@@ -1,5 +1,7 @@
 package br.ifmath.compiler.infrastructure.util;
 
+import br.ifmath.compiler.infrastructure.props.RegexPattern;
+
 import java.util.List;
 
 /**
@@ -29,6 +31,12 @@ public class NumberUtil {
 
     public static boolean canBeSimplified(double a, double b) {
         return greatestCommonDenominator(a, b) != 1 || a % b == 0;
+    }
+
+
+    public static String removeVariable(String source){
+        return StringUtil.replace(source, RegexPattern.VARIABLE.toString(), "");
+
     }
 
     public static long leastCommonMultiple(List<Integer> elements) {

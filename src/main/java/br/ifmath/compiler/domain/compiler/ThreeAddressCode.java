@@ -13,6 +13,9 @@ public class ThreeAddressCode {
     private String right;
     private List<ExpandedQuadruple> expandedQuadruples;
 
+    public ThreeAddressCode() {
+    }
+
     public ThreeAddressCode(String left, String comparison, String right, List<ExpandedQuadruple> expandedQuadruples) {
         this.left = left;
         this.comparison = comparison;
