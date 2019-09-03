@@ -15,9 +15,9 @@ import java.util.List;
 
 public class PolynomialExpertSystem implements IExpertSystem {
     private static PolynomialRuleSubstituteVariables substituteVariable;
-    private static  PolynomialRuleSumNumbers sumNumbers;
+    private static PolynomialRuleSumNumbers sumNumbers;
 
-    public PolynomialExpertSystem(){
+    public PolynomialExpertSystem() {
         substituteVariable = new PolynomialRuleSubstituteVariables();
         sumNumbers = new PolynomialRuleSumNumbers();
     }
@@ -36,9 +36,9 @@ public class PolynomialExpertSystem implements IExpertSystem {
             steps.addAll(substituteVariable.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        if (sumNumbers.match(sources)){
+        if (sumNumbers.match(sources)) {
             steps.addAll(sumNumbers.handle(sources));
-            sources = steps.get(steps.size() -1).getSource();
+            sources = steps.get(steps.size() - 1).getSource();
         }
 
         if (isVariable(sources.get(0).getLeft())) {
