@@ -6,7 +6,6 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.linearequation.AnswerLinearEquation;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -16,10 +15,12 @@ import java.util.List;
 public class PolynomialExpertSystem implements IExpertSystem {
     private static PolynomialRuleSubstituteVariables substituteVariable;
     private static PolynomialRuleSumNumbers sumNumbers;
+    private  static PolynomialRuleGroupSimilarTerms groupTerms;
 
     public PolynomialExpertSystem() {
         substituteVariable = new PolynomialRuleSubstituteVariables();
         sumNumbers = new PolynomialRuleSumNumbers();
+        groupTerms = new PolynomialRuleGroupSimilarTerms();
     }
 
 
@@ -30,6 +31,12 @@ public class PolynomialExpertSystem implements IExpertSystem {
         AnswerPolynomial answer = new AnswerPolynomial(steps);
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
+
+        validateExpressions(sources);
+        if (groupTerms.match(sources)) {
+            steps.addAll(groupTerms.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
 
         validateExpressions(sources);
         if (substituteVariable.match(sources)) {

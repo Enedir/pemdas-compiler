@@ -90,6 +90,26 @@ public class ThreeAddressCode {
         return null;
     }
 
+    public ExpandedQuadruple findQuadrupleByArgument1(String param) {
+        for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
+            if (expandedQuadruple.isArgument1(param)) {
+                return expandedQuadruple;
+            }
+        }
+
+        return null;
+    }
+
+    public ExpandedQuadruple findQuadrupleByArgument2(String param) {
+        for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
+            if (expandedQuadruple.isArgument2(param)) {
+                return expandedQuadruple;
+            }
+        }
+
+        return null;
+    }
+
     public List<ExpandedQuadruple> getDerivatedOperationsFromParent(String param) {
         ExpandedQuadruple parent = findQuadrupleByResult(param);
 
