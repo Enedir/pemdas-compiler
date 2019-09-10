@@ -31,12 +31,12 @@ public class PolynomialRuleSumNumbersTest {
     @Test()
     public void sum_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "x = y + 5 + 6";
+        String expression = "x = y - 5 - 6";
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = "x = 3+5+6";
-        String lastStepValueExpected = "x = 14";
+        String stepTwoValueExpected = "x = 3 - 5 - 6";
+        String lastStepValueExpected = "x = -8";
 
         // Act
         IAnswer answer = null;

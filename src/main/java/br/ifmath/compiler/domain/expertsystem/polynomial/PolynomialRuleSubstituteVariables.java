@@ -7,6 +7,7 @@ import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionExceptio
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -45,7 +46,9 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
         switchVariables(sources.get(0).getExpandedQuadruples());
 
-        String right = generateParameter(sources.get(0), 1);
+        String right = generateParameter(sources.get(0));
+
+        expandedQuadruples = sources.get(0).getExpandedQuadruples();
 
         //instanciando um novo ThreeAddressCode para ser adicionada a lista que contém o passo-a-passo
         //FIXME: primeiro parâmetro hardcoded devido a restrição do compilador
@@ -63,34 +66,44 @@ public class PolynomialRuleSubstituteVariables implements IRule {
      * @param position valor da prioridade das operações
      * @return {@link String} que representa o {@link ThreeAddressCode}
      */
-    private String generateParameter(ThreeAddressCode value, int position) {
-        //variável que irá concatenar os valores das quádruplas
-        String parameter = "";
-
-        //variável contendo a lista de quádruplas com seus elementros reordenados
-        List<ExpandedQuadruple> inverted = new ArrayList<>(value.getExpandedQuadruples());
-        Collections.reverse(inverted);
+    private String generateParameter(ThreeAddressCode value) {
+        List<ExpandedQuadruple> quadruples = value.getExpandedQuadruples();
+        return quadruples.get(quadruples.size()-1).getResult();
 
 
-        for (ExpandedQuadruple expanded : inverted) {
-            //caso algum dos argumentos à direita da quádrupla seja uma variável temporária
-            if (StringUtil.match(value.getRight(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                //procura dentro das quádruplas que possúi
-                ExpandedQuadruple expandedQuadruple = value.findQuadrupleByResult(expanded.getResult());
+//FIXME: delete se não precisar utilizar
 
-                //verifica se a variável temporária está presente no segundo argumento e caso sim, a mesma
-                //não é concatenada na variável de retorno
-                if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                    parameter += expandedQuadruple.getArgument1() + expandedQuadruple.getOperator();
-                } else {
-                    parameter += expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
-                }
-
-            } else {
-                parameter += expanded.getArgument1() + expanded.getOperator() + expanded.getArgument2();
-            }
-        }
-        return parameter;
+//        //variável que irá concatenar os valores das quádruplas
+//        String parameter = "";
+//
+//        //variável contendo a lista de quádruplas com seus elementros reordenados
+//        List<ExpandedQuadruple> inverted = new ArrayList<>(value.getExpandedQuadruples());
+//        Collections.reverse(inverted);
+//
+//
+//        for (ExpandedQuadruple expanded : inverted) {
+//            //caso algum dos argumentos à direita da quádrupla seja uma variável temporária
+//            if (StringUtil.match(value.getRight(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+//                //procura dentro das quádruplas que possúi
+//                ExpandedQuadruple expandedQuadruple = value.findQuadrupleByResult(expanded.getResult());
+//
+//                //verifica se a variável temporária está presente no segundo argumento e caso sim, a mesma
+//                //não é concatenada na variável de retorno
+//                if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+//                    parameter += expandedQuadruple.getArgument1() + expandedQuadruple.getOperator();
+//                } else {
+//                    parameter += expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
+//                }
+//
+//            } else {
+//                parameter += expanded.getArgument1() + expanded.getOperator() + expanded.getArgument2();
+//            }
+//        }
+//
+//        for (ExpandedQuadruple expanded : value.getExpandedQuadruples()) {
+//            expandedQuadruples.add(expanded);
+//        }
+//        return parameter;
     }
 
     /**
