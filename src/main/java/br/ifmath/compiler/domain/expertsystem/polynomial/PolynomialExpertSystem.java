@@ -15,12 +15,14 @@ import java.util.List;
 public class PolynomialExpertSystem implements IExpertSystem {
     private static PolynomialRuleSubstituteVariables substituteVariable;
     private static PolynomialRuleSumNumbers sumNumbers;
-    private  static PolynomialRuleGroupSimilarTerms groupTerms;
+    private static PolynomialRuleGroupSimilarTerms groupTerms;
+    private static PolynomialRuleMultiplyNumber multiplyNumbers;
 
     public PolynomialExpertSystem() {
         substituteVariable = new PolynomialRuleSubstituteVariables();
         sumNumbers = new PolynomialRuleSumNumbers();
         groupTerms = new PolynomialRuleGroupSimilarTerms();
+        multiplyNumbers = new PolynomialRuleMultiplyNumber();
     }
 
 
@@ -38,15 +40,26 @@ public class PolynomialExpertSystem implements IExpertSystem {
 //            sources = steps.get(steps.size() - 1).getSource();
 //        }
 
+
         validateExpressions(sources);
         if (substituteVariable.match(sources)) {
             steps.addAll(substituteVariable.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
+
+        validateExpressions(sources);
+        if (multiplyNumbers.match(sources)) {
+            steps.addAll(multiplyNumbers.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
         if (sumNumbers.match(sources)) {
             steps.addAll(sumNumbers.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
+
+
+
 
         if (isVariable(sources.get(0).getLeft())) {
             getFinalResult(answer, sources.get(0), sources.get(0).getRight());

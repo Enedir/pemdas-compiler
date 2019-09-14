@@ -230,8 +230,7 @@ public class LinearEquationRuleCrossMultiplication implements IRule {
         return negativeQuadruple.getResult();
     }
       
-    private boolean isThereAFraction(ThreeAddressCode threeAddressCode, String param)
-    {
+    private boolean isThereAFraction(ThreeAddressCode threeAddressCode, String param) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
             
@@ -246,8 +245,7 @@ public class LinearEquationRuleCrossMultiplication implements IRule {
         return false;
     }    
     
-    private boolean isThereOnlyOneTerm(ThreeAddressCode threeAddressCode, String param)
-    {
+    private boolean isThereOnlyOneTerm(ThreeAddressCode threeAddressCode, String param) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
             
