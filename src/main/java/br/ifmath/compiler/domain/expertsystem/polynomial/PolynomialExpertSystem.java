@@ -16,13 +16,13 @@ public class PolynomialExpertSystem implements IExpertSystem {
     private static PolynomialRuleSubstituteVariables substituteVariable;
     private static PolynomialRuleSumNumbers sumNumbers;
     private static PolynomialRuleGroupSimilarTerms groupTerms;
-    private static PolynomialRuleMultiplyNumber multiplyNumbers;
+    private static PolynomialRuleMultiplyNumbers multiplyNumbers;
 
     public PolynomialExpertSystem() {
         substituteVariable = new PolynomialRuleSubstituteVariables();
         sumNumbers = new PolynomialRuleSumNumbers();
         groupTerms = new PolynomialRuleGroupSimilarTerms();
-        multiplyNumbers = new PolynomialRuleMultiplyNumber();
+        multiplyNumbers = new PolynomialRuleMultiplyNumbers();
     }
 
 

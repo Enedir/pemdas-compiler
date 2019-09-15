@@ -33,7 +33,7 @@ public class PolynomialRuleSumNumbers implements IRule {
         ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation(), "Somando os numeros."));
+        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation(), "Somando os valores."));
 
         return steps;
     }
