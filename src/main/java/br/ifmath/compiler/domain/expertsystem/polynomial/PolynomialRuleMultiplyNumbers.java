@@ -24,10 +24,9 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> sources){
+    public List<Step> handle(List<ThreeAddressCode> sources) {
         List<Step> steps = new ArrayList<>();
         expandedQuadruples = new ArrayList<>();
-
 
         expandedQuadruples.addAll(sources.get(0).getExpandedQuadruples());
         operationIndex = expandedQuadruples.size() + 1;
@@ -37,7 +36,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
         generateParameter(expandedQuadruples, rightTimes);
 
-        if(!expandedQuadruples.isEmpty())
+        if (!expandedQuadruples.isEmpty())
             sources.get(0).setExpandedQuadruples(expandedQuadruples);
         else
             expandedQuadruples = rightTimes;
@@ -62,12 +61,12 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
 
     private void multiply(List<ThreeAddressCode> source, List<ExpandedQuadruple> times) {
-        String a, b ;
+        String a, b;
         boolean changeSignal = false;
 
         for (ExpandedQuadruple eq : times) {
             if (StringUtil.match(eq.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                a = findInnerProduct(source,eq.getArgument1());
+                a = findInnerProduct(source, eq.getArgument1());
                 //TODO verificar caso o valor de a for negativo
 //                if (a.contains("MINUS")) {
 //                    a = "-" + a;
@@ -78,7 +77,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
             }
 
             if (StringUtil.match(eq.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                b = findInnerProduct(source,eq.getArgument2());
+                b = findInnerProduct(source, eq.getArgument2());
                 //TODO verificar caso o valor de b for negativo
 //                if (a.contains("MINUS")) {
 //                    a = "-" + a;
@@ -90,8 +89,8 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
             if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
                 expandedQuadruples.remove(eq);
-                double result = MathOperatorUtil.times(a, b);
-                if(result % 1 == 0)
+                double result = Double.parseDouble(a) * Double.parseDouble(b);
+                if (result % 1 == 0)
                     eq.setArgument1(String.valueOf((int) result));
                 else
                     eq.setArgument1(String.valueOf(result));
@@ -109,6 +108,30 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
         return negativeQuadruple.getResult();
     }
 
+
+    private void generateParameter(List<ExpandedQuadruple> expandedQuadruples, List<ExpandedQuadruple> times) {
+        for (ExpandedQuadruple multipliedQuadruple : times) {
+            String temporaryVarLabel = multipliedQuadruple.getResult();
+            for (ExpandedQuadruple remainingQuadruple : expandedQuadruples) {
+                if (remainingQuadruple.getArgument1().equals(temporaryVarLabel)) {
+                    remainingQuadruple.setArgument1(multipliedQuadruple.getArgument1().replace(".", ","));
+                }
+                if (remainingQuadruple.getArgument2().equals(temporaryVarLabel)) {
+                    remainingQuadruple.setArgument2(multipliedQuadruple.getArgument1().replace(".", ","));
+                }
+            }
+        }
+    }
+
+
+    private String findInnerProduct(List<ThreeAddressCode> source, String tempVar) {
+        ExpandedQuadruple innerQuadruple = source.get(0).findQuadrupleByResult(tempVar);
+        if (innerQuadruple.getArgument2().equals("")) {
+            return innerQuadruple.getArgument1();
+        }
+        return "";
+    }
+
     private boolean isThereTermsToMultiply(List<ExpandedQuadruple> expandedQuadruples) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
             if (expandedQuadruple.getOperator().equals("*")) {
@@ -116,29 +139,5 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
             }
         }
         return false;
-    }
-
-    private void generateParameter(List<ExpandedQuadruple> expandedQuadruples, List<ExpandedQuadruple> times) {
-        for (ExpandedQuadruple multipliedQuadruple: times) {
-            String temporaryVarLabel = multipliedQuadruple.getResult();
-            for (ExpandedQuadruple remainingQuadruple: expandedQuadruples) {
-                if(remainingQuadruple.getArgument1().equals(temporaryVarLabel)){
-                    remainingQuadruple.setArgument1(multipliedQuadruple.getArgument1());
-                }
-                if(remainingQuadruple.getArgument2().equals(temporaryVarLabel)){
-                    remainingQuadruple.setArgument2(multipliedQuadruple.getArgument1());
-                }
-            }
-        }
-    }
-
-
-
-    private String findInnerProduct(List<ThreeAddressCode> source, String tempVar){
-        ExpandedQuadruple innerQuadruple = source.get(0).findQuadrupleByResult(tempVar);
-        if(innerQuadruple.getArgument2().equals("")){
-            return innerQuadruple.getArgument1();
-        }
-        return null;
     }
 }

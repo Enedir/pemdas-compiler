@@ -25,9 +25,11 @@ public class PolynomialRuleSumNumbers implements IRule {
         List<Step> steps = new ArrayList<>();
 
         double result = sumTerms(sources.get(0), sources.get(0).getRight(), false);
-
-        String right = String.valueOf(NumberUtil.parseInt(result));
-
+        String right;
+        if (result % 1 == 0)
+            right = String.valueOf(NumberUtil.parseInt(result));
+        else
+            right = String.valueOf(result);
         expandedQuadruples = sources.get(0).getExpandedQuadruples();
 
         ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);

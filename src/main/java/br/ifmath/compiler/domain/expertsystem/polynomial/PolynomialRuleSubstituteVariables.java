@@ -60,50 +60,37 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         return steps;
     }
 
+//FIXME Verificação da entrada do usuario ser negativa, para isso deve ser criada uma quádrupla
+
+//    private void checkNegativeInput(List<ExpandedQuadruple> source) {
+//        List<ExpandedQuadruple> negativeInputs = new ArrayList<>();
+//        for (NumericValueVariable input : userInput) {
+//            if (input.getValue().toString().startsWith("-")) {
+//                String cleanInput = input.getValue().toString().replace("-", "").trim();
+//                ExpandedQuadruple negativeQuadruple = new ExpandedQuadruple("MINUS", cleanInput, "T" + (source.size() + 1), 0, 0);
+//                negativeInputs.add(negativeQuadruple);
+//                for (ExpandedQuadruple expandedQuadruple : source) {
+//                    if (input.getLabel().equals(expandedQuadruple.getArgument1())) {
+//                        expandedQuadruple.setArgument1(negativeQuadruple.getResult());
+//                    }
+//                    if (input.getLabel().equals(expandedQuadruple.getArgument2())) {
+//                        expandedQuadruple.setArgument2(negativeQuadruple.getResult());
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
+
     /**
      * Transforma o {@link ThreeAddressCode} em uma {@link String}
+     *
      * @param value código de três endereços a ser transformado
-     * @param position valor da prioridade das operações
      * @return {@link String} que representa o {@link ThreeAddressCode}
      */
     private String generateParameter(ThreeAddressCode value) {
         List<ExpandedQuadruple> quadruples = value.getExpandedQuadruples();
-        return quadruples.get(quadruples.size()-1).getResult();
-
-
-//FIXME: delete se não precisar utilizar
-
-//        //variável que irá concatenar os valores das quádruplas
-//        String parameter = "";
-//
-//        //variável contendo a lista de quádruplas com seus elementros reordenados
-//        List<ExpandedQuadruple> inverted = new ArrayList<>(value.getExpandedQuadruples());
-//        Collections.reverse(inverted);
-//
-//
-//        for (ExpandedQuadruple expanded : inverted) {
-//            //caso algum dos argumentos à direita da quádrupla seja uma variável temporária
-//            if (StringUtil.match(value.getRight(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-//                //procura dentro das quádruplas que possúi
-//                ExpandedQuadruple expandedQuadruple = value.findQuadrupleByResult(expanded.getResult());
-//
-//                //verifica se a variável temporária está presente no segundo argumento e caso sim, a mesma
-//                //não é concatenada na variável de retorno
-//                if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-//                    parameter += expandedQuadruple.getArgument1() + expandedQuadruple.getOperator();
-//                } else {
-//                    parameter += expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
-//                }
-//
-//            } else {
-//                parameter += expanded.getArgument1() + expanded.getOperator() + expanded.getArgument2();
-//            }
-//        }
-//
-//        for (ExpandedQuadruple expanded : value.getExpandedQuadruples()) {
-//            expandedQuadruples.add(expanded);
-//        }
-//        return parameter;
+        return quadruples.get(quadruples.size() - 1).getResult();
     }
 
     /**
@@ -144,8 +131,10 @@ public class PolynomialRuleSubstituteVariables implements IRule {
             if (!StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 //se o primeiro argumento da quadrupla for igual ao rótulo da variável,
                 // irá substituir o rótulo por seu valor real
-                if (expandedQuadruple.getArgument2().contains(this.userInput.get(0).getLabel())) {
-                    expandedQuadruple.setArgument2(this.userInput.get(0).getValue().toString());
+                if (!expandedQuadruple.getOperator().equals("MINUS")) {
+                    if (expandedQuadruple.getArgument2().contains(this.userInput.get(0).getLabel())) {
+                        expandedQuadruple.setArgument2(this.userInput.get(0).getValue().toString());
+                    }
                 }
             }
         }
@@ -153,6 +142,7 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
     /**
      * Verifica se há alguma variável a ser substituida dentro do polinômio
+     *
      * @param expandedQuadruples lista de quádruplas que representam o polinômio
      * @return true caso haja pelo menos uma variável a ser substituida
      */
@@ -164,31 +154,34 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
 
             //verifica se tem um rótulo de variável igual ao que o usuário inseriu (mesma lógica para os demais)
-            if (!userInput.isEmpty() && expandedQuadruple.getArgument1().contains(userInput.get(0).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(0).getLabel())) {
-                countEqualVariable++;
-            }
-
-            if (userInput.size() > 1) {
-                if (expandedQuadruple.getArgument1().contains(userInput.get(1).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(1).getLabel())) {
+            if (!expandedQuadruple.getOperator().equals("MINUS")) {
+                if (!userInput.isEmpty() && (expandedQuadruple.getArgument1().contains(userInput.get(0).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(0).getLabel()))) {
                     countEqualVariable++;
                 }
-            }
 
-            if (userInput.size() > 2) {
-                if (expandedQuadruple.getArgument1().contains(userInput.get(2).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(2).getLabel())) {
-                    countEqualVariable++;
+
+                if (userInput.size() > 1) {
+                    if (expandedQuadruple.getArgument1().contains(userInput.get(1).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(1).getLabel())) {
+                        countEqualVariable++;
+                    }
                 }
-            }
 
-            if (userInput.size() > 3) {
-                if (expandedQuadruple.getArgument1().contains(userInput.get(3).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(3).getLabel())) {
-                    countEqualVariable++;
+                if (userInput.size() > 2) {
+                    if (expandedQuadruple.getArgument1().contains(userInput.get(2).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(2).getLabel())) {
+                        countEqualVariable++;
+                    }
                 }
-            }
 
-            if (userInput.size() > 4) {
-                if (expandedQuadruple.getArgument1().contains(userInput.get(4).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(4).getLabel())) {
-                    countEqualVariable++;
+                if (userInput.size() > 3) {
+                    if (expandedQuadruple.getArgument1().contains(userInput.get(3).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(3).getLabel())) {
+                        countEqualVariable++;
+                    }
+                }
+
+                if (userInput.size() > 4) {
+                    if (expandedQuadruple.getArgument1().contains(userInput.get(4).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(4).getLabel())) {
+                        countEqualVariable++;
+                    }
                 }
             }
 
