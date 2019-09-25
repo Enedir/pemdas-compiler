@@ -16,7 +16,6 @@ import java.util.List;
 public class PolynomialRuleGroupSimilarTerms implements IRule {
     private final List<ExpandedQuadruple> expandedQuadruples;
     private List<NumericValueVariable> termsAndValuesList;
-    private boolean visitado = false;
 
     public PolynomialRuleGroupSimilarTerms() {
         expandedQuadruples = new ArrayList<>();
@@ -35,10 +34,9 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
 
         List<Step> steps = new ArrayList<>();
 
-        double rightIndependentTermValue = sumTerms(sources.get(0), sources.get(0).getRight(), false, false);
-        sumTerms(sources.get(0), sources.get(0).getRight(), false, true);
+        sumTerms(sources.get(0), sources.get(0).getRight(), false);
 
-        String right = generateParameter(rightIndependentTermValue, sources, 1);
+        String right = generateParameter(sources);
 
         ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
@@ -74,12 +72,13 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
     }
 
 
-    private String generateParameter(double valueTermIndependent, List<ThreeAddressCode> source, int position) {
+    private String generateParameter(List<ThreeAddressCode> source) {
 
-        //FIXME PLEASE  verificacao com MINUS
+        //FIXME PLEASE verificacao com MINUS
         String parameter = "";
         List<NumericValueVariable> list = new ArrayList<>(termsAndValuesList);
-        parameter = this.searchOperaThor(list,source);
+        parameter = this.searchOperaThor(list, source);
+
 
         return parameter;
     }
@@ -92,7 +91,7 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
             expandedQuadruple = sources.get(0).findQuadrupleByArgument1(variableList.get(0).getLabel());
             if (expandedQuadruple != null) {
                 variableList.remove(0);
-                variableList.add(0,new NumericValueVariable(expandedQuadruple.getResult()));
+                variableList.add(0, new NumericValueVariable(expandedQuadruple.getResult()));
                 this.searchOperaThor(variableList, sources);
             }
         }
@@ -105,62 +104,48 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
     }
 
 
-    private double sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus, boolean variable) {
-        double sum = 0;
+    private void sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
 
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
 
             if (expandedQuadruple.isNegative()) {
-                sum -= sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), false, variable);
+                sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), false);
             } else {
-                sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), lastOperationIsMinus, variable);
-                sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus(), variable);
+                sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), lastOperationIsMinus);
+                sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus());
             }
         } else {
-            if (isVariable(param)) {
-                if (!variable)
-                    return 0;
-
-                String aux = StringUtil.removeNonNumericChars(param);
-                int index = 0;
-                int cont = 0;
-                if (termsAndValuesList.isEmpty()) {
-                    this.termsAndValuesList.add(new NumericValueVariable(param, 0));
-                } else {
-                    for (int i = 0; i < termsAndValuesList.size(); i++) {
-                        if (!termsAndValuesList.get(i).getLabel().equals(param)) {
-                            cont++;
-                            if (cont == termsAndValuesList.size()) {
-                                this.termsAndValuesList.add(new NumericValueVariable(param, 0));
-                            }
-                        } else {
-                            index = i;
+            String aux = StringUtil.removeNonNumericChars(param);
+            int index = 0;
+            int cont = 0;
+            if (termsAndValuesList.isEmpty()) {
+                this.termsAndValuesList.add(new NumericValueVariable(param, 0));
+            } else {
+                for (int i = 0; i < termsAndValuesList.size(); i++) {
+                    if (!termsAndValuesList.get(i).getLabel().equals(param)) {
+                        cont++;
+                        if (cont == termsAndValuesList.size()) {
+                            this.termsAndValuesList.add(new NumericValueVariable(param, 0));
                         }
+                    } else {
+                        index = i;
                     }
                 }
-                if (StringUtil.isEmpty(aux)) {
-                    if (lastOperationIsMinus)
-                        this.termsAndValuesList.get(index).addValue(-1);
-                    else
-                        this.termsAndValuesList.get(index).addValue(1);
-                } else {
-                    if (lastOperationIsMinus)
-                        sum -= Double.parseDouble(aux.replace(",", "."));
-                    else
-                        sum += Double.parseDouble(aux.replace(",", "."));
-                }
-            } else {
-                if (variable)
-                    return 0;
-
-                if (lastOperationIsMinus)
-                    sum -= Double.parseDouble(param.replace(",", "."));
-                else
-                    sum += Double.parseDouble(param.replace(",", "."));
             }
+            if (StringUtil.isEmpty(aux)) {
+                if (lastOperationIsMinus)
+                    this.termsAndValuesList.get(index).addValue(-1);
+                else
+                    this.termsAndValuesList.get(index).addValue(1);
+            } else {
+                if (lastOperationIsMinus)
+                    Double.parseDouble(aux.replace(",", "."));
+                else
+                    Double.parseDouble(aux.replace(",", "."));
+            }
+
         }
-        return sum;
     }
 
 

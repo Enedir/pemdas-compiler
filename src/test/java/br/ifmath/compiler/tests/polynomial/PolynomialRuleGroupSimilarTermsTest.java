@@ -13,16 +13,18 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class PolynomialRuleGroupSimilarTermsTest  {
+public class PolynomialRuleGroupSimilarTermsTest {
 
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String finalResultExplicationExpected;
+    private String stepTwoResultExplicationExpected;
 
     @Before
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialExpertSystem();
+        stepTwoResultExplicationExpected = "Agrupando termos semelhantes.";
         finalResultExplicationExpected = "Agrupando termos semelhantes.";
     }
 
@@ -33,8 +35,9 @@ public class PolynomialRuleGroupSimilarTermsTest  {
         String expression = "x = y + y";
 
         int positionTwo = 4;
+        String stepTwoValueExpected = "x = 2 * y";
+        String lastStepValueExpected = "x = 6";
 
-        String lastStepValueExpected = "x = 2y";
 
         // Act
         IAnswer answer = null;
@@ -45,19 +48,23 @@ public class PolynomialRuleGroupSimilarTermsTest  {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(1);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
+        assertEquals(finalStep.getMathExpression(), stepTwoValueExpected);
+        assertEquals(finalStep.getReason(), stepTwoResultExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
+
     @Test()
     public void group_terms_with_two_variable_scenery_one_with_success() {
         //Arrange
-        String expression = "x = -y + y  + z + z";
+        String expression = "x = - y + z + y + z";
 
         int positionTwo = 4;
 
-        String lastStepValueExpected = "x = 2y - 2z";
+        String lastStepValueExpected = "x = 2*y";
 
         // Act
         IAnswer answer = null;

@@ -37,11 +37,11 @@ public class PolynomialExpertSystem implements IExpertSystem {
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
 
-//        validateExpressions(sources);
-//        if (groupTerms.match(sources)) {
-//            steps.addAll(groupTerms.handle(sources));
-//            sources = steps.get(steps.size() - 1).getSource();
-//        }
+        validateExpressions(sources);
+        if (groupTerms.match(sources)) {
+            steps.addAll(groupTerms.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
 
 
         validateExpressions(sources);
