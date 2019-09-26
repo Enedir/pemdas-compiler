@@ -6,7 +6,6 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleNumbersPotentiation;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -16,14 +15,12 @@ import java.util.List;
 public class PolynomialExpertSystem implements IExpertSystem {
     private static PolynomialRuleSubstituteVariables substituteVariable;
     private static PolynomialRuleSumNumbers sumNumbers;
-    private static PolynomialRuleGroupSimilarTerms groupTerms;
     private static PolynomialRuleMultiplyNumbers multiplyNumbers;
     private static PolynomialRuleNumbersPotentiation powerNumbers;
 
     public PolynomialExpertSystem() {
         substituteVariable = new PolynomialRuleSubstituteVariables();
         sumNumbers = new PolynomialRuleSumNumbers();
-        groupTerms = new PolynomialRuleGroupSimilarTerms();
         multiplyNumbers = new PolynomialRuleMultiplyNumbers();
         powerNumbers = new PolynomialRuleNumbersPotentiation();
     }
@@ -36,13 +33,6 @@ public class PolynomialExpertSystem implements IExpertSystem {
         AnswerPolynomial answer = new AnswerPolynomial(steps);
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
-
-        validateExpressions(sources);
-        if (groupTerms.match(sources)) {
-            steps.addAll(groupTerms.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
-
 
         validateExpressions(sources);
         if (substituteVariable.match(sources)) {
@@ -68,6 +58,7 @@ public class PolynomialExpertSystem implements IExpertSystem {
             sources = steps.get(steps.size() - 1).getSource();
         }
 
+        sources = substituteNullFields(sources);
 
         if (isVariable(sources.get(0).getLeft())) {
             getFinalResult(answer, sources.get(0), sources.get(0).getRight());
@@ -176,5 +167,18 @@ public class PolynomialExpertSystem implements IExpertSystem {
 
             answer.setResult(numerator + "/" + denominator);
         }
+    }
+
+
+    private List<ThreeAddressCode> substituteNullFields(List<ThreeAddressCode> sources) {
+        for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
+            if (expandedQuadruple.getArgument1() == null)
+                expandedQuadruple.setArgument1("");
+            if (expandedQuadruple.getArgument2() == null)
+                expandedQuadruple.setArgument2("");
+            if (expandedQuadruple.getOperator() == null)
+                expandedQuadruple.setOperator("");
+        }
+        return sources;
     }
 }

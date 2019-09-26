@@ -104,13 +104,13 @@ public class PolynomialRuleNumbersPotentiationTest {
     @Test()
     public void professor_Ailton_example_scenery_one_with_success() {
         //Arrange
-        String expression = "x = -3 * y ^ 3 + 2 * y ^ 2 - 4 * y * z";
+        String expression = "x = 3 * y ^ 3 + 2 * y ^ 2 - 4 * y * z";
 
 
-        String stepTwoValueExpected = "x = -3 * -1 ^ 3 + 2 * -1 ^ 2 - 4 * -1 * 3";
-        String stepThreeValueExpected = "x = -3 * -1 + 2 * 1 - 4 * -1 * 3";
-        String stepFourValueExpected = "x = 3 + 2 + 12";
-        String lastStepValueExpected = "x = 17";
+        String stepTwoValueExpected = "x = 3 * 3 ^ 3 + 2 * 3 ^ 2 - 4 * 3 * 4";
+        String stepThreeValueExpected = "x = 3 * 27 + 2 * 9 - 4 * 3 * 4";
+        String stepFourValueExpected = "x = 81 + 18 - 48";
+        String lastStepValueExpected = "x = 51";
 
         // Act
         IAnswer answer = null;

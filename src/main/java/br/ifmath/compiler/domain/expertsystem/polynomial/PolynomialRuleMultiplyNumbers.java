@@ -5,7 +5,6 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
-import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 
@@ -62,39 +61,36 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
     private void multiply(List<ThreeAddressCode> source, List<ExpandedQuadruple> times) {
         String a, b;
-        boolean changeSignal = false;
 
         for (ExpandedQuadruple eq : times) {
             if (StringUtil.match(eq.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 a = findInnerProduct(source, eq.getArgument1());
-                //TODO verificar caso o valor de a for negativo
-//                if (a.contains("MINUS")) {
-//                    a = "-" + a;
-//                    changeSignal = !changeSignal;
-//                }
             } else {
                 a = eq.getArgument1();
             }
 
             if (StringUtil.match(eq.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 b = findInnerProduct(source, eq.getArgument2());
-                //TODO verificar caso o valor de b for negativo
-//                if (a.contains("MINUS")) {
-//                    a = "-" + a;
-//                    changeSignal = !changeSignal;
-//                }
             } else {
                 b = eq.getArgument2();
             }
 
             if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
-                expandedQuadruples.remove(eq);
+                if (!eq.getOperator().equals("MINUS"))
+                    expandedQuadruples.remove(eq);
                 double result = Double.parseDouble(a) * Double.parseDouble(b);
+
+                if (result < 0) {
+                    result *= -1;
+                    eq.setOperator("MINUS");
+                } else
+                    eq.setOperator("");
+
                 if (result % 1 == 0)
                     eq.setArgument1(String.valueOf((int) result));
                 else
                     eq.setArgument1(String.valueOf(result));
-                eq.setOperator("");
+
                 eq.setArgument2("");
             }
         }
@@ -113,23 +109,30 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
         for (ExpandedQuadruple multipliedQuadruple : times) {
             String temporaryVarLabel = multipliedQuadruple.getResult();
             for (ExpandedQuadruple remainingQuadruple : expandedQuadruples) {
-                if (remainingQuadruple.getArgument1().equals(temporaryVarLabel)) {
-                    remainingQuadruple.setArgument1(multipliedQuadruple.getArgument1().replace(".", ","));
-                }
-                if (remainingQuadruple.getArgument2().equals(temporaryVarLabel)) {
-                    remainingQuadruple.setArgument2(multipliedQuadruple.getArgument1().replace(".", ","));
+                if (remainingQuadruple.getArgument1() != null && remainingQuadruple.getArgument2() != null) {
+                    if (remainingQuadruple.getArgument1().equals(temporaryVarLabel)) {
+                        if (multipliedQuadruple.getOperator().equals(""))
+                            remainingQuadruple.setArgument1(multipliedQuadruple.getArgument1().replace(".", ","));
+                    }
+                    if (remainingQuadruple.getArgument2().equals(temporaryVarLabel)) {
+                        remainingQuadruple.setArgument2(multipliedQuadruple.getArgument1().replace(".", ","));
+                    }
                 }
             }
+
         }
     }
 
 
     private String findInnerProduct(List<ThreeAddressCode> source, String tempVar) {
         ExpandedQuadruple innerQuadruple = source.get(0).findQuadrupleByResult(tempVar);
-        if (innerQuadruple.getArgument2().equals("")) {
-            return innerQuadruple.getArgument1();
+        if (!innerQuadruple.getOperator().equals("")) {
+            if (innerQuadruple.getOperator().equals("MINUS")) {
+                expandedQuadruples.remove(innerQuadruple);
+                return "-" + innerQuadruple.getArgument1();
+            }
         }
-        return "";
+        return innerQuadruple.getArgument1();
     }
 
     private boolean isThereTermsToMultiply(List<ExpandedQuadruple> expandedQuadruples) {

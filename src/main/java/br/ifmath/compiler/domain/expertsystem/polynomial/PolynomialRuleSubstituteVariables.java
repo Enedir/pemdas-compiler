@@ -27,9 +27,6 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         this.userInput.add(new NumericValueVariable("a", 777));
         this.userInput.add(new NumericValueVariable("y", 3));
         this.userInput.add(new NumericValueVariable("z", 4));
-
-//        Valor para teste sum_numbers_scenery_one_with_success
-//        this.userInput.add(new NumericValueVariable("y", 4));
     }
 
 
@@ -55,7 +52,7 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation(), "Substituindo os valores nas variáveis correspondentes."));
+        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation().trim(), "Substituindo os valores nas variáveis correspondentes."));
 
         return steps;
     }

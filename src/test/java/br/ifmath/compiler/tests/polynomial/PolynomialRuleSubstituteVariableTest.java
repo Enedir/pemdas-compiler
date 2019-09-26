@@ -16,12 +16,14 @@ public class PolynomialRuleSubstituteVariableTest {
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String finalResultExplicationExpected;
+    private String stepTwoResultExpected;
 
     @Before
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialExpertSystem();
-        finalResultExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
+        stepTwoResultExpected = "Substituindo os valores nas variáveis correspondentes.";
+        finalResultExplicationExpected = "Somando os valores.";
     }
 
     @Test()
@@ -29,9 +31,8 @@ public class PolynomialRuleSubstituteVariableTest {
         //Arrange
         String expression = "x = y + 3";
 
-        int positionTwo = 4;
-
-        String lastStepValueExpected = "x = 3+3";
+        String stepTwoValueExpected = "x = 3 + 3";
+        String lastStepValueExpected = "x = 6";
 
         // Act
         IAnswer answer = null;
@@ -42,8 +43,11 @@ public class PolynomialRuleSubstituteVariableTest {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoResultExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
@@ -53,9 +57,8 @@ public class PolynomialRuleSubstituteVariableTest {
         //Arrange
         String expression = "x = y + 5 + 10 + y - z+a";
 
-        int positionTwo = 4;
-
-        String lastStepValueExpected = "x = 3+5+10+3-4+777";
+        String stepTwoValueExpected = "x = 3 + 5 + 10 + 3 - 4 + 777";
+        String lastStepValueExpected = "x = 794";
 
         // Act
         IAnswer answer = null;
@@ -66,8 +69,11 @@ public class PolynomialRuleSubstituteVariableTest {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoResultExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }

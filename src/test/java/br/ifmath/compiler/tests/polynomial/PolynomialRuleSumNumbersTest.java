@@ -25,7 +25,7 @@ public class PolynomialRuleSumNumbersTest {
         compiler = new Compiler();
         expertSystem = new PolynomialExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
-        finalResultExplicationExpected = "Somando os numeros.";
+        finalResultExplicationExpected = "Somando os valores.";
     }
 
     @Test()
