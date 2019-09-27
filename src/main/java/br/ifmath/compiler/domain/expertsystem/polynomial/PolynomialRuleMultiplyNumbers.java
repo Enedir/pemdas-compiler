@@ -14,8 +14,6 @@ import java.util.List;
 
 public class PolynomialRuleMultiplyNumbers implements IRule {
     private List<ExpandedQuadruple> expandedQuadruples;
-    private int operationIndex;
-
 
     @Override
     public boolean match(List<ThreeAddressCode> source) {
@@ -28,7 +26,6 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
         expandedQuadruples = new ArrayList<>();
 
         expandedQuadruples.addAll(sources.get(0).getExpandedQuadruples());
-        operationIndex = expandedQuadruples.size() + 1;
         List<ExpandedQuadruple> rightTimes = checkTimesOperation(sources.get(0).getExpandedQuadruples());
 
         multiply(sources, rightTimes);
@@ -48,6 +45,12 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
     }
 
 
+    /**
+     * Verifica quais quadruplas possuem a operaçao de multiplicacao.
+     *
+     * @param expandedQuadruples lista de quadruplas expandidas que será avaliada.
+     * @return expandedQuadruples1 retorna apenas as quadruplas que possuem o operador de multiplicação.
+     */
     private List<ExpandedQuadruple> checkTimesOperation(List<ExpandedQuadruple> expandedQuadruples) {
         List<ExpandedQuadruple> expandedQuadruples1 = new ArrayList<>();
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
@@ -59,6 +62,12 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
     }
 
 
+    /**
+     * Realiza efetivamente as multiplicacoes dos termos.
+     *
+     * @param source Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
+     * @param times  Lista de quadruplas expandidas que possuem a operacação de multiplicação gerada pelo {@link #checkTimesOperation}.
+     */
     private void multiply(List<ThreeAddressCode> source, List<ExpandedQuadruple> times) {
         String a, b;
 
@@ -80,12 +89,18 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
                     expandedQuadruples.remove(eq);
                 double result = Double.parseDouble(a) * Double.parseDouble(b);
 
+                /**
+                 * Realiza a verificação se o numero é negativo, caso seja,transforma o mesmo em positivo e atribui o operador MINUS a quadrupla do mesmo.
+                 */
                 if (result < 0) {
                     result *= -1;
                     eq.setOperator("MINUS");
                 } else
                     eq.setOperator("");
 
+                /**
+                 * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
+                 */
                 if (result % 1 == 0)
                     eq.setArgument1(String.valueOf((int) result));
                 else
@@ -97,23 +112,26 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
     }
 
-    private String createNegativeNumberQuadruple(String parameter, int position, int level) {
-        ExpandedQuadruple negativeQuadruple = new ExpandedQuadruple("MINUS", parameter, "T" + (this.operationIndex++), position, level);
-        this.expandedQuadruples.add(negativeQuadruple);
-
-        return negativeQuadruple.getResult();
-    }
-
-
+    /**
+     * @param expandedQuadruples Lista de quadruplas expandidadas geradas pelas etapas anteriores do compilador.
+     * @param times              Lista de quadruplas expandidas que possuem a operacação de multiplicação gerada pelo {@link #checkTimesOperation}.
+     */
     private void generateParameter(List<ExpandedQuadruple> expandedQuadruples, List<ExpandedQuadruple> times) {
         for (ExpandedQuadruple multipliedQuadruple : times) {
             String temporaryVarLabel = multipliedQuadruple.getResult();
+
             for (ExpandedQuadruple remainingQuadruple : expandedQuadruples) {
+
                 if (remainingQuadruple.getArgument1() != null && remainingQuadruple.getArgument2() != null) {
+                    /**
+                     * Verifica se algum dos argumentos da quadrupla que esta sendo processada é igual a variavel temporaria que possui o resultado.
+                     * Em caso positivo atribui o valor da temporaria ao argumento da quadrupla que esta sendo analisada.
+                     */
                     if (remainingQuadruple.getArgument1().equals(temporaryVarLabel)) {
                         if (multipliedQuadruple.getOperator().equals(""))
                             remainingQuadruple.setArgument1(multipliedQuadruple.getArgument1().replace(".", ","));
                     }
+
                     if (remainingQuadruple.getArgument2().equals(temporaryVarLabel)) {
                         remainingQuadruple.setArgument2(multipliedQuadruple.getArgument1().replace(".", ","));
                     }
@@ -124,6 +142,14 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
     }
 
 
+    /**
+     * Encontra o valor  dentro das variaveis temporarias que esta envolvida
+     * em uma operacao de multiplicaçao e verifica caso o mesmo seja negativo, caso seja, adiciona o "-".
+     *
+     * @param source  Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
+     * @param tempVar Variavel provida pela quadrupla expandida que esta sendo processada no método {@link #multiply}.
+     * @return Retorna o valor da quadrupla que foi acessada atraves do parametro tempVar, em caso de a quadrupla ser negativa (MINUS), retorna o valor concatenado com "-".
+     */
     private String findInnerProduct(List<ThreeAddressCode> source, String tempVar) {
         ExpandedQuadruple innerQuadruple = source.get(0).findQuadrupleByResult(tempVar);
         if (!innerQuadruple.getOperator().equals("")) {
@@ -135,6 +161,10 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
         return innerQuadruple.getArgument1();
     }
 
+    /**
+     * @param expandedQuadruples Lista de quadruplas expandidadas geradas pelas etapas anteriores do compilador.
+     * @return Retorna true caso exista termos a serem multiplicados, retorna false caso contrario.
+     */
     private boolean isThereTermsToMultiply(List<ExpandedQuadruple> expandedQuadruples) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
             if (expandedQuadruple.getOperator().equals("*")) {
