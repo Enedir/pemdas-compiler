@@ -25,11 +25,16 @@ public class PolynomialRuleSumNumbers implements IRule {
         List<Step> steps = new ArrayList<>();
 
         double result = sumTerms(sources.get(0), sources.get(0).getRight(), false);
+
         String right;
+        /**
+         * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
+         */
         if (result % 1 == 0)
             right = String.valueOf(NumberUtil.parseInt(result));
         else
             right = String.valueOf(result);
+
         expandedQuadruples = sources.get(0).getExpandedQuadruples();
 
         ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);
@@ -41,8 +46,21 @@ public class PolynomialRuleSumNumbers implements IRule {
     }
 
 
+    /**
+     * Realiza a soma entre todos os numeros, de maneira recursiva.
+     *
+     * @param threeAddressCode     {@link ThreeAddressCode} que representa o polinomio.
+     * @param param                {@link String} que pode representar uma temporaria ou um numero em si.
+     * @param lastOperationIsMinus {@link Boolean} que identifica se a operacao anterior era uma subtracao.
+     * @return a soma total dos numeros, como um {@link Double}.
+     */
     private double sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
         double sum = 0;
+
+        /**
+         * verifica se entre a operacao ha uma variavel temporaria, e abre a mesma, para poder obter os numeros contidos.
+         * caso seja a soma entre numeros, entrara no else.
+         */
 
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
@@ -54,6 +72,9 @@ public class PolynomialRuleSumNumbers implements IRule {
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus());
             }
         } else {
+            /**
+             * entra no if caso seja uma subtracao, e no else caso seja uma soma
+             */
             if (lastOperationIsMinus)
                 sum -= Double.parseDouble(param.replace(",", "."));
             else
@@ -64,6 +85,12 @@ public class PolynomialRuleSumNumbers implements IRule {
     }
 
 
+    /**
+     * Verifica se ha operacoes de soma e subtracao a serem realizadas.
+     *
+     * @param expandedQuadruples {@link List} de {@link ExpandedQuadruple}s a serem analisados.
+     * @return true se ha numeros a serem somados ou subtrados, e falso caso contrario.
+     */
     private boolean isThereNumbersToSum(List<ExpandedQuadruple> expandedQuadruples) {
         int numberAmount = 0;
         int variableAmount = 0;
@@ -89,6 +116,12 @@ public class PolynomialRuleSumNumbers implements IRule {
         return (numberAmount > 1 && variableAmount == 0);
     }
 
+    /**
+     * Verifica se dado parametro é uma variavel.
+     *
+     * @param param {@link String} a ser verificado.
+     * @return true caso realmente seja uma variavel, e falso caso contario.
+     */
     private boolean isVariable(String param) {
         return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())
                 && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());

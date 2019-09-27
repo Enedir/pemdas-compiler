@@ -169,7 +169,12 @@ public class PolynomialExpertSystem implements IExpertSystem {
         }
     }
 
-
+    /**
+     * Substitui caso os argumentos ou o operador sejam nulos, por ""
+     *
+     * @param sources a {@link List} de {@link ThreeAddressCode} com o polinomio
+     * @return o proprio parametro sources, ja alterados
+     */
     private List<ThreeAddressCode> substituteNullFields(List<ThreeAddressCode> sources) {
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
             if (expandedQuadruple.getArgument1() == null)

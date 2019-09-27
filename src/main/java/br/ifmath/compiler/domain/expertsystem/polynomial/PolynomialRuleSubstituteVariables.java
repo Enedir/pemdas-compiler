@@ -22,8 +22,8 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
     public PolynomialRuleSubstituteVariables() {
         this.expandedQuadruples = new ArrayList<>();
-        // Valores para testes: switch_variable_y_to_3_scenery_one_with_success
-        // e switch_multiple_variable_scenery_one_with_success
+        /** Valores para testes
+         */
         this.userInput.add(new NumericValueVariable("a", 777));
         this.userInput.add(new NumericValueVariable("y", 3));
         this.userInput.add(new NumericValueVariable("z", 4));
@@ -32,7 +32,10 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
     @Override
     public boolean match(List<ThreeAddressCode> sources) {
-        return this.isThereVariablesToSubstitute(sources.get(0).getOperationsFromRight()); // pegando operacoes da direita pois nao haverá sinal de igualdade. EX: x=3y^2
+        /**
+         * pegando operacoes da direita pois nao havera sinal de igualdade. EX: x=3y^2
+         */
+        return this.isThereVariablesToSubstitute(sources.get(0).getOperationsFromRight());
     }
 
     @Override
@@ -47,7 +50,6 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
         expandedQuadruples = sources.get(0).getExpandedQuadruples();
 
-        //instanciando um novo ThreeAddressCode para ser adicionada a lista que contém o passo-a-passo
         //FIXME: primeiro parâmetro hardcoded devido a restrição do compilador
         ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
@@ -82,7 +84,7 @@ public class PolynomialRuleSubstituteVariables implements IRule {
     /**
      * Transforma o {@link ThreeAddressCode} em uma {@link String}
      *
-     * @param value código de três endereços a ser transformado
+     * @param value codigo de tres endereços a ser transformado
      * @return {@link String} que representa o {@link ThreeAddressCode}
      */
     private String generateParameter(ThreeAddressCode value) {
@@ -91,43 +93,40 @@ public class PolynomialRuleSubstituteVariables implements IRule {
     }
 
     /**
-     * Altera todas as variáveis presentes no polinômio para seus valores
+     * Altera todas as variaveis presentes no polinomio para seus valores
      * respectivos.
      *
-     * @param expandedQuadruples Lista de quadruplas expandidadas para substituição
+     * @param expandedQuadruples Lista de quadruplas expandidadas para substituicao
      */
     private void switchVariables(List<ExpandedQuadruple> expandedQuadruples) {
-
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
             replaceTemporaryVariables(expandedQuadruple);
         }
+
         userInput.remove(0);
+
         if (!userInput.isEmpty()) {
             switchVariables(expandedQuadruples);
         }
     }
 
     /**
-     * Efetivamente substitui as variáveis contidas no polinômio
+     * Efetivamente substitui as variaveis contidas no polinomio
      *
-     * @param expandedQuadruple uma quádrupla expecífica a ser analisada
+     * @param expandedQuadruple uma {@link ExpandedQuadruple} expecifica a ser analisada
      */
     private void replaceTemporaryVariables(ExpandedQuadruple expandedQuadruple) {
-        //verifica se o usuário atribuiu valores as variáveis
+
         //FIXME: deve ser alterado quando forem utilizados valores reais do frontend
         if (!this.userInput.isEmpty()) {
-            //caso o primeiro argumento não seja uma variável temporária
+
             if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                //se o primeiro argumento da quadrupla for igual ao rótulo da variável,
-                // irá substituir o rótulo por seu valor real
                 if (expandedQuadruple.getArgument1().contains(this.userInput.get(0).getLabel())) {
                     expandedQuadruple.setArgument1(this.userInput.get(0).getValue().toString());
                 }
             }
-            //caso o segundo argumento não seja uma variável temporária
+
             if (!StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                //se o primeiro argumento da quadrupla for igual ao rótulo da variável,
-                // irá substituir o rótulo por seu valor real
                 if (!expandedQuadruple.getOperator().equals("MINUS")) {
                     if (expandedQuadruple.getArgument2().contains(this.userInput.get(0).getLabel())) {
                         expandedQuadruple.setArgument2(this.userInput.get(0).getValue().toString());
@@ -138,24 +137,20 @@ public class PolynomialRuleSubstituteVariables implements IRule {
     }
 
     /**
-     * Verifica se há alguma variável a ser substituida dentro do polinômio
+     * Verifica se ha alguma variavel a ser substituida dentro do polinomio
      *
-     * @param expandedQuadruples lista de quádruplas que representam o polinômio
-     * @return true caso haja pelo menos uma variável a ser substituida
+     * @param expandedQuadruples lista de quadruplas que representam o polinomio
+     * @return true caso haja pelo menos uma variavel a ser substituida
      */
     private boolean isThereVariablesToSubstitute(List<ExpandedQuadruple> expandedQuadruples) {
-        //contador para verificar se existe uma variável a ser substituida
         int countEqualVariable = 0;
 
-        //Verifica na lista de quadruplas se existe uma variavel a ser substituida
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
 
-            //verifica se tem um rótulo de variável igual ao que o usuário inseriu (mesma lógica para os demais)
             if (!expandedQuadruple.getOperator().equals("MINUS")) {
                 if (!userInput.isEmpty() && (expandedQuadruple.getArgument1().contains(userInput.get(0).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(0).getLabel()))) {
                     countEqualVariable++;
                 }
-
 
                 if (userInput.size() > 1) {
                     if (expandedQuadruple.getArgument1().contains(userInput.get(1).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(1).getLabel())) {
