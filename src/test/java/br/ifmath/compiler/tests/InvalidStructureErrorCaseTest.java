@@ -4,7 +4,6 @@ import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
 import br.ifmath.compiler.domain.expertsystem.*;
 import br.ifmath.compiler.domain.expertsystem.linearequation.LinearEquationExpertSystem;
-import br.ifmath.compiler.domain.grammar.InvalidDistributiveOperationException;
 import br.ifmath.compiler.domain.grammar.nonterminal.UnrecognizedStructureException;
 import br.ifmath.compiler.infrastructure.compiler.UnrecognizedLexemeException;
 import org.junit.Before;
@@ -37,7 +36,7 @@ public class InvalidStructureErrorCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(UnrecognizedStructureException.class));
         }
     }
 
@@ -51,7 +50,7 @@ public class InvalidStructureErrorCaseTest {
            compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(UnrecognizedStructureException.class));
         }
     }
 
@@ -79,7 +78,7 @@ public class InvalidStructureErrorCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -93,7 +92,7 @@ public class InvalidStructureErrorCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(UnrecognizedStructureException.class));
         }
     }
 
@@ -107,7 +106,7 @@ public class InvalidStructureErrorCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(UnrecognizedStructureException.class));
         }
     }
 
@@ -121,7 +120,7 @@ public class InvalidStructureErrorCaseTest {
             IAnswer answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(UnrecognizedStructureException.class));
         }
     }
 
@@ -193,7 +192,7 @@ public class InvalidStructureErrorCaseTest {
              compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(UnrecognizedStructureException.class));
         }
     }
 
@@ -207,7 +206,7 @@ public class InvalidStructureErrorCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(UnrecognizedStructureException.class));
         }
     }
 }

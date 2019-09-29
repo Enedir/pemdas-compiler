@@ -4,7 +4,6 @@ import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
 import br.ifmath.compiler.domain.expertsystem.*;
 import br.ifmath.compiler.domain.expertsystem.linearequation.LinearEquationExpertSystem;
-import br.ifmath.compiler.domain.grammar.InvalidDistributiveOperationException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -84,7 +83,7 @@ public class LinearEquationSucessCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -98,7 +97,7 @@ public class LinearEquationSucessCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -112,7 +111,7 @@ public class LinearEquationSucessCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -150,14 +149,12 @@ public class LinearEquationSucessCaseTest {
         //Arrange
         String expression = "raiz(2x;4)=(7+g)";
 
-        String lastStepValueExpected = "x = 1";
-
         // Act
         try {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -166,15 +163,12 @@ public class LinearEquationSucessCaseTest {
         //Arrange
         String expression = "log(2x;4)=-7";
 
-        String lastStepValueExpected = "2x log 4 =  -7";
-
         // Act
-        IAnswer answer = null;
         try {
-            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            Object result = compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -182,14 +176,13 @@ public class LinearEquationSucessCaseTest {
     public void  linear_equation_should_sucess_case_scenery_eleven_with_fail()  {
         //Arrange
         String expression = "log10(raizq(3x+2))=-7";
-        String lastStepValueExpected = "3x + 2 raizq 2 log10 10 =  -7";
 
         // Act
         try {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -203,30 +196,23 @@ public class LinearEquationSucessCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
     @Test()
-    public void linear_equation_should_sucess_case_scenery_thirteen_with_success() {
+    public void linear_equation_should_sucess_case_scenery_thirteen_with_fail() {
         //Arrange
         String expression = "x^2 + 3x = -5,4";
-
-        String lastStepValueExpected = "x ^ 2 + 3x =  -5,4";
 
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
         } catch (Exception e) {
-            fail(e.getMessage());
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
-
-        // Assert
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
-        assertEquals(finalStep.getReason(), "Equação inicial.");
     }
 
     @Test()
@@ -344,13 +330,20 @@ public class LinearEquationSucessCaseTest {
         //Arrange
         String expression = "2x(3 - 1)=0";
 
+        String lastStepValueExpected = "x = 0";
+
         // Act
+        IAnswer answer = null;
         try {
-            compiler.analyse(expertSystem, AnswerType.BEST, expression);
-            fail();
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            fail(e.getMessage());
         }
+        
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
 
     @Test()
@@ -363,7 +356,7 @@ public class LinearEquationSucessCaseTest {
             compiler.analyse(expertSystem, AnswerType.BEST, expression);
             fail();
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            assertThat(e, instanceOf(InvalidAlgebraicExpressionException.class));
         }
     }
 
@@ -371,14 +364,20 @@ public class LinearEquationSucessCaseTest {
     public void linear_equation_should_sucess_case_scenery_twenty_one_with_success() {
         //Arrange
         String expression = "x(3 - 1)=0";
+        String lastStepValueExpected = "x = 0";
 
         // Act
+        IAnswer answer = null;
         try {
-            compiler.analyse(expertSystem, AnswerType.BEST, expression);
-            fail();
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
         } catch (Exception e) {
-            assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
+            fail(e.getMessage());
         }
+        
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
     
     @Test()
