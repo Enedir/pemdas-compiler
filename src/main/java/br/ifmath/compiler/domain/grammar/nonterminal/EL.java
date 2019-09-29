@@ -11,6 +11,12 @@ import br.ifmath.compiler.domain.grammar.GrammarSymbol;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction3;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction4;
 import br.ifmath.compiler.domain.grammar.terminal.Success;
+import br.ifmath.compiler.domain.grammar.terminal.comparison.Different;
+import br.ifmath.compiler.domain.grammar.terminal.comparison.Equal;
+import br.ifmath.compiler.domain.grammar.terminal.comparison.Greater;
+import br.ifmath.compiler.domain.grammar.terminal.comparison.GreaterOrEqual;
+import br.ifmath.compiler.domain.grammar.terminal.comparison.Lower;
+import br.ifmath.compiler.domain.grammar.terminal.comparison.LowerOrEqual;
 
 /**
  *
@@ -44,7 +50,12 @@ public class EL extends NonTerminal {
     @Override
     public GrammarSymbol[] derivate(Token token) throws UnrecognizedStructureException {
         if (token.isInstanceOfAny(
-        sds
+            Equal.class,
+            Different.class,
+            Greater.class,
+            GreaterOrEqual.class,
+            Lower.class,
+            LowerOrEqual.class
         )) {
             C c = new C();
             T t = new T();
@@ -57,10 +68,7 @@ public class EL extends NonTerminal {
             };
         }
         
-        if (token.isInstanceOfAny(
-                Success.class
-            )
-        ) {
+        if (token.isInstanceOfAny(Success.class)) {
             return new GrammarSymbol[] { };
         }
         
