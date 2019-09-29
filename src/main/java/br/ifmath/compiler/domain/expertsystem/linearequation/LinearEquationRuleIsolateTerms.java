@@ -155,7 +155,7 @@ public class LinearEquationRuleIsolateTerms implements IRule {
     
     private void isolateVariable(String param, ExpandedQuadruple parent, ExpandedQuadruple grandparent, boolean left, boolean lastOperationIsMinus) {
         if (parent == null || (parent.getArgument1().equals(param) && grandparent == null)) {
-            quadrupleVariable = addTermToQuadruple(quadrupleVariable, param, !left, 0, false);
+            quadrupleVariable = addTermToQuadruple(quadrupleVariable, param, !left && !lastOperationIsMinus, 0, false);
         } else if (parent.getArgument1().equals(param) && grandparent != null && grandparent.getArgument2().equals(parent.getResult())) {
             quadrupleVariable = addTermToQuadruple(quadrupleVariable, param, !(grandparent.isMinusOrNegative() ^ left), 0, false);
         } else if (parent.getArgument1().equals(param) && !parent.isNegative()){

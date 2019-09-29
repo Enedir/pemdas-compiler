@@ -17,11 +17,7 @@ import br.ifmath.compiler.domain.expertsystem.linearequation.LinearEquationExper
 public class App 
 {
     public static void main( String[] args ) {
-        String[] expressions = new String[] {
-            //"y+2=2y-4",
-            "x+3*(-10)=-x",
-            //"x+3*(-10x)=-1",
-        };
+        String[] expressions = new String[] {};
         
         ICompiler compiler = new Compiler();
         IExpertSystem expertSystem = new LinearEquationExpertSystem();
