@@ -380,5 +380,26 @@ public class LinearEquationSucessCaseTest {
             assertThat(e, instanceOf(InvalidDistributiveOperationException.class));
         }
     }
+    
+    @Test()
+    public void linear_equation_should_sucess_case_scenery_twenty_two_with_success() {
+        //Arrange
+        String expression = "2y + 3 = -7";
+
+        String lastStepValueExpected = "y = 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+        // Assert
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
 
 }
