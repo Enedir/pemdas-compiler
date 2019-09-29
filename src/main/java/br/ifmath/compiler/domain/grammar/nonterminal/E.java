@@ -9,8 +9,8 @@ package br.ifmath.compiler.domain.grammar.nonterminal;
 import br.ifmath.compiler.domain.compiler.Token;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction1;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction2;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction3;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction4;
 import br.ifmath.compiler.domain.grammar.terminal.function.*;
 import br.ifmath.compiler.domain.grammar.terminal.id.Id;
 import br.ifmath.compiler.domain.grammar.terminal.id.IdWithCoefficient;
@@ -85,9 +85,9 @@ public class E extends NonTerminal {
             C c = new C();
             
             return new GrammarSymbol[] {
-                new SemanticAction3(this, t1, t2, c),
+                new SemanticAction4(this, t1, t2, c),
                 t2,
-                new SemanticAction2(t2),
+                new SemanticAction3(t2),
                 c,
                 t1,
                 new SemanticAction1(t1)

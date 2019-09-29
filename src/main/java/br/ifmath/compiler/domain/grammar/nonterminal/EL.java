@@ -8,10 +8,10 @@ package br.ifmath.compiler.domain.grammar.nonterminal;
 
 import br.ifmath.compiler.domain.compiler.Token;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction10;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction7;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction11;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction8;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction9;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction10;
 import br.ifmath.compiler.domain.grammar.terminal.Semicolon;
 import br.ifmath.compiler.domain.grammar.terminal.Success;
 import br.ifmath.compiler.domain.grammar.terminal.comparison.*;
@@ -84,10 +84,10 @@ public class EL extends NonTerminal {
             EL tl1 = new EL();
             
             return new GrammarSymbol[] {
-                new SemanticAction8(m, this, tl1),
+                new SemanticAction9(m, this, tl1),
                 tl1,
                 m,
-                new SemanticAction7(m, this, tl1),
+                new SemanticAction8(m, this, tl1),
                 new Plus()
             };
         }
@@ -97,10 +97,10 @@ public class EL extends NonTerminal {
             EL tl1 = new EL();
             
             return new GrammarSymbol[] {
-                new SemanticAction9(m, this, tl1),
+                new SemanticAction10(m, this, tl1),
                 tl1,
                 m,
-                new SemanticAction7(m, this, tl1),
+                new SemanticAction8(m, this, tl1),
                 new Minus()
             };
         }
@@ -119,7 +119,7 @@ public class EL extends NonTerminal {
                 Success.class
             )
         ) {
-            return new GrammarSymbol[] { new SemanticAction10(this) };
+            return new GrammarSymbol[] { new SemanticAction11(this) };
         }
         
         throw new UnrecognizedStructureException(this, token);

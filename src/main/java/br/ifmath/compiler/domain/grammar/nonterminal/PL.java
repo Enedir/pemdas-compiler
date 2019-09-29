@@ -8,9 +8,9 @@ package br.ifmath.compiler.domain.grammar.nonterminal;
 
 import br.ifmath.compiler.domain.compiler.Token;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction19;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction20;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction21;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction22;
 import br.ifmath.compiler.domain.grammar.terminal.Semicolon;
 import br.ifmath.compiler.domain.grammar.terminal.Success;
 import br.ifmath.compiler.domain.grammar.terminal.comparison.*;
@@ -82,10 +82,10 @@ public class PL extends NonTerminal {
             PL pl1 = new PL();
             
             return new GrammarSymbol[] {
-                new SemanticAction20(o, this, pl1),
+                new SemanticAction21(o, this, pl1),
                 pl1,
                 o,
-                new SemanticAction19(o, this, pl1),
+                new SemanticAction20(o, this, pl1),
                 new Pow()
             };
         }
@@ -108,7 +108,7 @@ public class PL extends NonTerminal {
                 Success.class
             )
         ) {
-            return new GrammarSymbol[] { new SemanticAction21(this) };
+            return new GrammarSymbol[] { new SemanticAction22(this) };
         }
         
         throw new UnrecognizedStructureException(this, token);

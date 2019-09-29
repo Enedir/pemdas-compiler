@@ -7,8 +7,8 @@ package br.ifmath.compiler.domain.grammar.nonterminal;
 
 import br.ifmath.compiler.domain.compiler.Token;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction24;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction25;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction26;
 import br.ifmath.compiler.domain.grammar.terminal.function.*;
 import br.ifmath.compiler.domain.grammar.terminal.id.Id;
 import br.ifmath.compiler.domain.grammar.terminal.id.IdWithCoefficient;
@@ -44,14 +44,14 @@ public class S extends NonTerminal {
     public GrammarSymbol[] derivate(Token token) throws UnrecognizedStructureException {
         if (token.isInstanceOfAny(Plus.class)) {
             return new GrammarSymbol[] {
-                new SemanticAction24(this),
+                new SemanticAction25(this),
                 new Plus()
             };
         }
         
         if (token.isInstanceOfAny(Minus.class)) {
             return new GrammarSymbol[] {
-                new SemanticAction25(this),
+                new SemanticAction26(this),
                 new Minus()
             };
         }
@@ -72,7 +72,7 @@ public class S extends NonTerminal {
                 DecimalNumber.class
             )
         ) {
-            return new GrammarSymbol[] { new SemanticAction24(this) };
+            return new GrammarSymbol[] { new SemanticAction25(this) };
         }
         
         throw new UnrecognizedStructureException(this, token);
