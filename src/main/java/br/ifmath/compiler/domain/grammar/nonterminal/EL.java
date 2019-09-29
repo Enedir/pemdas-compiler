@@ -8,18 +8,9 @@ package br.ifmath.compiler.domain.grammar.nonterminal;
 
 import br.ifmath.compiler.domain.compiler.Token;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction11;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction8;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction9;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction10;
-import br.ifmath.compiler.domain.grammar.terminal.Semicolon;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction3;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction4;
 import br.ifmath.compiler.domain.grammar.terminal.Success;
-import br.ifmath.compiler.domain.grammar.terminal.comparison.*;
-import br.ifmath.compiler.domain.grammar.terminal.operator.Minus;
-import br.ifmath.compiler.domain.grammar.terminal.operator.Plus;
-import br.ifmath.compiler.domain.grammar.terminal.precedence.EndBracket;
-import br.ifmath.compiler.domain.grammar.terminal.precedence.EndKey;
-import br.ifmath.compiler.domain.grammar.terminal.precedence.EndParentheses;
 
 /**
  *
@@ -27,99 +18,50 @@ import br.ifmath.compiler.domain.grammar.terminal.precedence.EndParentheses;
  */
 public class EL extends NonTerminal {
 
-    private String address;
-    private int position;
-    private int level;
-    private boolean value;
-    private String operator;
+    private String parameter;
+    private String comparison;
     
     public EL() {
-        super("TL");
+        super("EL");
     }
 
-    public String getAddress() {
-        return address;
+    public String getParameter() {
+        return parameter;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setParameter(String parameter) {
+        this.parameter = parameter;
     }
 
-    public int getPosition() {
-        return position;
+    public String getComparison() {
+        return comparison;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setComparison(String comparison) {
+        this.comparison = comparison;
     }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public boolean isValue() {
-        return value;
-    }
-
-    public void setValue(boolean value) {
-        this.value = value;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-
+    
     @Override
     public GrammarSymbol[] derivate(Token token) throws UnrecognizedStructureException {
-        if (token.isInstanceOfAny(Plus.class)) {
-            M m = new M();
-            EL tl1 = new EL();
+        if (token.isInstanceOfAny(
+        sds
+        )) {
+            C c = new C();
+            T t = new T();
             
             return new GrammarSymbol[] {
-                new SemanticAction9(m, this, tl1),
-                tl1,
-                m,
-                new SemanticAction8(m, this, tl1),
-                new Plus()
-            };
-        }
-        
-        if (token.isInstanceOfAny(Minus.class)) {
-            M m = new M();
-            EL tl1 = new EL();
-            
-            return new GrammarSymbol[] {
-                new SemanticAction10(m, this, tl1),
-                tl1,
-                m,
-                new SemanticAction8(m, this, tl1),
-                new Minus()
+                new SemanticAction4(this, t, c),
+                t,
+                c,
+                new SemanticAction3(t),
             };
         }
         
         if (token.isInstanceOfAny(
-                EndParentheses.class,
-                EndBracket.class,
-                EndKey.class,
-                Equal.class,
-                Different.class,
-                Greater.class,
-                GreaterOrEqual.class,
-                Lower.class,
-                LowerOrEqual.class,
-                Semicolon.class,
                 Success.class
             )
         ) {
-            return new GrammarSymbol[] { new SemanticAction11(this) };
+            return new GrammarSymbol[] { };
         }
         
         throw new UnrecognizedStructureException(this, token);
