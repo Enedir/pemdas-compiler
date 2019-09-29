@@ -31,8 +31,8 @@ public class SemanticAction2 extends SemanticAction {
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
         e.setParameter1(t.getAddress());
-        e.setComparison(el.getComp());
-        e.setParameter2(el.getParam());
+        e.setComparison(el.getComparison());
+        e.setParameter2(el.getParameter());
     }
     
 }
