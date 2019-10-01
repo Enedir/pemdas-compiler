@@ -27,7 +27,8 @@ public class SemanticAction29 extends SemanticAction {
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        f.setAddress(t.getAddress());
+        t.setPosition(f.getPosition());
+        t.setLevel(f.getLevel() + 1);
     }
     
 }

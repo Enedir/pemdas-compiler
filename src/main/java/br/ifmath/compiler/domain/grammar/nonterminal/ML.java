@@ -7,10 +7,10 @@ package br.ifmath.compiler.domain.grammar.nonterminal;
 
 import br.ifmath.compiler.domain.compiler.Token;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction13;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction14;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction15;
 import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction16;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction17;
 import br.ifmath.compiler.domain.grammar.terminal.Semicolon;
 import br.ifmath.compiler.domain.grammar.terminal.Success;
 import br.ifmath.compiler.domain.grammar.terminal.comparison.*;
@@ -85,10 +85,10 @@ public class ML extends NonTerminal {
             ML pl1 = new ML();
             
             return new GrammarSymbol[] {
-                new SemanticAction14(p, this, pl1),
+                new SemanticAction15(p, this, pl1),
                 pl1,
                 p,
-                new SemanticAction13(p, this, pl1),
+                new SemanticAction14(p, this, pl1),
                 new Times()
             };
         }
@@ -98,10 +98,10 @@ public class ML extends NonTerminal {
             ML ml1 = new ML();
             
             return new GrammarSymbol[] {
-                new SemanticAction15(p, this, ml1),
+                new SemanticAction16(p, this, ml1),
                 ml1,
                 p,
-                new SemanticAction13(p, this, ml1),
+                new SemanticAction14(p, this, ml1),
                 new Fraction()
             };
         }
@@ -122,7 +122,7 @@ public class ML extends NonTerminal {
                 Success.class
             )
         ) {
-            return new GrammarSymbol[] { new SemanticAction16(this) };
+            return new GrammarSymbol[] { new SemanticAction17(this) };
         }
         
         throw new UnrecognizedStructureException(this, token);

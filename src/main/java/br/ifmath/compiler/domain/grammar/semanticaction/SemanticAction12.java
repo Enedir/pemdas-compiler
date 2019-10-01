@@ -5,7 +5,6 @@
  */
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
-
 import br.ifmath.compiler.domain.grammar.nonterminal.M;
 import br.ifmath.compiler.domain.grammar.nonterminal.ML;
 import br.ifmath.compiler.domain.grammar.nonterminal.P;
@@ -20,7 +19,7 @@ public class SemanticAction12 extends SemanticAction {
     private final P p;
     private final M m;
     private final ML ml;
-    
+            
     public SemanticAction12(P p, M m, ML ml) {
         super("AS12");
         
@@ -31,12 +30,10 @@ public class SemanticAction12 extends SemanticAction {
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        if (ml.isValue()) {
-            m.setAddress(intermediateCodeGenerator.getNextTemporary().toString());
-            intermediateCodeGenerator.addNewOperation(ml.getOperator(), p.getAddress(), ml.getAddress(), m.getAddress(), m.getPosition(), m.getLevel());
-        } else {
-            m.setAddress(p.getAddress());
-        }
+        p.setPosition(m.getPosition());
+        ml.setPosition(m.getPosition());
+        p.setLevel(m.getLevel());
+        ml.setLevel(m.getLevel());
     }
     
 }

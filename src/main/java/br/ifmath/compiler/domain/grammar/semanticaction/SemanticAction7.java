@@ -5,7 +5,9 @@
  */
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
+
 import br.ifmath.compiler.domain.grammar.nonterminal.M;
+import br.ifmath.compiler.domain.grammar.nonterminal.T;
 import br.ifmath.compiler.domain.grammar.nonterminal.TL;
 import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerator;
 
@@ -17,22 +19,24 @@ public class SemanticAction7 extends SemanticAction {
 
     private final M m;
     private final TL tl;
-    private final TL tl1;
-    
-    public SemanticAction7(M m, TL tl, TL tl1) {
+    private final T t;
+
+    public SemanticAction7(M m, TL tl, T t) {
         super("AS7");
         
         this.m = m;
         this.tl = tl;
-        this.tl1 = tl1;
+        this.t = t;
     }
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        m.setPosition(tl.getPosition());
-        tl1.setPosition(tl.getPosition());
-        m.setLevel(tl.getLevel());
-        tl1.setLevel(tl.getLevel());
+        if (tl.isValue()) {
+            t.setAddress(intermediateCodeGenerator.getNextTemporary().toString());
+            intermediateCodeGenerator.addNewOperation(tl.getOperator(), m.getAddress(), tl.getAddress(), t.getAddress(), t.getPosition(), t.getLevel());
+        } else {
+            t.setAddress(m.getAddress());
+        }
     }
     
 }

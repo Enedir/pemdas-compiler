@@ -2,7 +2,7 @@ package br.ifmath.compiler.domain.grammar.nonterminal;
 
 import br.ifmath.compiler.domain.compiler.Token;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
-import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction4;
+import br.ifmath.compiler.domain.grammar.semanticaction.SemanticAction5;
 import br.ifmath.compiler.domain.grammar.terminal.comparison.*;
 
 /**
@@ -31,7 +31,7 @@ public class C extends NonTerminal {
             Equal equal = new Equal();
 
             return new GrammarSymbol[] {
-                    new SemanticAction4(this, equal),
+                    new SemanticAction5(this, equal),
                     equal
             };
         }
@@ -40,7 +40,7 @@ public class C extends NonTerminal {
             Different different = new Different();
 
             return new GrammarSymbol[] {
-                    new SemanticAction4(this, different),
+                    new SemanticAction5(this, different),
                     different
             };
         }
@@ -49,7 +49,7 @@ public class C extends NonTerminal {
             Lower lower = new Lower();
 
             return new GrammarSymbol[] {
-                    new SemanticAction4(this, lower),
+                    new SemanticAction5(this, lower),
                     lower
             };
         }
@@ -58,7 +58,7 @@ public class C extends NonTerminal {
             LowerOrEqual lowerOrEqual = new LowerOrEqual();
 
             return new GrammarSymbol[] {
-                    new SemanticAction4(this, lowerOrEqual),
+                    new SemanticAction5(this, lowerOrEqual),
                     lowerOrEqual
             };
         }
@@ -67,7 +67,7 @@ public class C extends NonTerminal {
             Greater greater = new Greater();
 
             return new GrammarSymbol[] {
-                    new SemanticAction4(this, greater),
+                    new SemanticAction5(this, greater),
                     greater
             };
         }
@@ -76,7 +76,7 @@ public class C extends NonTerminal {
             GreaterOrEqual greaterOrEqual = new GreaterOrEqual();
 
             return new GrammarSymbol[] {
-                    new SemanticAction4(this, greaterOrEqual),
+                    new SemanticAction5(this, greaterOrEqual),
                     greaterOrEqual
             };
         }

@@ -12,11 +12,11 @@ package br.ifmath.compiler.domain.expertsystem;
 public class InvalidAlgebraicExpressionException extends Exception {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1396171472572015846L;
+    * 
+    */
+    private static final long serialVersionUID = 1396171472572015846L;
 
-	public InvalidAlgebraicExpressionException(String message) {
+    public InvalidAlgebraicExpressionException(String message) {
         super(message);
     }
     

@@ -281,4 +281,60 @@ public class LinearEquationRuleDistributiveTest {
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
+    
+    @Test()
+    public void linear_equation_should_use_distributive_rule_scenery_ten_with_success() {
+        //Arrange
+        String expression = "x+3*(-10)=-x";
+
+        int positionTwo = 1;
+
+        String secondStepValueExpected = "x - 30 =  -x";
+        String lastStepValueExpected = "x = 15";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step secondStep = answer.getSteps().get(positionTwo);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(secondStep.getMathExpression(), secondStepValueExpected);
+        assertEquals(secondStep.getReason(), distributiveExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+    
+    @Test()
+    public void linear_equation_should_use_distributive_rule_scenery_eleven_with_success() {
+        //Arrange
+        String expression = "x+3*(-10x)=-1";
+
+        int positionTwo = 1;
+
+        String secondStepValueExpected = "x - 30x =  -1";
+        String lastStepValueExpected = "x = 1 / 29";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step secondStep = answer.getSteps().get(positionTwo);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(secondStep.getMathExpression(), secondStepValueExpected);
+        assertEquals(secondStep.getReason(), distributiveExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
 }

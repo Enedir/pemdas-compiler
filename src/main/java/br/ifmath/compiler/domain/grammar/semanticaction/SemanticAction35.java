@@ -6,7 +6,7 @@
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
 import br.ifmath.compiler.domain.grammar.nonterminal.Func;
-import br.ifmath.compiler.domain.grammar.terminal.number.NaturalNumber;
+import br.ifmath.compiler.domain.grammar.nonterminal.T;
 import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerator;
 
 /**
@@ -16,18 +16,20 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
 public class SemanticAction35 extends SemanticAction {
 
     private final Func func;
-    private final NaturalNumber integerNumber;
+    private final T t;
     
-    public SemanticAction35(Func func, NaturalNumber integerNumber) {
+    public SemanticAction35(Func func, T t) {
         super("AS35");
         
         this.func = func;
-        this.integerNumber = integerNumber;
+        this.t = t;
     }
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        func.setParameter(Integer.parseInt(integerNumber.getValue()));
+        func.setAddress(intermediateCodeGenerator.getNextTemporary().toString());
+        intermediateCodeGenerator.addNewOperation(func.getOperator(), t.getAddress(), Integer.toString(func.getParameter()), 
+                func.getAddress(), func.getPosition(), func.getLevel());
     }
     
 }

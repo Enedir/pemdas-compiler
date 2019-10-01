@@ -5,9 +5,9 @@
  */
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
-
 import br.ifmath.compiler.domain.grammar.nonterminal.C;
-import br.ifmath.compiler.domain.grammar.terminal.comparison.Comparison;
+import br.ifmath.compiler.domain.grammar.nonterminal.EL;
+import br.ifmath.compiler.domain.grammar.nonterminal.T;
 import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerator;
 
 /**
@@ -16,19 +16,22 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
  */
 public class SemanticAction4 extends SemanticAction {
 
+    private final EL el;
+    private final T t;
     private final C c;
-    private final Comparison comparison;
     
-    public SemanticAction4(C c, Comparison comparison) {
+    public SemanticAction4(EL el, T t, C c) {
         super("AS4");
         
+        this.el = el;
+        this.t = t;
         this.c = c;
-        this.comparison = comparison;
     }
-    
+
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        c.setAddress(comparison.getValue());
+        el.setParameter(t.getAddress());
+        el.setComparison(c.getAddress());
     }
     
 }
