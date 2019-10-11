@@ -98,11 +98,11 @@ public enum RegexPattern {
         }
     },
 
-    INVALID_DISTRIBUTIVE_OPERATION {
+    REDUCED_DISTRIBUTIVE_OPERATION {
 
         @Override
         public String toString() {
-            return "[a-zA-Z0-9]\\(";
+            return "(?<![a-zA-Z0-9])([0-9]+[a-zA-Z]|[a-zA-Z]|[0-9]+)\\(";
         }
     };
 

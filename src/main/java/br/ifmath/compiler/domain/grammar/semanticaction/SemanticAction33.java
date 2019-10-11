@@ -5,8 +5,8 @@
  */
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
-
 import br.ifmath.compiler.domain.grammar.nonterminal.Func;
+import br.ifmath.compiler.domain.grammar.nonterminal.T;
 import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerator;
 
 /**
@@ -16,16 +16,19 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
 public class SemanticAction33 extends SemanticAction {
 
     private final Func func;
+    private final T t;
     
-    public SemanticAction33(Func func) {
+    public SemanticAction33(Func func, T t) {
         super("AS33");
         
         this.func = func;
+        this.t = t;
     }
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        func.setParameter(2);
+        func.setAddress(intermediateCodeGenerator.getNextTemporary().toString());
+        intermediateCodeGenerator.addNewOperation(func.getOperator(), t.getAddress(), func.getAddress(), func.getPosition(), func.getLevel());
     }
     
 }

@@ -88,7 +88,7 @@ public class LinearEquationRuleNegativeVariableTest {
         String expression = "5 + 6= -4x";
 
         int positionThree = 2;
-        String lastStepValueExpected = "x = 11 / 4";
+        String lastStepValueExpected = "x =  -11 / 4";
 
         // Act
         IAnswer answer = null;

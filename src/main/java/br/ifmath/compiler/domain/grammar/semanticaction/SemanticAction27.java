@@ -5,7 +5,6 @@
  */
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
-
 import br.ifmath.compiler.domain.grammar.nonterminal.F;
 import br.ifmath.compiler.domain.grammar.nonterminal.Func;
 import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerator;
@@ -28,7 +27,8 @@ public class SemanticAction27 extends SemanticAction {
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        f.setAddress(func.getAddress());
+        func.setPosition(f.getPosition());
+        func.setLevel(f.getLevel());
     }
     
 }

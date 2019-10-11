@@ -268,7 +268,26 @@ public class LinearEquationRuleDistributive implements IRule {
 
     private String calculateDistributive(ThreeAddressCode source, String multiplier, String innerOperationString, int position, int level, ExpandedQuadruple parent, boolean lastOperationIsNegative, boolean changeSignal, String currentResult) {
         ExpandedQuadruple operation = source.findQuadrupleByResult(innerOperationString);
-
+      
+        if (operation == null) {
+            String value = (lastOperationIsNegative ? "-" : "") + innerOperationString;
+            double result = MathOperatorUtil.times(multiplier, value);
+            
+            if (changeSignal) {
+                result *= (-1);
+            }
+            
+            String valueToReturn = generateParameter(result) + getVariable(multiplier, value);
+            if (result < 0) { 
+                if (parent == null || parent.getArgument1().equals(currentResult))
+                    return createNegativeNumberQuadruple(valueToReturn, position, level);
+                else
+                    parent.setOperator("-");
+            }
+            
+            return valueToReturn;
+        }
+        
         expandedQuadruples.removeAll(source.findAllQuadruplesByResultOrArgument(innerOperationString));
 
         if (!operation.isPlusOrMinus()) {

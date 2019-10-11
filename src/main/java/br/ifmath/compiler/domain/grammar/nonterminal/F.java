@@ -60,10 +60,10 @@ public class F extends NonTerminal {
             T t = new T();
             
             return new GrammarSymbol[] {
-                new SemanticAction29(t, this),
+                new SemanticAction30(t, this),
                 new EndParentheses(),
                 t,
-                new SemanticAction28(t, this),
+                new SemanticAction29(t, this),
                 new BeginParentheses()
             };
         }
@@ -72,10 +72,10 @@ public class F extends NonTerminal {
             T t = new T();
             
             return new GrammarSymbol[] {
-                new SemanticAction29(t, this),
+                new SemanticAction30(t, this),
                 new EndBracket(),
                 t,
-                new SemanticAction28(t, this),
+                new SemanticAction29(t, this),
                 new BeginBracket()
             };
         }
@@ -84,10 +84,10 @@ public class F extends NonTerminal {
             T t = new T();
             
             return new GrammarSymbol[] {
-                new SemanticAction29(t, this),
+                new SemanticAction30(t, this),
                 new EndKey(),
                 t,
-                new SemanticAction28(t, this),
+                new SemanticAction29(t, this),
                 new BeginKey()
             };
         }
@@ -95,7 +95,7 @@ public class F extends NonTerminal {
         if (token.isInstanceOfAny(Id.class)) {
             Id id = new Id();
             return new GrammarSymbol[] {
-                new SemanticAction30(this, id),
+                new SemanticAction31(this, id),
                 id
             };
         }
@@ -103,7 +103,7 @@ public class F extends NonTerminal {
         if (token.isInstanceOfAny(IdWithCoefficient.class)) {
             IdWithCoefficient idWithCoefficient = new IdWithCoefficient();
             return new GrammarSymbol[] {
-                new SemanticAction30(this, idWithCoefficient),
+                new SemanticAction31(this, idWithCoefficient),
                 idWithCoefficient
             };
         }
@@ -112,7 +112,7 @@ public class F extends NonTerminal {
             NaturalNumber integerNumber = new NaturalNumber();
             
             return new GrammarSymbol[] {
-                new SemanticAction30(this, integerNumber),
+                new SemanticAction31(this, integerNumber),
                 integerNumber
             };
         }
@@ -120,7 +120,7 @@ public class F extends NonTerminal {
         if (token.isInstanceOfAny(DecimalNumber.class)) {
             DecimalNumber decimalNumber = new DecimalNumber();
             return new GrammarSymbol[] {
-                new SemanticAction30(this, decimalNumber),
+                new SemanticAction31(this, decimalNumber),
                 decimalNumber
             };
         }
@@ -138,9 +138,9 @@ public class F extends NonTerminal {
             Func func = new Func();
             
             return new GrammarSymbol[] {
-                new SemanticAction27(func, this),
+                new SemanticAction28(func, this),
                 func,
-                new SemanticAction26(func, this)
+                new SemanticAction27(func, this)
             };
         }
         

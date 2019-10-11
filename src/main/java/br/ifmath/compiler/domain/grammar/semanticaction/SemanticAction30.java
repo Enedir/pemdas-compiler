@@ -5,9 +5,8 @@
  */
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
-
 import br.ifmath.compiler.domain.grammar.nonterminal.F;
-import br.ifmath.compiler.domain.grammar.terminal.VariableTerminal;
+import br.ifmath.compiler.domain.grammar.nonterminal.T;
 import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerator;
 
 /**
@@ -16,19 +15,19 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
  */
 public class SemanticAction30 extends SemanticAction {
 
+    private final T t;
     private final F f;
-    private final VariableTerminal variableTerminal;
     
-    public SemanticAction30(F f, VariableTerminal variableTerminal) {
+    public SemanticAction30(T t, F f) {
         super("AS30");
         
+        this.t = t;
         this.f = f;
-        this.variableTerminal = variableTerminal;
     }
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        f.setAddress(variableTerminal.getValue());
+        f.setAddress(t.getAddress());
     }
     
 }

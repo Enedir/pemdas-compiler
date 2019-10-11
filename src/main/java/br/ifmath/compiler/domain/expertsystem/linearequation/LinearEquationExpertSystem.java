@@ -15,6 +15,7 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
+import com.sun.tools.doclint.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,10 +138,14 @@ public class LinearEquationExpertSystem implements IExpertSystem {
         List<String> variables = new ArrayList<>();
         double coeficient = 0d;
         String variable;
-
-        if (StringUtil.isVariable(sources.get(0).getLeft())) {
-            variable = StringUtil.getVariable(sources.get(0).getLeft());
-            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
+ 
+        if (StringUtil.isEmpty(sources.get(0).getComparison())) {
+            throw new InvalidAlgebraicExpressionException("Equação deve possuir uma igualdade.");
+        }
+        
+        if (isVariable(sources.get(0).getLeft())) {
+            variable = getVariable(sources.get(0).getLeft());
+            coeficient += getVariableCoeficient(sources.get(0).getLeft());
             if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                 variables.add(variable);
         }
@@ -165,6 +170,13 @@ public class LinearEquationExpertSystem implements IExpertSystem {
                 coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
+            }
+            
+            if (!expandedQuadruple.isPlus()
+                    && !expandedQuadruple.isFraction()
+                    && !expandedQuadruple.isTimes()
+                    && !expandedQuadruple.isMinusOrNegative()) {
+                throw new InvalidAlgebraicExpressionException("A expressão deve possuir apenas as seguintes operações: +, -, * e /.");
             }
         }
 

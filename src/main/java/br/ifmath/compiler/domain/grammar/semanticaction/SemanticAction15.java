@@ -30,7 +30,7 @@ public class SemanticAction15 extends SemanticAction {
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
         ml.setValue(true);
-        ml.setOperator("/");
+        ml.setOperator("*");
         
         if (ml1.isValue()) {
             ml.setAddress(intermediateCodeGenerator.getNextTemporary().toString());

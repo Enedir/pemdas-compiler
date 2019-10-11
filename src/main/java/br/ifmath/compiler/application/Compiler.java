@@ -7,7 +7,6 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
-import br.ifmath.compiler.domain.grammar.InvalidDistributiveOperationException;
 import br.ifmath.compiler.domain.grammar.nonterminal.E;
 import br.ifmath.compiler.domain.grammar.nonterminal.UnrecognizedStructureException;
 import br.ifmath.compiler.domain.grammar.terminal.Success;
@@ -16,9 +15,9 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
 import br.ifmath.compiler.infrastructure.compiler.iface.ILexicalAnalyzer;
 import br.ifmath.compiler.infrastructure.compiler.iface.ISymbolTable;
 import br.ifmath.compiler.infrastructure.compiler.iface.ISyntacticAnalyzer;
-import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.stack.Stack;
 import br.ifmath.compiler.infrastructure.stack.exception.StackAddNullItemException;
+import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -72,15 +71,13 @@ public class Compiler implements ICompiler {
     }
 
     @Override
-    public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException, InvalidDistributiveOperationException {
+    public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException {
         this.expertSystem = expertSystem;
         this.answerType = answerType;
         this.intermediateCodes = new ArrayList<>();
 
         for (String expression : expressions) {
-            if (StringUtil.contains(expression, RegexPattern.INVALID_DISTRIBUTIVE_OPERATION.toString()))
-                throw new InvalidDistributiveOperationException();
-
+            expression = MathOperatorUtil.replaceReducedDistributive(expression);
             setUp();
             frontEnd(expression);
             this.intermediateCodes.add(intermediateCodeGenerator.generateCode(e.getParameter1(), e.getComparison(), e.getParameter2()));
