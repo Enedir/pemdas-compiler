@@ -123,9 +123,9 @@ public class ExpandedQuadruple {
         return operator.equals("/");
     }
 
-    public boolean isTimes() {
-        return operator.equals("*");
-    }
+    public boolean isTimes() {return operator.equals("*");}
+
+    public boolean isPotentiation() {return operator.equals("^");}
 
     public boolean isNegative() {
         return operator != null && operator.equals("MINUS");

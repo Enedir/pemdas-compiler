@@ -13,13 +13,13 @@ import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author alex_
  */
 public class LinearEquationExpertSystem implements IExpertSystem {
@@ -34,7 +34,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
     private final LinearEquationRuleGeneralWithCoeficientInVariable generalWithCoeficientInVariable;
     private final LinearEquationRuleFractionCanBeSimplified fractionCanBeSimplified;
     private final LinearEquationRuleFinalResult finalResult;
-    
+
     public LinearEquationExpertSystem() {
         finalResult = new LinearEquationRuleFinalResult();
         crossMultiplication = new LinearEquationRuleCrossMultiplication(finalResult);
@@ -51,79 +51,79 @@ public class LinearEquationExpertSystem implements IExpertSystem {
     @Override
     public IAnswer findBestAnswer(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
         List<Step> steps = new ArrayList<>();
-        
+
         AnswerLinearEquation answer = new AnswerLinearEquation(steps);
-        
+
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
-        
+
         validateExpressions(sources);
         if (crossMultiplication.match(sources)) {
             steps.addAll(crossMultiplication.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         validateExpressions(sources);
         if (leastCommonMultiple.match(sources)) {
             steps.addAll(leastCommonMultiple.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         validateExpressions(sources);
         while (distributive.match(sources)) {
             steps.addAll(distributive.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         validateExpressions(sources);
         if (shiftSignal.match(sources)) {
             steps.addAll(shiftSignal.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-                
+
         validateExpressions(sources);
         if (isolateTerms.match(sources)) {
             steps.addAll(isolateTerms.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         validateExpressions(sources);
         if (sumTerms.match(sources)) {
             steps.addAll(sumTerms.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         getFunction(answer, sources.get(0));
-        
+
         validateExpressions(sources);
         if (negativeVariable.match(sources)) {
             steps.addAll(negativeVariable.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         validateExpressions(sources);
         if (generalWithCoeficientInVariable.match(sources)) {
             steps.addAll(generalWithCoeficientInVariable.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         validateExpressions(sources);
         if (fractionCanBeSimplified.match(sources)) {
             steps.addAll(fractionCanBeSimplified.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         validateExpressions(sources);
         if (finalResult.match(sources)) {
             steps.addAll(finalResult.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
-        if (isVariable(sources.get(0).getLeft())) {
+
+        if (StringUtil.isVariable(sources.get(0).getLeft())) {
             getFinalResult(answer, sources.get(0), sources.get(0).getRight());
         } else {
             getFinalResult(answer, sources.get(0), sources.get(0).getLeft());
         }
-        
+
         return answer;
     }
 
@@ -137,88 +137,71 @@ public class LinearEquationExpertSystem implements IExpertSystem {
         List<String> variables = new ArrayList<>();
         double coeficient = 0d;
         String variable;
-        
-        if (isVariable(sources.get(0).getLeft())) {
-            variable = getVariable(sources.get(0).getLeft());
-            coeficient += getVariableCoeficient(sources.get(0).getLeft());
+
+        if (StringUtil.isVariable(sources.get(0).getLeft())) {
+            variable = StringUtil.getVariable(sources.get(0).getLeft());
+            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
             if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                 variables.add(variable);
         }
-        
-        if (isVariable(sources.get(0).getRight())) {
-            variable = getVariable(sources.get(0).getRight());
-            coeficient += getVariableCoeficient(sources.get(0).getRight());
+
+        if (StringUtil.isVariable(sources.get(0).getRight())) {
+            variable = StringUtil.getVariable(sources.get(0).getRight());
+            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getRight());
             if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                 variables.add(variable);
         }
-        
+
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
-            if (isVariable(expandedQuadruple.getArgument1())) {
-                variable = getVariable(expandedQuadruple.getArgument1());
-                coeficient += getVariableCoeficient(expandedQuadruple.getArgument1());
+            if (StringUtil.isVariable(expandedQuadruple.getArgument1())) {
+                variable = StringUtil.getVariable(expandedQuadruple.getArgument1());
+                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument1());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
-            
-            if (isVariable(expandedQuadruple.getArgument2())) {
-                variable = getVariable(expandedQuadruple.getArgument2());
-                coeficient += getVariableCoeficient(expandedQuadruple.getArgument2());
+
+            if (StringUtil.isVariable(expandedQuadruple.getArgument2())) {
+                variable = StringUtil.getVariable(expandedQuadruple.getArgument2());
+                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
         }
-        
+
         if (variables.isEmpty() || coeficient == 0)
             throw new InvalidAlgebraicExpressionException("A expressão não possui nenhuma variável.");
-        
+
         if (variables.size() > 1)
             throw new InvalidAlgebraicExpressionException("A expressão possui mais que uma variável.");
     }
-    
-    private String getVariable(String param) {
-        return StringUtil.removeNumericChars(param);
-    }
-    
-    private double getVariableCoeficient(String param) {
-        String coeficient = StringUtil.removeNonNumericChars(param).replace(",", ".");
-        
-        if (StringUtil.isDecimalNumber(coeficient))
-            return Double.parseDouble(coeficient);
-        
-        return 1d;
-    }
-    
-    private boolean isVariable(String param) {
-        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())
-                    && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
-    }
-    
+
+
     private void getFunction(AnswerLinearEquation answer, ThreeAddressCode sources) {
         double leftValue = sumTerms(sources, sources.getLeft(), false);
         double rightValue = sumTerms(sources, sources.getRight(), false);
-        
+
         String leftVariable = findVariable(sources, sources.getLeft());
-        
+
         if (StringUtil.isEmpty(leftVariable)) {
             leftValue *= -1;
-            
+
             answer.setA(String.valueOf(rightValue));
             answer.setB(String.valueOf(leftValue));
         } else {
             rightValue *= -1;
-            
+
             answer.setA(String.valueOf(leftValue));
             answer.setB(String.valueOf(rightValue));
         }
     }
-    
+
     private void getFinalResult(AnswerLinearEquation answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
         ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(possibleNumber);
         if (expandedQuadruple == null) {
             answer.setX(possibleNumber.replace(",", "."));
             return;
         }
-        
+
         if (expandedQuadruple.isNegative()) {
             if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 ExpandedQuadruple innerOperation = threeAddressCode.findQuadrupleByResult(expandedQuadruple.getArgument1());
@@ -234,7 +217,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
             } else {
                 numerator = expandedQuadruple.getArgument1().replace(",", ".");
             }
-            
+
             String denominator;
             if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 ExpandedQuadruple innerOperation = threeAddressCode.findQuadrupleByResult(expandedQuadruple.getArgument2());
@@ -242,24 +225,24 @@ public class LinearEquationExpertSystem implements IExpertSystem {
             } else {
                 denominator = expandedQuadruple.getArgument2().replace(",", ".");
             }
-            
+
             answer.setX(numerator + "/" + denominator);
         }
     }
-    
+
     private double sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
         double sum = 0;
-        
+
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
-            
+
             if (expandedQuadruple.isNegative()) {
                 sum -= sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), false);
             } else {
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), lastOperationIsMinus);
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus());
             }
-        } else if (isVariable(param)) {
+        } else if (StringUtil.isVariable(param)) {
             String aux = StringUtil.removeNonNumericChars(param);
             if (StringUtil.isEmpty(aux)) {
                 if (lastOperationIsMinus)
@@ -278,25 +261,25 @@ public class LinearEquationExpertSystem implements IExpertSystem {
             else
                 sum += Double.parseDouble(param.replace(",", "."));
         }
-        
+
         return sum;
     }
-        
+
     private String findVariable(ThreeAddressCode threeAddressCode, String param) {
         String variable = null;
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
-            
+
             variable = findVariable(threeAddressCode, expandedQuadruple.getArgument1());
-                
+
             if (StringUtil.isEmpty(variable)) {
                 variable = findVariable(threeAddressCode, expandedQuadruple.getArgument2());
             }
-        } else if (isVariable(param)) {
+        } else if (StringUtil.isVariable(param)) {
             variable = StringUtil.removeNumericChars(param);
         }
-        
+
         return variable;
     }
-    
+
 }

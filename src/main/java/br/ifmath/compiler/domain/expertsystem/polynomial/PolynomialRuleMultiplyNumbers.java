@@ -36,10 +36,10 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
             sources.get(0).setExpandedQuadruples(expandedQuadruples);
         else
             expandedQuadruples = rightTimes;
-        ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), sources.get(0).getRight(), expandedQuadruples);
+        ThreeAddressCode step = new ThreeAddressCode(sources.get(0).getLeft(), expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation().trim(), "Multiplicando os valores."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Multiplicando os valores."));
 
         return steps;
     }
@@ -54,7 +54,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
     private List<ExpandedQuadruple> checkTimesOperation(List<ExpandedQuadruple> expandedQuadruples) {
         List<ExpandedQuadruple> expandedQuadruples1 = new ArrayList<>();
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
-            if (expandedQuadruple.getOperator().equals("*")) {
+            if (expandedQuadruple.isTimes()) {
                 expandedQuadruples1.add(expandedQuadruple);
             }
         }
@@ -85,7 +85,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
             }
 
             if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
-                if (!eq.getOperator().equals("MINUS"))
+                if (eq.isNegative())
                     expandedQuadruples.remove(eq);
                 double result = Double.parseDouble(a) * Double.parseDouble(b);
 
@@ -112,6 +112,15 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
     }
 
+
+    private String findProductFactor(ExpandedQuadruple eq, List<ThreeAddressCode> source) {
+        if (StringUtil.match(eq.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return findInnerProduct(source, eq.getArgument1());
+        } else {
+            return eq.getArgument1();
+        }
+    }
+
     /**
      * @param expandedQuadruples Lista de quadruplas expandidadas geradas pelas etapas anteriores do compilador.
      * @param times              Lista de quadruplas expandidas que possuem a operacação de multiplicação gerada pelo {@link #checkTimesOperation}.
@@ -127,9 +136,8 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
                      * Verifica se algum dos argumentos da quadrupla que esta sendo processada é igual a variavel temporaria que possui o resultado.
                      * Em caso positivo atribui o valor da temporaria ao argumento da quadrupla que esta sendo analisada.
                      */
-                    if (remainingQuadruple.getArgument1().equals(temporaryVarLabel)) {
-                        if (multipliedQuadruple.getOperator().equals(""))
-                            remainingQuadruple.setArgument1(multipliedQuadruple.getArgument1().replace(".", ","));
+                    if (remainingQuadruple.getArgument1().equals(temporaryVarLabel) && (multipliedQuadruple.getOperator().equals(""))) {
+                        remainingQuadruple.setArgument1(multipliedQuadruple.getArgument1().replace(".", ","));
                     }
 
                     if (remainingQuadruple.getArgument2().equals(temporaryVarLabel)) {
@@ -152,11 +160,9 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
      */
     private String findInnerProduct(List<ThreeAddressCode> source, String tempVar) {
         ExpandedQuadruple innerQuadruple = source.get(0).findQuadrupleByResult(tempVar);
-        if (!innerQuadruple.getOperator().equals("")) {
-            if (innerQuadruple.getOperator().equals("MINUS")) {
-                expandedQuadruples.remove(innerQuadruple);
-                return "-" + innerQuadruple.getArgument1();
-            }
+        if (!innerQuadruple.getOperator().equals("") && innerQuadruple.isNegative()) {
+            expandedQuadruples.remove(innerQuadruple);
+            return "-" + innerQuadruple.getArgument1();
         }
         return innerQuadruple.getArgument1();
     }
@@ -167,7 +173,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
      */
     private boolean isThereTermsToMultiply(List<ExpandedQuadruple> expandedQuadruples) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
-            if (expandedQuadruple.getOperator().equals("*")) {
+            if (expandedQuadruple.isTimes()) {
                 return true;
             }
         }

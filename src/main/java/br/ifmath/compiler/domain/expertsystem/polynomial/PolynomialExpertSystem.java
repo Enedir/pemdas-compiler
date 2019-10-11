@@ -7,6 +7,7 @@ import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class PolynomialExpertSystem implements IExpertSystem {
 
         sources = substituteNullFields(sources);
 
-        if (isVariable(sources.get(0).getLeft())) {
+        if (StringUtil.isVariable(sources.get(0).getLeft())) {
             getFinalResult(answer, sources.get(0), sources.get(0).getRight());
         } else {
             getFinalResult(answer, sources.get(0), sources.get(0).getLeft());
@@ -81,58 +82,37 @@ public class PolynomialExpertSystem implements IExpertSystem {
         double coeficient = 0d;
         String variable;
 
-        if (isVariable(sources.get(0).getLeft())) {
-            variable = getVariable(sources.get(0).getLeft());
-            coeficient += getVariableCoeficient(sources.get(0).getLeft());
+        if (StringUtil.isVariable(sources.get(0).getLeft())) {
+            variable = StringUtil.getVariable(sources.get(0).getLeft());
+            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
             if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                 variables.add(variable);
         }
 
-        if (isVariable(sources.get(0).getRight())) {
-            variable = getVariable(sources.get(0).getRight());
-            coeficient += getVariableCoeficient(sources.get(0).getRight());
+        if (StringUtil.isVariable(sources.get(0).getRight())) {
+            variable = StringUtil.getVariable(sources.get(0).getRight());
+            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getRight());
             if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                 variables.add(variable);
         }
 
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
-            if (isVariable(expandedQuadruple.getArgument1())) {
-                variable = getVariable(expandedQuadruple.getArgument1());
-                coeficient += getVariableCoeficient(expandedQuadruple.getArgument1());
+            if (StringUtil.isVariable(expandedQuadruple.getArgument1())) {
+                variable = StringUtil.getVariable(expandedQuadruple.getArgument1());
+                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument1());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
 
-            if (isVariable(expandedQuadruple.getArgument2())) {
-                variable = getVariable(expandedQuadruple.getArgument2());
-                coeficient += getVariableCoeficient(expandedQuadruple.getArgument2());
+            if (StringUtil.isVariable(expandedQuadruple.getArgument2())) {
+                variable = StringUtil.getVariable(expandedQuadruple.getArgument2());
+                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
         }
-
-        if (variables.isEmpty() || coeficient == 0)
-            throw new InvalidAlgebraicExpressionException("A expressão não possui nenhuma variável.");
-
     }
 
-    private boolean isVariable(String param) {
-        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())
-                && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
-    }
-
-    private String getVariable(String param) {
-        return StringUtil.removeNumericChars(param);
-    }
-
-    private double getVariableCoeficient(String param) {
-        String coeficient = StringUtil.removeNonNumericChars(param).replace(",", ".");
-
-        if (StringUtil.isDecimalNumber(coeficient))
-            return Double.parseDouble(coeficient);
-
-        return 1d;
-    }
 
     private void getFinalResult(AnswerPolynomial answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
         ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(possibleNumber);

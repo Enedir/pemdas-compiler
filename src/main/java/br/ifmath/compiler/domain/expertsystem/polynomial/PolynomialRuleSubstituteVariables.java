@@ -35,7 +35,7 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         /**
          * pegando operacoes da direita pois nao havera sinal de igualdade. EX: x=3y^2
          */
-        return this.isThereVariablesToSubstitute(sources.get(0).getOperationsFromRight());
+        return this.isThereVariablesToSubstitute(sources.get(0).getOperationsFromLeft());
     }
 
     @Override
@@ -46,40 +46,17 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
         switchVariables(sources.get(0).getExpandedQuadruples());
 
-        String right = generateParameter(sources.get(0));
+        String left = generateParameter(sources.get(0));
 
         expandedQuadruples = sources.get(0).getExpandedQuadruples();
 
-        //FIXME: primeiro parâmetro hardcoded devido a restrição do compilador
-        ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);
+        ThreeAddressCode step = new ThreeAddressCode(left, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation().trim(), "Substituindo os valores nas variáveis correspondentes."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Substituindo os valores nas variáveis correspondentes."));
 
         return steps;
     }
-
-//FIXME Verificação da entrada do usuario ser negativa, para isso deve ser criada uma quádrupla
-
-//    private void checkNegativeInput(List<ExpandedQuadruple> source) {
-//        List<ExpandedQuadruple> negativeInputs = new ArrayList<>();
-//        for (NumericValueVariable input : userInput) {
-//            if (input.getValue().toString().startsWith("-")) {
-//                String cleanInput = input.getValue().toString().replace("-", "").trim();
-//                ExpandedQuadruple negativeQuadruple = new ExpandedQuadruple("MINUS", cleanInput, "T" + (source.size() + 1), 0, 0);
-//                negativeInputs.add(negativeQuadruple);
-//                for (ExpandedQuadruple expandedQuadruple : source) {
-//                    if (input.getLabel().equals(expandedQuadruple.getArgument1())) {
-//                        expandedQuadruple.setArgument1(negativeQuadruple.getResult());
-//                    }
-//                    if (input.getLabel().equals(expandedQuadruple.getArgument2())) {
-//                        expandedQuadruple.setArgument2(negativeQuadruple.getResult());
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
 
     /**
      * Transforma o {@link ThreeAddressCode} em uma {@link String}
@@ -120,14 +97,13 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         //FIXME: deve ser alterado quando forem utilizados valores reais do frontend
         if (!this.userInput.isEmpty()) {
 
-            if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                if (expandedQuadruple.getArgument1().contains(this.userInput.get(0).getLabel())) {
-                    expandedQuadruple.setArgument1(this.userInput.get(0).getValue().toString());
-                }
+            if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())
+                    && expandedQuadruple.getArgument1().contains(this.userInput.get(0).getLabel())) {
+                expandedQuadruple.setArgument1(this.userInput.get(0).getValue().toString());
             }
 
             if (!StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                if (!expandedQuadruple.getOperator().equals("MINUS")) {
+                if (!expandedQuadruple.isNegative()) {
                     if (expandedQuadruple.getArgument2().contains(this.userInput.get(0).getLabel())) {
                         expandedQuadruple.setArgument2(this.userInput.get(0).getValue().toString());
                     }
@@ -147,33 +123,25 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
 
-            if (!expandedQuadruple.getOperator().equals("MINUS")) {
+            if (!expandedQuadruple.isNegative()) {
                 if (!userInput.isEmpty() && (expandedQuadruple.getArgument1().contains(userInput.get(0).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(0).getLabel()))) {
                     countEqualVariable++;
                 }
 
-                if (userInput.size() > 1) {
-                    if (expandedQuadruple.getArgument1().contains(userInput.get(1).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(1).getLabel())) {
-                        countEqualVariable++;
-                    }
+                if (userInput.size() > 1 && (expandedQuadruple.getArgument1().contains(userInput.get(1).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(1).getLabel()))) {
+                    countEqualVariable++;
                 }
 
-                if (userInput.size() > 2) {
-                    if (expandedQuadruple.getArgument1().contains(userInput.get(2).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(2).getLabel())) {
-                        countEqualVariable++;
-                    }
+                if (userInput.size() > 2 && (expandedQuadruple.getArgument1().contains(userInput.get(2).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(2).getLabel()))) {
+                    countEqualVariable++;
                 }
 
-                if (userInput.size() > 3) {
-                    if (expandedQuadruple.getArgument1().contains(userInput.get(3).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(3).getLabel())) {
-                        countEqualVariable++;
-                    }
+                if (userInput.size() > 3 && (expandedQuadruple.getArgument1().contains(userInput.get(3).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(3).getLabel()))) {
+                    countEqualVariable++;
                 }
 
-                if (userInput.size() > 4) {
-                    if (expandedQuadruple.getArgument1().contains(userInput.get(4).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(4).getLabel())) {
-                        countEqualVariable++;
-                    }
+                if (userInput.size() > 4 && (expandedQuadruple.getArgument1().contains(userInput.get(4).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(4).getLabel()))) {
+                    countEqualVariable++;
                 }
             }
 

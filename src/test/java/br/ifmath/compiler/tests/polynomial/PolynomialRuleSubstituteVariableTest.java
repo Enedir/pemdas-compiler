@@ -29,10 +29,10 @@ public class PolynomialRuleSubstituteVariableTest {
     @Test()
     public void switch_variable_y_to_3_scenery_one_with_success() {
         //Arrange
-        String expression = "x = y + 3";
+        String expression = "y + 3";
 
-        String stepTwoValueExpected = "x = 3 + 3";
-        String lastStepValueExpected = "x = 6";
+        String stepTwoValueExpected = "3 + 3";
+        String lastStepValueExpected = "6";
 
         // Act
         IAnswer answer = null;
@@ -55,10 +55,10 @@ public class PolynomialRuleSubstituteVariableTest {
     @Test()
     public void switch_multiple_variable_scenery_one_with_success() {
         //Arrange
-        String expression = "x = y + 5 + 10 + y - z+a";
+        String expression = "y + 5 + 10 + y - z+a";
 
-        String stepTwoValueExpected = "x = 3 + 5 + 10 + 3 - 4 + 777";
-        String lastStepValueExpected = "x = 794";
+        String stepTwoValueExpected = "3 + 5 + 10 + 3 - 4 + 777";
+        String lastStepValueExpected = "794";
 
         // Act
         IAnswer answer = null;

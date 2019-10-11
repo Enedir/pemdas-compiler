@@ -33,9 +33,9 @@ public class PolynomialRuleMultiplyNumbersTest {
     @Test()
     public void multiply_few_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "x = 2 * 4 * 5";
+        String expression = "2 * 4 * 5";
 
-        String lastStepValueExpected = "x = 40";
+        String lastStepValueExpected = "40";
 
         // Act
         IAnswer answer = null;
@@ -55,12 +55,12 @@ public class PolynomialRuleMultiplyNumbersTest {
     @Test()
     public void multiply_many_numbers_and_variables_scenery_one_with_success() {
         //Arrange
-        String expression = "x = 8 * 1 * y * z";
+        String expression = "8 * 1 * y * z";
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = "x = 8 * 1 * 3 * 4";
-        String lastStepValueExpected = "x = 96";
+        String stepTwoValueExpected = "8 * 1 * 3 * 4";
+        String lastStepValueExpected = "96";
 
         // Act
         IAnswer answer = null;
@@ -83,14 +83,14 @@ public class PolynomialRuleMultiplyNumbersTest {
     @Test()
     public void multiply_and_sum_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "x = 2 + 8 * 2 + 1 * y * z * 2 - 5";
+        String expression = "2 + 8 * 2 + 1 * y * z * 2 - 5";
 
         int positionTwo = 1;
         int positionThree = 2;
 
-        String stepTwoValueExpected = "x = 2 + 8 * 2 + 1 * 3 * 4 * 2 - 5";
-        String stepThreeValueExpected = "x = 2 + 16 + 24 - 5";
-        String lastStepValueExpected = "x = 37";
+        String stepTwoValueExpected = "2 + 8 * 2 + 1 * 3 * 4 * 2 - 5";
+        String stepThreeValueExpected = "2 + 16 + 24 - 5";
+        String lastStepValueExpected = "37";
 
         // Act
         IAnswer answer = null;

@@ -23,6 +23,13 @@ public class ThreeAddressCode {
         this.expandedQuadruples = expandedQuadruples;
     }
 
+    public ThreeAddressCode(String left, List<ExpandedQuadruple> expandedQuadruples) {
+        this.left = left;
+        this.comparison = "";
+        this.right = "";
+        this.expandedQuadruples = expandedQuadruples;
+    }
+
     public String getLeft() {
         return left;
     }

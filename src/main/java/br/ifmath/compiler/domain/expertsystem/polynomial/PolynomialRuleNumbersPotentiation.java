@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.text.DecimalFormat;
@@ -36,10 +37,10 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
             sources.get(0).setExpandedQuadruples(expandedQuadruples);
         else
             expandedQuadruples = rightPower;
-        ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), sources.get(0).getRight(), expandedQuadruples);
+        ThreeAddressCode step = new ThreeAddressCode(sources.get(0).getLeft(), expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation().trim(), "Elevando os valores a suas potências."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Elevando os valores a suas potências."));
 
         return steps;
     }
@@ -54,7 +55,7 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
     private List<ExpandedQuadruple> checkPotentiationOperation(List<ExpandedQuadruple> expandedQuadruples) {
         List<ExpandedQuadruple> expandedQuadruples1 = new ArrayList<>();
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
-            if (expandedQuadruple.getOperator().equals("^")) {
+            if (expandedQuadruple.isPotentiation()) {
                 expandedQuadruples1.add(expandedQuadruple);
             }
         }
@@ -90,10 +91,8 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
                 /**
                  * Mascara para limitar as casas decimais em caso de potencia negativa.
                  */
-                DecimalFormat decimalFormat = new DecimalFormat("#.0000");
                 double result = Math.pow(Double.parseDouble(a), Double.parseDouble(b));
-                result = Double.parseDouble(decimalFormat.format(result).replace(",", "."));
-
+                result = NumberUtil.formatDouble(result);
                 /**
                  * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
                  */
@@ -120,12 +119,9 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
                 if (remainingQuadruple.getArgument1().equals(temporaryVarLabel)) {
                     remainingQuadruple.setArgument1(poweredQuadruple.getArgument1());
                 }
-                if (!remainingQuadruple.getOperator().equals("MINUS")) {
-                    if (remainingQuadruple.getArgument2().equals(temporaryVarLabel)) {
-                        remainingQuadruple.setArgument2(poweredQuadruple.getArgument1());
-                    }
+                if (!remainingQuadruple.isNegative() && remainingQuadruple.getArgument2().equals(temporaryVarLabel)) {
+                    remainingQuadruple.setArgument2(poweredQuadruple.getArgument1());
                 }
-
             }
         }
     }
@@ -142,7 +138,7 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
     private String findInnerPower(List<ThreeAddressCode> source, String tempVar) {
         ExpandedQuadruple innerQuadruple = source.get(0).findQuadrupleByResult(tempVar);
         if (innerQuadruple.getArgument1() != null || innerQuadruple.getArgument2() != null) {
-            if (innerQuadruple.getOperator().equals("MINUS")) {
+            if (innerQuadruple.isNegative()) {
                 this.expandedQuadruples.remove(innerQuadruple);
                 return "-" + innerQuadruple.getArgument1();
             }
@@ -158,7 +154,7 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
      */
     private boolean isThereTermsToPowerTo(List<ExpandedQuadruple> expandedQuadruples) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
-            if (expandedQuadruple.getOperator().equals("^")) {
+            if (expandedQuadruple.isPotentiation()) {
                 return true;
             }
         }

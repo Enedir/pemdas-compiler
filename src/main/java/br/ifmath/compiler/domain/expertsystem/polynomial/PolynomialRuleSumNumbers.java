@@ -26,21 +26,21 @@ public class PolynomialRuleSumNumbers implements IRule {
 
         double result = sumTerms(sources.get(0), sources.get(0).getRight(), false);
 
-        String right;
+        String left;
         /**
          * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
          */
         if (result % 1 == 0)
-            right = String.valueOf(NumberUtil.parseInt(result));
+            left = String.valueOf(NumberUtil.parseInt(result));
         else
-            right = String.valueOf(result);
+            left = String.valueOf(result);
 
         expandedQuadruples = sources.get(0).getExpandedQuadruples();
 
-        ThreeAddressCode step = new ThreeAddressCode("x", sources.get(0).getComparison(), right, expandedQuadruples);
+        ThreeAddressCode step = new ThreeAddressCode(left, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation(), "Somando os valores."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Somando os valores."));
 
         return steps;
     }
@@ -105,25 +105,14 @@ public class PolynomialRuleSumNumbers implements IRule {
             if (StringUtil.matchAny(expandedQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.DECIMAL_NUMBER.toString()))
                 numberAmount++;
 
-            if (isVariable(expandedQuadruple.getArgument1()))
+            if (StringUtil.isVariable(expandedQuadruple.getArgument1()))
                 variableAmount++;
 
-            if (isVariable(expandedQuadruple.getArgument2()))
+            if (StringUtil.isVariable(expandedQuadruple.getArgument2()))
                 variableAmount++;
 
         }
 
         return (numberAmount > 1 && variableAmount == 0);
-    }
-
-    /**
-     * Verifica se dado parametro é uma variavel.
-     *
-     * @param param {@link String} a ser verificado.
-     * @return true caso realmente seja uma variavel, e falso caso contario.
-     */
-    private boolean isVariable(String param) {
-        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())
-                && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
     }
 }

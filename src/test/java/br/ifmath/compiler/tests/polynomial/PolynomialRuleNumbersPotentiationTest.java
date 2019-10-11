@@ -32,9 +32,9 @@ public class PolynomialRuleNumbersPotentiationTest {
     @Test()
     public void power_few_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "x = 2 ^ 2 - 4";
+        String expression = "2 ^ 2 - 4";
 
-        String lastStepValueExpected = "x = 0";
+        String lastStepValueExpected = "0";
 
         // Act
         IAnswer answer = null;
@@ -54,9 +54,9 @@ public class PolynomialRuleNumbersPotentiationTest {
     @Test()
     public void power_a_number_with_negative_exponent_scenery_one_with_success() {
         //Arrange
-        String expression = "x = 2 ^ -2";
+        String expression = "2 ^ -2";
 
-        String lastStepValueExpected = "x = 0.25";
+        String lastStepValueExpected = "0.25";
 
         // Act
         IAnswer answer = null;
@@ -76,12 +76,12 @@ public class PolynomialRuleNumbersPotentiationTest {
     @Test()
     public void power_many_numbers_and_variables_scenery_one_with_success() {
         //Arrange
-        String expression = "x = 8 * 1 * y ^ -2 + 5";
+        String expression = "8 * 1 * y ^ -2 + 5";
 
         int positionTwo = 2;
 
-        String stepTwoValueExpected = "x = 8 * 1 * 0.1111 + 5";
-        String lastStepValueExpected = "x = 5.8888";
+        String stepTwoValueExpected = "8 * 1 * 0.1111 + 5";
+        String lastStepValueExpected = "5.8888";
 
         // Act
         IAnswer answer = null;
@@ -104,13 +104,13 @@ public class PolynomialRuleNumbersPotentiationTest {
     @Test()
     public void professor_Ailton_example_scenery_one_with_success() {
         //Arrange
-        String expression = "x = 3 * y ^ 3 + 2 * y ^ 2 - 4 * y * z";
+        String expression = "3 * y ^ 3 + 2 * y ^ 2 - 4 * y * z";
 
 
-        String stepTwoValueExpected = "x = 3 * 3 ^ 3 + 2 * 3 ^ 2 - 4 * 3 * 4";
-        String stepThreeValueExpected = "x = 3 * 27 + 2 * 9 - 4 * 3 * 4";
-        String stepFourValueExpected = "x = 81 + 18 - 48";
-        String lastStepValueExpected = "x = 51";
+        String stepTwoValueExpected = "3 * 3 ^ 3 + 2 * 3 ^ 2 - 4 * 3 * 4";
+        String stepThreeValueExpected = "3 * 27 + 2 * 9 - 4 * 3 * 4";
+        String stepFourValueExpected = "81 + 18 - 48";
+        String lastStepValueExpected = "51";
 
         // Act
         IAnswer answer = null;
@@ -139,7 +139,7 @@ public class PolynomialRuleNumbersPotentiationTest {
     @Test()
     public void power_with_sum_in_exponentiation_scenery_one_with_fail() {
         //Arrange
-        String expression = "x = 2 ^ (1 + 2) * y";
+        String expression = "2 ^ (1 + 2) * y";
 
         // Act
         try {
