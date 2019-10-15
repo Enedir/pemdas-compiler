@@ -1,9 +1,11 @@
 package br.ifmath.compiler.infrastructure.util;
 
+import br.ifmath.compiler.infrastructure.props.RegexPattern;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
- *
  * @author alex_
  */
 public class NumberUtil {
@@ -29,6 +31,25 @@ public class NumberUtil {
 
     public static boolean canBeSimplified(double a, double b) {
         return greatestCommonDenominator(a, b) != 1 || a % b == 0;
+    }
+
+    public static double getVariableCoeficient(String param) {
+        String coeficient = StringUtil.removeNonNumericChars(param).replace(",", ".");
+
+        if (StringUtil.isDecimalNumber(coeficient))
+            return Double.parseDouble(coeficient);
+
+        return 1d;
+    }
+
+    public static String removeVariable(String source) {
+        return StringUtil.replace(source, RegexPattern.VARIABLE.toString(), "");
+
+    }
+
+    public static double formatDouble(double param) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.0000");
+        return Double.parseDouble(decimalFormat.format(param).replace(",", "."));
     }
 
     public static long leastCommonMultiple(List<Integer> elements) {

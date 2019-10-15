@@ -13,10 +13,20 @@ public class ThreeAddressCode {
     private String right;
     private List<ExpandedQuadruple> expandedQuadruples;
 
+    public ThreeAddressCode() {
+    }
+
     public ThreeAddressCode(String left, String comparison, String right, List<ExpandedQuadruple> expandedQuadruples) {
         this.left = left;
         this.comparison = comparison;
         this.right = right;
+        this.expandedQuadruples = expandedQuadruples;
+    }
+
+    public ThreeAddressCode(String left, List<ExpandedQuadruple> expandedQuadruples) {
+        this.left = left;
+        this.comparison = "";
+        this.right = "";
         this.expandedQuadruples = expandedQuadruples;
     }
 
@@ -80,6 +90,26 @@ public class ThreeAddressCode {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
             if (expandedQuadruple.isArgument1(param)
                     || expandedQuadruple.isArgument2(param)) {
+                return expandedQuadruple;
+            }
+        }
+
+        return null;
+    }
+
+    public ExpandedQuadruple findQuadrupleByArgument1(String param) {
+        for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
+            if (expandedQuadruple.isArgument1(param)) {
+                return expandedQuadruple;
+            }
+        }
+
+        return null;
+    }
+
+    public ExpandedQuadruple findQuadrupleByArgument2(String param) {
+        for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
+            if (expandedQuadruple.isArgument2(param)) {
                 return expandedQuadruple;
             }
         }

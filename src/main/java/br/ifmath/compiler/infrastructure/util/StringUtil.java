@@ -7,7 +7,6 @@ import br.ifmath.compiler.infrastructure.props.RegexPattern;
  * It provides some methods to manipulate strings</p>
  *
  * @author alexjravila
- *
  */
 public class StringUtil {
 
@@ -105,9 +104,9 @@ public class StringUtil {
      * <p>
      * It replaces all matches of pattern for a specific text</p>
      *
-     * @param source - the string to be analyzed
+     * @param source  - the string to be analyzed
      * @param pattern - the pattern to be replaced. It can be a regular
-     * expression or a literal string
+     *                expression or a literal string
      * @param replace - the string to replace the matched patterns
      * @return the source after replace the matched patterns
      */
@@ -125,9 +124,9 @@ public class StringUtil {
      * <p>
      * It removes all matches of pattern for a specific text</p>
      *
-     * @param source - the string to be analyzed
+     * @param source  - the string to be analyzed
      * @param pattern - the pattern to be removed. It can be a regular
-     * expression or a literal string
+     *                expression or a literal string
      * @return the source after remove the matched patterns
      */
     public static String remove(String source, String pattern) {
@@ -177,9 +176,9 @@ public class StringUtil {
      * <p>
      * It verifies if there are only characters from pattern in source</p>
      *
-     * @param source - the string to be analyzed
+     * @param source  - the string to be analyzed
      * @param pattern - the pattern to be verified. It can be a regular
-     * expression or a literal string
+     *                expression or a literal string
      * @return the source after remove the matched patterns
      */
     public static boolean containOnyTheseChars(String source, String pattern) {
@@ -253,7 +252,7 @@ public class StringUtil {
      * <p>
      * It verifies if source matches with pattern</p>
      *
-     * @param source - the string to be analyzed
+     * @param source  - the string to be analyzed
      * @param pattern - pattern to search
      * @return if the source matches
      */
@@ -270,7 +269,7 @@ public class StringUtil {
      * <p>
      * It verifies if source matches with pattern</p>
      *
-     * @param source - the string to be analyzed
+     * @param source  - the string to be analyzed
      * @param pattern - pattern to search
      * @return if the source matches
      */
@@ -286,7 +285,7 @@ public class StringUtil {
      * <p>
      * It verifies if source matches with any pattern</p>
      *
-     * @param source - the string to be analyzed
+     * @param source   - the string to be analyzed
      * @param patterns - patterns to search
      * @return if the source matches
      */
@@ -307,7 +306,7 @@ public class StringUtil {
      * <p>
      * It verifies if source matches with all pattern</p>
      *
-     * @param source - the string to be analyzed
+     * @param source   - the string to be analyzed
      * @param patterns - patterns to search
      * @return if the source matches
      */
@@ -328,7 +327,7 @@ public class StringUtil {
      * <p>
      * It fills a string with a specific length</p>
      *
-     * @param source - string to fill the StringBuilder's length
+     * @param source   - string to fill the StringBuilder's length
      * @param quantity - the size of string
      * @return the string with a specific length
      */
@@ -387,8 +386,8 @@ public class StringUtil {
      * It cuts a string between two keys</p>
      *
      * @param source - string to be cut
-     * @param begin - the begin's key
-     * @param end - the end's key
+     * @param begin  - the begin's key
+     * @param end    - the end's key
      * @return the cut string
      */
     public static String substringBetween(String source, String begin, String end) {
@@ -399,9 +398,9 @@ public class StringUtil {
      * <p>
      * It cuts a string between two keys</p>
      *
-     * @param source - string to be cut
-     * @param begin - the begin's key
-     * @param end - the end's key
+     * @param source    - string to be cut
+     * @param begin     - the begin's key
+     * @param end       - the end's key
      * @param fromIndex - the index where the search will start
      * @return the cut string
      */
@@ -426,9 +425,9 @@ public class StringUtil {
      * It cuts a string. This method has some validations to avoid common
      * exceptions that happens when is tried to cut a string</p>
      *
-     * @param source - the string that will be cut
+     * @param source     - the string that will be cut
      * @param beginIndex - the index where the cut begins
-     * @param endIndex - the index where the cut ends
+     * @param endIndex   - the index where the cut ends
      * @return the cut string
      */
     public static String substring(String source, int beginIndex, int endIndex) {
@@ -489,11 +488,33 @@ public class StringUtil {
         return (source != null && source.length() > 0);
     }
 
+
+    public static boolean isVariable(String param) {
+        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())
+                && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
+    }
+
+    public static String getVariable(String param) {
+        return StringUtil.removeNumericChars(param);
+    }
+
+    public static String getVariable(String a, String b) {
+        a = StringUtil.removeNumericChars(a).replace("-", "").replace(",", "").replace(".", "");
+        if (StringUtil.isNotEmpty(a))
+            return a;
+
+        b = StringUtil.removeNumericChars(b).replace("-", "").replace(",", "").replace(".", "");
+        if (StringUtil.isNotEmpty(b))
+            return b;
+
+        return "";
+    }
+
     /**
      * <p>
      * It counts which times an specific character repeat into a string</p>
      *
-     * @param source - the string to be analyzed
+     * @param source      - the string to be analyzed
      * @param charToCount - character to be counted
      * @return the quantity of an character repeats into a string
      */
@@ -518,7 +539,7 @@ public class StringUtil {
      * It concatenates some string, using a specific separator</p>
      *
      * @param separator - the string that will separate each union
-     * @param source - the strings that will be concatenates
+     * @param source    - the strings that will be concatenates
      * @return the concatenated string
      */
     public static String concat(String separator, String... source) {
