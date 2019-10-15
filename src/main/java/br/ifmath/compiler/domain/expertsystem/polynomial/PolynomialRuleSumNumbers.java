@@ -24,7 +24,7 @@ public class PolynomialRuleSumNumbers implements IRule {
     public List<Step> handle(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
         List<Step> steps = new ArrayList<>();
 
-        double result = sumTerms(sources.get(0), sources.get(0).getRight(), false);
+        double result = sumTerms(sources.get(0), sources.get(0).getLeft(), false);
 
         String left;
         /**

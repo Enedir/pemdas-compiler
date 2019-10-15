@@ -72,20 +72,11 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
         String a, b;
 
         for (ExpandedQuadruple eq : times) {
-            if (StringUtil.match(eq.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                a = findInnerProduct(source, eq.getArgument1());
-            } else {
-                a = eq.getArgument1();
-            }
-
-            if (StringUtil.match(eq.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                b = findInnerProduct(source, eq.getArgument2());
-            } else {
-                b = eq.getArgument2();
-            }
+            a = findProductFactor(source, eq.getArgument1());
+            b = findProductFactor(source, eq.getArgument2());
 
             if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
-                if (eq.isNegative())
+                if (!eq.isNegative())
                     expandedQuadruples.remove(eq);
                 double result = Double.parseDouble(a) * Double.parseDouble(b);
 
@@ -113,12 +104,18 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
     }
 
 
-    private String findProductFactor(ExpandedQuadruple eq, List<ThreeAddressCode> source) {
-        if (StringUtil.match(eq.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return findInnerProduct(source, eq.getArgument1());
-        } else {
-            return eq.getArgument1();
+    /**
+     * Encontra os fatores a e b para a multiplicacao, conforme a expressao: a * b, para cada uma
+     * das quadruplas que tem alguma operação de multiplicacao.
+     * @param source {@link ThreeAddressCode} que contem todas as quadruplas.
+     * @param factor Fator a ser verificado e encontrado dentro das quadruplas(a ou b).
+     * @return {@link String} que contem o valor numérico do fator.
+     */
+    private String findProductFactor(List<ThreeAddressCode> source, String factor) {
+        if (StringUtil.match(factor,RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return findInnerProduct(source,factor);
         }
+        return factor;
     }
 
     /**

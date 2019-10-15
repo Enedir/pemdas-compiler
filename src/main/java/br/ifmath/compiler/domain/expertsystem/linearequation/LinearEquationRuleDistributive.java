@@ -277,7 +277,7 @@ public class LinearEquationRuleDistributive implements IRule {
                 result *= (-1);
             }
             
-            String valueToReturn = generateParameter(result) + getVariable(multiplier, value);
+            String valueToReturn = generateParameter(result) + StringUtil.getVariable(multiplier, value);
             if (result < 0) { 
                 if (parent == null || parent.getArgument1().equals(currentResult))
                     return createNegativeNumberQuadruple(valueToReturn, position, level);

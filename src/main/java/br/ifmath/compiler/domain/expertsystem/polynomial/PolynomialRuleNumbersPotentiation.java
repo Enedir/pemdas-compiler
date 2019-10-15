@@ -73,17 +73,8 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
         String a, b;
 
         for (ExpandedQuadruple eq : powers) {
-            if (StringUtil.match(eq.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                a = findInnerPower(source, eq.getArgument1());
-            } else {
-                a = eq.getArgument1();
-            }
-
-            if (StringUtil.match(eq.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                b = findInnerPower(source, eq.getArgument2());
-            } else {
-                b = eq.getArgument2();
-            }
+            a = findPowerFactor(source,eq.getArgument1());
+            b = findPowerFactor(source,eq.getArgument2());
 
             if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
                 expandedQuadruples.remove(eq);
@@ -105,6 +96,20 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
             }
         }
 
+    }
+
+    /**
+     * Encontra os fatores a e b para a potenciacao, conforme a expressao: a ^ b, para cada uma
+     * das quadruplas que tem alguma operacao de potenciacao.
+     * @param source {@link ThreeAddressCode} que contem todas as quadruplas.
+     * @param factor Fator a ser verificado e encontrado dentro das quadruplas(a ou b).
+     * @return {@link String} que contem o valor numerico do fator.
+     */
+    private String findPowerFactor(List<ThreeAddressCode> source, String factor) {
+        if (StringUtil.match(factor,RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return findInnerPower(source,factor);
+        }
+        return factor;
     }
 
 
