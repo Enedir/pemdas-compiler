@@ -139,7 +139,11 @@ public class LinearEquationExpertSystem implements IExpertSystem {
         List<String> variables = new ArrayList<>();
         double coeficient = 0d;
         String variable;
-
+ 
+        if (StringUtil.isEmpty(sources.get(0).getComparison())) {
+            throw new InvalidAlgebraicExpressionException("Equação deve possuir uma igualdade.");
+        }
+        
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             variable = StringUtil.getVariable(sources.get(0).getLeft());
             coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
@@ -167,6 +171,13 @@ public class LinearEquationExpertSystem implements IExpertSystem {
                 coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
+            }
+            
+            if (!expandedQuadruple.isPlus()
+                    && !expandedQuadruple.isFraction()
+                    && !expandedQuadruple.isTimes()
+                    && !expandedQuadruple.isMinusOrNegative()) {
+                throw new InvalidAlgebraicExpressionException("A expressão deve possuir apenas as seguintes operações: +, -, * e /.");
             }
         }
 

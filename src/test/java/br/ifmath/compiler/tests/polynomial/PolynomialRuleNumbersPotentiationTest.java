@@ -102,7 +102,7 @@ public class PolynomialRuleNumbersPotentiationTest {
     }
 
     @Test()
-    public void professor_Ailton_example_scenery_one_with_success() {
+    public void multiple_operations_example_scenery_one_with_success() {
         //Arrange
         String expression = "3 * y ^ 3 + 2 * y ^ 2 - 4 * y * z";
 

@@ -29,8 +29,8 @@ public class SemanticAction9 extends SemanticAction {
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-       tl.setValue(true);
-        tl.setOperator("-");
+        tl.setValue(true);
+        tl.setOperator("+");
         
         if (tl1.isValue()) {
             tl.setAddress(intermediateCodeGenerator.getNextTemporary().toString());

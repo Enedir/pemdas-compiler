@@ -5,8 +5,7 @@
  */
 package br.ifmath.compiler.domain.grammar.semanticaction;
 
-import br.ifmath.compiler.domain.grammar.nonterminal.F;
-import br.ifmath.compiler.domain.grammar.nonterminal.O;
+import br.ifmath.compiler.domain.grammar.nonterminal.PL;
 import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerator;
 
 /**
@@ -15,20 +14,17 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
  */
 public class SemanticAction22 extends SemanticAction {
 
-    private final F f;
-    private final O o;
+    private PL pl;
     
-    public SemanticAction22(F f, O o) {
+    public SemanticAction22(PL pl) {
         super("AS22");
         
-        this.f = f;
-        this.o = o;
+        this.pl = pl;
     }
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        f.setPosition(o.getPosition());
-        f.setLevel(o.getLevel());
+        pl.setValue(false);
     }
     
 }

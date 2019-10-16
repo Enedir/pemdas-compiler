@@ -78,11 +78,11 @@ public class Func extends NonTerminal {
             Cosine cosine = new Cosine();
             
             return new GrammarSymbol[] {
-                new SemanticAction32(this, t),
+                new SemanticAction33(this, t),
                 new EndParentheses(),
                 t,
                 new BeginParentheses(),
-                new SemanticAction31(this, cosine),
+                new SemanticAction32(this, cosine),
                 cosine
             };
         }
@@ -92,11 +92,11 @@ public class Func extends NonTerminal {
             Sine sine = new Sine();
             
             return new GrammarSymbol[] {
-                new SemanticAction32(this, t),
+                new SemanticAction33(this, t),
                 new EndParentheses(),
                 t,
                 new BeginParentheses(),
-                new SemanticAction31(this, sine),
+                new SemanticAction32(this, sine),
                 sine
             };
         }
@@ -105,11 +105,11 @@ public class Func extends NonTerminal {
             Tangent tangent = new Tangent();
             
             return new GrammarSymbol[] {
-                new SemanticAction32(this, t),
+                new SemanticAction33(this, t),
                 new EndParentheses(),
                 t,
                 new BeginParentheses(),
-                new SemanticAction31(this, tangent),
+                new SemanticAction32(this, tangent),
                 tangent
             };
         }
@@ -118,12 +118,12 @@ public class Func extends NonTerminal {
             SquareRoot squareRoot = new SquareRoot();
             
             return new GrammarSymbol[] {
-                new SemanticAction34(this, t),
+                new SemanticAction35(this, t),
                 new EndParentheses(),
-                new SemanticAction33(this),
+                new SemanticAction34(this),
                 t,
                 new BeginParentheses(),
-                new SemanticAction31(this, squareRoot),
+                new SemanticAction32(this, squareRoot),
                 squareRoot
             };
         }
@@ -134,14 +134,14 @@ public class Func extends NonTerminal {
             NaturalNumber integerNumber = new NaturalNumber();
             
             return new GrammarSymbol[] {
-                new SemanticAction34(this, t),
+                new SemanticAction35(this, t),
                 new EndParentheses(),
-                new SemanticAction35(this, integerNumber),
+                new SemanticAction36(this, integerNumber),
                 integerNumber,
                 new Semicolon(),
                 t,
                 new BeginParentheses(),
-                new SemanticAction31(this, root),
+                new SemanticAction32(this, root),
                 root
             };
         }
@@ -151,12 +151,12 @@ public class Func extends NonTerminal {
             Log10 log10 = new Log10();
                     
             return new GrammarSymbol[] {
-                new SemanticAction34(this, t),
+                new SemanticAction35(this, t),
                 new EndParentheses(),
-                new SemanticAction36(this),
+                new SemanticAction37(this),
                 t,
                 new BeginParentheses(),
-                new SemanticAction31(this, log10),
+                new SemanticAction32(this, log10),
                 log10
             };
         }
@@ -167,14 +167,14 @@ public class Func extends NonTerminal {
             NaturalNumber integerNumber = new NaturalNumber();
             
             return new GrammarSymbol[] {
-                new SemanticAction34(this, t),
+                new SemanticAction35(this, t),
                 new EndParentheses(),
-                new SemanticAction35(this, integerNumber),
+                new SemanticAction36(this, integerNumber),
                 integerNumber,
                 new Semicolon(),
                 t,
                 new BeginParentheses(),
-                new SemanticAction31(this, log),
+                new SemanticAction32(this, log),
                 log
             };
         }

@@ -24,7 +24,7 @@ public class SemanticAction25 extends SemanticAction {
 
     @Override
     public void executeAction(IIntermediateCodeGenerator intermediateCodeGenerator) {
-        s.setValue(true);
+        s.setValue(false);
     }
     
 }
