@@ -3,7 +3,7 @@ package br.ifmath.compiler.tests.polynomial;
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
 import br.ifmath.compiler.domain.expertsystem.*;
-import br.ifmath.compiler.domain.expertsystem.polynomial.PolynomialExpertSystem;
+import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class PolynomialRuleNumbersPotentiationTest {
     @Before
     public void setUp() {
         compiler = new Compiler();
-        expertSystem = new PolynomialExpertSystem();
+        expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
         stepThreeExplicationExpected = "Elevando os valores a suas potências.";
         stepFourExplicationExpected = "Multiplicando os valores.";

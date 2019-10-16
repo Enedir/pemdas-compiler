@@ -1,4 +1,4 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial;
+package br.ifmath.compiler.domain.expertsystem.polynomial.addandsub;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
@@ -6,7 +6,6 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -15,17 +14,11 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PolynomialExpertSystem implements IExpertSystem {
-    private static PolynomialRuleSubstituteVariables substituteVariable;
-    private static PolynomialRuleSumNumbers sumNumbers;
-    private static PolynomialRuleMultiplyNumbers multiplyNumbers;
-    private static PolynomialRuleNumbersPotentiation powerNumbers;
+public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
-    public PolynomialExpertSystem() {
-        substituteVariable = new PolynomialRuleSubstituteVariables();
-        sumNumbers = new PolynomialRuleSumNumbers();
-        multiplyNumbers = new PolynomialRuleMultiplyNumbers();
-        powerNumbers = new PolynomialRuleNumbersPotentiation();
+
+    public PolynomialAddAndSubExpertSystem() {
+
     }
 
 
@@ -33,33 +26,11 @@ public class PolynomialExpertSystem implements IExpertSystem {
     public IAnswer findBestAnswer(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
         List<Step> steps = new ArrayList<>();
 
-        AnswerPolynomial answer = new AnswerPolynomial(steps);
+        AnswerPolynomialAddAndSub answer = new AnswerPolynomialAddAndSub(steps);
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
 
-        validateExpressions(sources);
-        if (substituteVariable.match(sources)) {
-            steps.addAll(substituteVariable.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
 
-        validateExpressions(sources);
-        if (powerNumbers.match(sources)) {
-            steps.addAll(powerNumbers.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
-
-        validateExpressions(sources);
-        if (multiplyNumbers.match(sources)) {
-            steps.addAll(multiplyNumbers.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
-
-        validateExpressions(sources);
-        if (sumNumbers.match(sources)) {
-            steps.addAll(sumNumbers.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
 
         sources = substituteNullFields(sources);
 
@@ -117,13 +88,14 @@ public class PolynomialExpertSystem implements IExpertSystem {
 
     @Override
     public void setVariables(List<ValueVariable> variables) {
-        for (ValueVariable variable : variables) {
-            this.substituteVariable.Add((NumericValueVariable) variable);
-        }
+        //FIXME: Utilizar para as outras expressoes polinomiais
+//        for (ValueVariable variable : variables) {
+//            this.substituteVariable.Add((NumericValueVariable) variable);
+//        }
     }
 
 
-    private void getFinalResult(AnswerPolynomial answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
+    private void getFinalResult(AnswerPolynomialAddAndSub answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
         ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(possibleNumber);
         if (expandedQuadruple == null) {
             answer.setResult(possibleNumber.replace(",", "."));

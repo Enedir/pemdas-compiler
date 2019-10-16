@@ -1,4 +1,4 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial;
+package br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;

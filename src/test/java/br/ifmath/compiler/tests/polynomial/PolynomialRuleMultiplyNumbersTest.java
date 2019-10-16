@@ -6,7 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.AnswerType;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.PolynomialExpertSystem;
+import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class PolynomialRuleMultiplyNumbersTest {
     @Before
     public void setUp() {
         compiler = new Compiler();
-        expertSystem = new PolynomialExpertSystem();
+        expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
         stepThreeExplicationExpected = "Multiplicando os valores.";
         finalResultExplicationExpected = "Somando os valores.";
