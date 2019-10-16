@@ -29,6 +29,10 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         this.userInput.add(new NumericValueVariable("z", 4));
     }
 
+    public void Add(NumericValueVariable variable) {
+        this.userInput.add(new NumericValueVariable(variable.getLabel(), variable.getValue()));
+    }
+
 
     @Override
     public boolean match(List<ThreeAddressCode> sources) {

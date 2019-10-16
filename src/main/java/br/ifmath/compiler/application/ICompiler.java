@@ -7,6 +7,9 @@ import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionExceptio
 import br.ifmath.compiler.domain.grammar.InvalidDistributiveOperationException;
 import br.ifmath.compiler.domain.grammar.nonterminal.UnrecognizedStructureException;
 import br.ifmath.compiler.infrastructure.compiler.UnrecognizedLexemeException;
+import br.ifmath.compiler.infrastructure.input.ValueVariable;
+
+import java.util.List;
 
 /**
  *
@@ -15,6 +18,8 @@ import br.ifmath.compiler.infrastructure.compiler.UnrecognizedLexemeException;
 public interface ICompiler {
 
     public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException, InvalidDistributiveOperationException;
+
+    public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, List<ValueVariable> variables, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException, InvalidDistributiveOperationException;
 
     public void frontEnd(String expression) throws UnrecognizedLexemeException, UnrecognizedStructureException;
 

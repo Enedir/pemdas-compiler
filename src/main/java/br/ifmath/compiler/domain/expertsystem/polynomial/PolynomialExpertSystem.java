@@ -6,6 +6,8 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -110,6 +112,13 @@ public class PolynomialExpertSystem implements IExpertSystem {
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
+        }
+    }
+
+    @Override
+    public void setVariables(List<ValueVariable> variables) {
+        for (ValueVariable variable : variables) {
+            this.substituteVariable.Add((NumericValueVariable) variable);
         }
     }
 

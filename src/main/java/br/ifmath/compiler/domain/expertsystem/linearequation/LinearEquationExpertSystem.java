@@ -12,9 +12,11 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -173,6 +175,11 @@ public class LinearEquationExpertSystem implements IExpertSystem {
 
         if (variables.size() > 1)
             throw new InvalidAlgebraicExpressionException("A expressão possui mais que uma variável.");
+    }
+
+    @Override
+    public void setVariables(List<ValueVariable> variables) {
+        throw new NotImplementedException();
     }
 
 

@@ -16,6 +16,7 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
 import br.ifmath.compiler.infrastructure.compiler.iface.ILexicalAnalyzer;
 import br.ifmath.compiler.infrastructure.compiler.iface.ISymbolTable;
 import br.ifmath.compiler.infrastructure.compiler.iface.ISyntacticAnalyzer;
+import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.stack.Stack;
 import br.ifmath.compiler.infrastructure.stack.exception.StackAddNullItemException;
@@ -76,6 +77,25 @@ public class Compiler implements ICompiler {
         this.expertSystem = expertSystem;
         this.answerType = answerType;
         this.intermediateCodes = new ArrayList<>();
+
+        for (String expression : expressions) {
+            if (StringUtil.contains(expression, RegexPattern.INVALID_DISTRIBUTIVE_OPERATION.toString()))
+                throw new InvalidDistributiveOperationException();
+
+            setUp();
+            frontEnd(expression);
+            this.intermediateCodes.add(intermediateCodeGenerator.generateCode(e.getParameter1(), e.getComparison(), e.getParameter2()));
+        }
+
+        return backEnd();
+    }
+
+    @Override
+    public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, List<ValueVariable> variables, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException, InvalidDistributiveOperationException {
+        this.expertSystem = expertSystem;
+        this.answerType = answerType;
+        this.intermediateCodes = new ArrayList<>();
+        this.expertSystem.setVariables(variables);
 
         for (String expression : expressions) {
             if (StringUtil.contains(expression, RegexPattern.INVALID_DISTRIBUTIVE_OPERATION.toString()))
