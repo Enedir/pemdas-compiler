@@ -16,7 +16,6 @@ import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,11 +138,11 @@ public class LinearEquationExpertSystem implements IExpertSystem {
         List<String> variables = new ArrayList<>();
         double coeficient = 0d;
         String variable;
- 
+
         if (StringUtil.isEmpty(sources.get(0).getComparison())) {
             throw new InvalidAlgebraicExpressionException("Equação deve possuir uma igualdade.");
         }
-        
+
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             variable = StringUtil.getVariable(sources.get(0).getLeft());
             coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
@@ -172,7 +171,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
-            
+
             if (!expandedQuadruple.isPlus()
                     && !expandedQuadruple.isFraction()
                     && !expandedQuadruple.isTimes()
@@ -190,7 +189,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
 
     @Override
     public void setVariables(List<ValueVariable> variables) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 

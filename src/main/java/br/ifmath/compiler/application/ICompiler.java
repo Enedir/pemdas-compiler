@@ -11,14 +11,13 @@ import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import java.util.List;
 
 /**
- *
  * @author alex_
  */
 public interface ICompiler {
 
     public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException;
 
-    public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, List<ValueVariable> variables, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException, InvalidDistributiveOperationException;
+    public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, List<ValueVariable> variables, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException;
 
     public void frontEnd(String expression) throws UnrecognizedLexemeException, UnrecognizedStructureException;
 
