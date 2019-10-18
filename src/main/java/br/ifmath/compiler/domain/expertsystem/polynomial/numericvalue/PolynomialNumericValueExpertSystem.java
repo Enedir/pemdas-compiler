@@ -33,9 +33,11 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
     public IAnswer findBestAnswer(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
         List<Step> steps = new ArrayList<>();
 
+        setUp(sources);
+
         AnswerPolynomialNumericValue answer = new AnswerPolynomialNumericValue(steps);
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
+        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().trim(), sources.get(0).toMathNotation().trim(), "Equação inicial."));
 
         validateExpressions(sources);
         if (substituteVariable.match(sources)) {
@@ -116,10 +118,15 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public void setVariables(List<ValueVariable> variables) {
+    public void setVariables(List<NumericValueVariable> variables) {
         for (ValueVariable variable : variables) {
             this.substituteVariable.Add((NumericValueVariable) variable);
         }
+    }
+
+    private void setUp(List<ThreeAddressCode> sources) {
+        sources.get(0).setComparison("");
+        sources.get(0).setRight("");
     }
 
 

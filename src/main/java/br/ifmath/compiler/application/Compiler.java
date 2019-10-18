@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.AnswerType;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
 import br.ifmath.compiler.domain.grammar.nonterminal.E;
 import br.ifmath.compiler.domain.grammar.nonterminal.UnrecognizedStructureException;
@@ -88,19 +89,19 @@ public class Compiler implements ICompiler {
     }
 
     @Override
-    public IAnswer analyse(IExpertSystem expertSystem, AnswerType answerType, List<ValueVariable> variables, String... expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException {
+    public IAnswer analyseNumeric(IExpertSystem expertSystem, AnswerType answerType, List<NumericValueVariable> variables, String expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException {
         this.expertSystem = expertSystem;
         this.answerType = answerType;
         this.intermediateCodes = new ArrayList<>();
         this.expertSystem.setVariables(variables);
 
-        for (String expression : expressions) {
 
-            expression = MathOperatorUtil.replaceReducedDistributive(expression);
+
+            expressions = MathOperatorUtil.replaceReducedDistributive(expressions);
             setUp();
-            frontEnd(expression);
+            frontEnd(expressions);
             this.intermediateCodes.add(intermediateCodeGenerator.generateCode(e.getParameter1(), e.getComparison(), e.getParameter2()));
-        }
+
 
         return backEnd();
     }

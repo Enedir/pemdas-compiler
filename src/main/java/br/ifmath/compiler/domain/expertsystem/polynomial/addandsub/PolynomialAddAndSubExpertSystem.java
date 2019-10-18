@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -29,7 +30,6 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         AnswerPolynomialAddAndSub answer = new AnswerPolynomialAddAndSub(steps);
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
-
 
 
         sources = substituteNullFields(sources);
@@ -87,7 +87,7 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public void setVariables(List<ValueVariable> variables) {
+    public void setVariables(List<NumericValueVariable> variables) {
         //FIXME: Utilizar para as outras expressoes polinomiais
 //        for (ValueVariable variable : variables) {
 //            this.substituteVariable.Add((NumericValueVariable) variable);

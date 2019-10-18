@@ -12,6 +12,7 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -188,7 +189,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public void setVariables(List<ValueVariable> variables) {
+    public void setVariables(List<NumericValueVariable> variables) {
         throw new UnsupportedOperationException();
     }
 

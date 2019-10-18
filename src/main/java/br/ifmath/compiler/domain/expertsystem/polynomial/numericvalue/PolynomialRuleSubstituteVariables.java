@@ -22,11 +22,7 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
     public PolynomialRuleSubstituteVariables() {
         this.expandedQuadruples = new ArrayList<>();
-        /** Valores para testes
-         */
-        this.userInput.add(new NumericValueVariable("a", 777));
-        this.userInput.add(new NumericValueVariable("y", 3));
-        this.userInput.add(new NumericValueVariable("z", 4));
+
     }
 
     public void Add(NumericValueVariable variable) {
