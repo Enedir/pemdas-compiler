@@ -1,4 +1,4 @@
-package br.ifmath.compiler.tests.polynomial;
+package br.ifmath.compiler.tests.polynomial.numericValue;
 
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
@@ -34,14 +34,14 @@ public class PolynomialRuleSumNumbersTest {
         finalResultExplicationExpected = "Somando os valores.";
 
         userInput.add(new NumericValueVariable("a", 777));
-        userInput.add(new NumericValueVariable("x", 3));
+        userInput.add(new NumericValueVariable("y", 3));
         userInput.add(new NumericValueVariable("z", 4));
     }
 
     @Test()
     public void sum_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "x - 5 - 6";
+        String expression = "y - 5 - 6";
 
         int positionTwo = 1;
 

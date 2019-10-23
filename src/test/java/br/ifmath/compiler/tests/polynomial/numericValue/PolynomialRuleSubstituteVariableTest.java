@@ -1,4 +1,4 @@
-package br.ifmath.compiler.tests.polynomial;
+package br.ifmath.compiler.tests.polynomial.numericValue;
 
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
@@ -30,7 +30,7 @@ public class PolynomialRuleSubstituteVariableTest {
         finalResultExplicationExpected = "Somando os valores.";
 
         userInput.add(new NumericValueVariable("a", 777));
-        userInput.add(new NumericValueVariable("x", 3));
+        userInput.add(new NumericValueVariable("y", 3));
         userInput.add(new NumericValueVariable("z", 4));
     }
 

@@ -1,8 +1,11 @@
-package br.ifmath.compiler.tests.polynomial;
+package br.ifmath.compiler.tests.polynomial.numericValue;
 
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
-import br.ifmath.compiler.domain.expertsystem.*;
+import br.ifmath.compiler.domain.expertsystem.AnswerType;
+import br.ifmath.compiler.domain.expertsystem.IAnswer;
+import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
+import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
@@ -11,16 +14,15 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-public class PolynomialRuleNumbersPotentiationTest {
+public class PolynomialRuleMultiplyNumbersTest {
 
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String stepTwoExplicationExpected;
     private String stepThreeExplicationExpected;
-    private String stepFourExplicationExpected;
     private String finalResultExplicationExpected;
     private List<NumericValueVariable> userInput = new ArrayList<>();
 
@@ -30,10 +32,8 @@ public class PolynomialRuleNumbersPotentiationTest {
         compiler = new Compiler();
         expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
-        stepThreeExplicationExpected = "Elevando os valores a suas potências.";
-        stepFourExplicationExpected = "Multiplicando os valores.";
+        stepThreeExplicationExpected = "Multiplicando os valores.";
         finalResultExplicationExpected = "Somando os valores.";
-
 
         userInput.add(new NumericValueVariable("a", 777));
         userInput.add(new NumericValueVariable("y", 3));
@@ -41,33 +41,11 @@ public class PolynomialRuleNumbersPotentiationTest {
     }
 
     @Test()
-    public void power_few_numbers_scenery_one_with_success() {
+    public void multiply_few_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "2 ^ 2 - 4";
+        String expression = "2 * 4 * 5";
 
-        String lastStepValueExpected = "0";
-
-        // Act
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
-        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
-    }
-
-    @Test()
-    public void power_a_number_with_negative_exponent_scenery_one_with_success() {
-        //Arrange
-        String expression = "2 ^ -2";
-
-        String lastStepValueExpected = "0.25";
+        String lastStepValueExpected = "40";
 
         // Act
         IAnswer answer = null;
@@ -85,14 +63,14 @@ public class PolynomialRuleNumbersPotentiationTest {
     }
 
     @Test()
-    public void power_many_numbers_and_variables_scenery_one_with_success() {
+    public void multiply_many_numbers_and_variables_scenery_one_with_success() {
         //Arrange
-        String expression = "8 * 1 * y ^ -2 + 5";
+        String expression = "8 * 1 * y * z";
 
-        int positionTwo = 2;
+        int positionTwo = 1;
 
-        String stepTwoValueExpected = "8 * 1 * 0.1111 + 5";
-        String lastStepValueExpected = "5.8888";
+        String stepTwoValueExpected = "8 * 1 * 3 * 4";
+        String lastStepValueExpected = "96";
 
         // Act
         IAnswer answer = null;
@@ -107,21 +85,22 @@ public class PolynomialRuleNumbersPotentiationTest {
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
-        assertEquals(stepTwo.getReason(), stepThreeExplicationExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
-        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+        assertEquals(finalStep.getReason(), stepThreeExplicationExpected);
     }
 
     @Test()
-    public void multiple_operations_example_scenery_one_with_success() {
+    public void multiply_and_sum_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "3 * y ^ 3 + 2 * y ^ 2 - 4 * y * z";
+        String expression = "2 + 8 * 2 + 1 * y * z * 2 - 5";
 
+        int positionTwo = 1;
+        int positionThree = 2;
 
-        String stepTwoValueExpected = "3 * 3 ^ 3 + 2 * 3 ^ 2 - 4 * 3 * 4";
-        String stepThreeValueExpected = "3 * 27 + 2 * 9 - 4 * 3 * 4";
-        String stepFourValueExpected = "81 + 18 - 48";
-        String lastStepValueExpected = "51";
+        String stepTwoValueExpected = "2 + 8 * 2 + 1 * 3 * 4 * 2 - 5";
+        String stepThreeValueExpected = "2 + 16 + 24 - 5";
+        String lastStepValueExpected = "37";
 
         // Act
         IAnswer answer = null;
@@ -132,32 +111,15 @@ public class PolynomialRuleNumbersPotentiationTest {
         }
 
         // Assert
-        Step stepTwo = answer.getSteps().get(1);
-        Step stepThree = answer.getSteps().get(2);
-        Step stepFour = answer.getSteps().get(3);
+        Step stepTwo = answer.getSteps().get(positionTwo);
+        Step stepThree = answer.getSteps().get(positionThree);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
         assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
         assertEquals(stepThree.getMathExpression(), stepThreeValueExpected);
         assertEquals(stepThree.getReason(), stepThreeExplicationExpected);
-        assertEquals(stepFour.getMathExpression(), stepFourValueExpected);
-        assertEquals(stepFour.getReason(), stepFourExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
-    }
-
-    @Test()
-    public void power_with_sum_in_exponentiation_scenery_one_with_fail() {
-        //Arrange
-        String expression = "2 ^ (1 + 2) * y";
-
-        // Act
-        try {
-            IAnswer answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
-            fail();
-        } catch (Exception e) {
-            assertThat(e, instanceOf(NullPointerException.class));
-        }
     }
 }

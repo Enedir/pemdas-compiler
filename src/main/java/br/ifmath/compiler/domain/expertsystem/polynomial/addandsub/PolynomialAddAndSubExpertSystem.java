@@ -17,9 +17,14 @@ import java.util.List;
 
 public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
+    private static PolynomialAddAndSubRuleShiftSign shiftSign;
+
+    private static PolynomialAddAndSubGroupSimilarTerms groupTerms;
+
 
     public PolynomialAddAndSubExpertSystem() {
-
+        shiftSign = new PolynomialAddAndSubRuleShiftSign();
+        groupTerms = new PolynomialAddAndSubGroupSimilarTerms();
     }
 
 
@@ -30,6 +35,19 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         AnswerPolynomialAddAndSub answer = new AnswerPolynomialAddAndSub(steps);
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
+
+        validateExpressions(sources);
+        if (shiftSign.match(sources)) {
+            steps.addAll(shiftSign.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+
+        validateExpressions(sources);
+        if (groupTerms.match(sources)) {
+            steps.addAll(groupTerms.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
 
 
         sources = substituteNullFields(sources);

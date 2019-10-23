@@ -1,4 +1,4 @@
-package br.ifmath.compiler.tests.polynomial;
+package br.ifmath.compiler.tests.polynomial.numericValue;
 
 
 import org.junit.runner.RunWith;
