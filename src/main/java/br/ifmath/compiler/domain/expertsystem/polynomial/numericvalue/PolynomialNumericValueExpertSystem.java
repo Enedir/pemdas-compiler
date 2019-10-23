@@ -20,12 +20,14 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
     private static PolynomialRuleSumNumbers sumNumbers;
     private static PolynomialRuleMultiplyNumbers multiplyNumbers;
     private static PolynomialRuleNumbersPotentiation powerNumbers;
+    private static PolynomialRuleParenthesesOperations parenOperations;
 
     public PolynomialNumericValueExpertSystem() {
         substituteVariable = new PolynomialRuleSubstituteVariables();
         sumNumbers = new PolynomialRuleSumNumbers();
         multiplyNumbers = new PolynomialRuleMultiplyNumbers();
         powerNumbers = new PolynomialRuleNumbersPotentiation();
+        parenOperations = new PolynomialRuleParenthesesOperations();
     }
 
 
@@ -42,6 +44,12 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (substituteVariable.match(sources)) {
             steps.addAll(substituteVariable.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (parenOperations.match(sources)) {
+            steps.addAll(parenOperations.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 

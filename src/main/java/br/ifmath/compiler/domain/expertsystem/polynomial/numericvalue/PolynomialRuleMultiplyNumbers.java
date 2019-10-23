@@ -68,7 +68,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
      * @param source Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
      * @param times  Lista de quadruplas expandidas que possuem a operacação de multiplicação gerada pelo {@link #checkTimesOperation}.
      */
-    private void multiply(List<ThreeAddressCode> source, List<ExpandedQuadruple> times) {
+    public void multiply(List<ThreeAddressCode> source, List<ExpandedQuadruple> times) {
         String a, b;
 
         for (ExpandedQuadruple eq : times) {
