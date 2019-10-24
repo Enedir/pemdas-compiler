@@ -146,18 +146,4 @@ public class PolynomialRuleNumbersPotentiationTest {
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
-
-    @Test()
-    public void power_with_sum_in_exponentiation_scenery_one_with_fail() {
-        //Arrange
-        String expression = "2 ^ (1 + 2) * y";
-
-        // Act
-        try {
-            IAnswer answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
-            fail();
-        } catch (Exception e) {
-            assertThat(e, instanceOf(NullPointerException.class));
-        }
-    }
 }

@@ -54,7 +54,7 @@ public class PolynomialRuleSumNumbers implements IRule {
      * @param lastOperationIsMinus {@link Boolean} que identifica se a operacao anterior era uma subtracao.
      * @return a soma total dos numeros, como um {@link Double}.
      */
-    public double sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
+    private double sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
         double sum = 0;
 
         /**

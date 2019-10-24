@@ -68,7 +68,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
      * @param source Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
      * @param times  Lista de quadruplas expandidas que possuem a operacação de multiplicação gerada pelo {@link #checkTimesOperation}.
      */
-    public void multiply(List<ThreeAddressCode> source, List<ExpandedQuadruple> times) {
+    private List<ExpandedQuadruple> multiply(List<ThreeAddressCode> source, List<ExpandedQuadruple> times) {
         String a, b;
 
         for (ExpandedQuadruple eq : times) {
@@ -100,20 +100,21 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
                 eq.setArgument2("");
             }
         }
-
+        return times;
     }
 
 
     /**
      * Encontra os fatores a e b para a multiplicacao, conforme a expressao: a * b, para cada uma
      * das quadruplas que tem alguma operação de multiplicacao.
+     *
      * @param source {@link ThreeAddressCode} que contem todas as quadruplas.
      * @param factor Fator a ser verificado e encontrado dentro das quadruplas(a ou b).
      * @return {@link String} que contem o valor numérico do fator.
      */
     private String findProductFactor(List<ThreeAddressCode> source, String factor) {
-        if (StringUtil.match(factor,RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return findInnerProduct(source,factor);
+        if (StringUtil.match(factor, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return findInnerProduct(source, factor);
         }
         return factor;
     }

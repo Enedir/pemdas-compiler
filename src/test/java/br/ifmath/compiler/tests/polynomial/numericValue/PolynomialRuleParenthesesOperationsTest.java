@@ -40,15 +40,15 @@ public class PolynomialRuleParenthesesOperationsTest {
     }
 
     @Test()
-    public void sum_numbers_in_parentheses_scenery_one_with_success() {
+    public void multiple_operations_in_parentheses_scenery_one_with_success() {
         //Arrange
-        String expression = "y * (8 - (6 + 3))";
+        String expression = "y * (8 - (2 * (3 ^ 2)))";
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = "3 * (8 - (6 + 3))";
-        String stepThreeValueExpected = "3 * -1.0";
-        String lastStepValueExpected = "-3";
+        String stepTwoValueExpected = "3 * (8 - (2 * (3 ^ 2)))";
+        String stepThreeValueExpected = "3 * -10.0";
+        String lastStepValueExpected = "-30";
 
         // Act
         IAnswer answer = null;
