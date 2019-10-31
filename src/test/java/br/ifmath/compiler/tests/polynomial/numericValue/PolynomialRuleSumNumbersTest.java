@@ -41,12 +41,12 @@ public class PolynomialRuleSumNumbersTest {
     @Test()
     public void sum_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "y - 5 - 6";
+        String expression = "y - 5 + 6";
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = "3 - 5 - 6";
-        String lastStepValueExpected = "-8";
+        String stepTwoValueExpected = "3 - 5 + 6";
+        String lastStepValueExpected = "4";
 
         // Act
         IAnswer answer = null;

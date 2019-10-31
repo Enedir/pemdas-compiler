@@ -6,12 +6,11 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
-import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 public class PolynomialRuleParenthesesOperations implements IRule {
@@ -32,219 +31,80 @@ public class PolynomialRuleParenthesesOperations implements IRule {
         resolveInnerOperations(source);
         clearNonUsedQuadruples();
 
-        ThreeAddressCode step = new ThreeAddressCode(source.get(0).getLeft(), expandedQuadruples);
-        List<ThreeAddressCode> codes = new ArrayList<>();
-        codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Realizando as operações dentro dos parênteses."));
-
         return steps;
     }
 
     private void clearNonUsedQuadruples() {
-        Iterator<ExpandedQuadruple> i = expandedQuadruples.iterator();
-        while (i.hasNext()) {
-            ExpandedQuadruple expandedQuadruple = i.next();
-            if (expandedQuadruple.getLevel() != 0)
-                i.remove();
-        }
+        expandedQuadruples.removeIf(expandedQuadruple -> expandedQuadruple.getLevel() != 0);
     }
 
     private void resolveInnerOperations(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
         for (int i = 0; i < expandedQuadruples.size() - 1; i++) {
             ExpandedQuadruple expandedQuadruple = expandedQuadruples.get(i);
             if (expandedQuadruple.getLevel() != 0) {
-                selectCorrectOperation(expandedQuadruple, source);
+                i += selectCorrectOperation(expandedQuadruple, source);
             }
         }
     }
 
-    private void selectCorrectOperation(ExpandedQuadruple expandedQuadruple, List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
-//        double newValue = 0;
-        List<ThreeAddressCode> source = new ArrayList<>();
-        expandedQuadruple.setLevel(0);
-        source.add(new ThreeAddressCode("T1", Arrays.asList(expandedQuadruple)));
+    private int selectCorrectOperation(ExpandedQuadruple expandedQuadruple, List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
 
-        if (expandedQuadruple.isPlusOrMinus()) {
-            PolynomialRuleSumNumbers sum = new PolynomialRuleSumNumbers();
-            List<Step> parenthesesSum = sum.handle(source);
-
-            String result = parenthesesSum.get(0).getSource().get(0).getLeft();
-
-            ExpandedQuadruple aux = sources.get(0).findQuadrupleByArgument1(expandedQuadruple.getResult());
-
-            if (aux == null) {
-                aux = sources.get(0).findQuadrupleByArgument2(expandedQuadruple.getResult());
-                aux.setArgument2(result);
-            } else {
-                aux.setArgument1(result);
-            }
-
-            source.get(0).setExpandedQuadruples(Arrays.asList(aux));
-
-            parenthesesSum.get(parenthesesSum.size() - 1).setSource(source);
-            parenthesesSum.get(parenthesesSum.size() - 1).setLatexExpression(source.get(0).toLaTeXNotation().trim());
-            parenthesesSum.get(parenthesesSum.size() - 1).setMathExpression(source.get(0).toMathNotation().trim());
-            steps.add(parenthesesSum.get(parenthesesSum.size() - 1));
+        IRule operation;
+        if (expandedQuadruple.isPotentiation()) {
+            operation = new PolynomialRuleNumbersPotentiation();
         } else if (expandedQuadruple.isTimes()) {
-
-
-        } else if (expandedQuadruple.isPotentiation()) {
-
-
-        }
-
-
-//
-//
-//        if (nextQuadruple.getArgument1().equals(expandedQuadruple.getResult())) {
-//            nextQuadruple.setArgument1(String.valueOf(newValue));
-//        }
-//
-//        if (nextQuadruple.getArgument2().equals(expandedQuadruple.getResult())) {
-//            nextQuadruple.setArgument2(String.valueOf(newValue));
-//        }
-
-    }
-
-
-    /**
-     * Realiza a soma entre todos os numeros, de maneira recursiva.
-     *
-     * @param threeAddressCode     {@link ThreeAddressCode} que representa o polinomio.
-     * @param param                {@link String} que pode representar uma temporaria ou um numero em si.
-     * @param lastOperationIsMinus {@link Boolean} que identifica se a operacao anterior era uma subtracao.
-     * @return a soma total dos numeros, como um {@link Double}.
-     */
-    private double sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
-        double sum = 0;
-
-        /**
-         * verifica se entre a operacao ha uma variavel temporaria, e abre a mesma, para poder obter os numeros contidos.
-         * caso seja a soma entre numeros, entrara no else.
-         */
-
-        if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
-
-            if (expandedQuadruple.isNegative()) {
-                sum -= sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), false);
-            } else {
-                sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), lastOperationIsMinus);
-                sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus());
-            }
+            operation = new PolynomialRuleMultiplyNumbers();
         } else {
-            /**
-             * entra no if caso seja uma subtracao, e no else caso seja uma soma
-             */
-            if (lastOperationIsMinus)
-                sum -= Double.parseDouble(param.replace(",", "."));
-            else
-                sum += Double.parseDouble(param.replace(",", "."));
+            operation = new PolynomialRuleSumNumbers();
         }
 
-        return sum;
-    }
+        List<ThreeAddressCode> operationsSource = new ArrayList<>();
+        List<ExpandedQuadruple> sameLevelQuadruples = getQuadruplesInSameLevel(expandedQuadruple, sources);
+        String lastQuadResult = sameLevelQuadruples.get(sameLevelQuadruples.size() - 1).getResult();
+        operationsSource.add(new ThreeAddressCode(lastQuadResult, sameLevelQuadruples));
+        List<Step> parenthesesOperation = operation.handle(operationsSource);
 
-    /**
-     * Realiza efetivamente as multiplicacoes dos termos.
-     *
-     * @param source Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
-     * @param times  Lista de quadruplas expandidas que possuem a operacação de multiplicação.
-     */
-    private double multiply(List<ThreeAddressCode> source, ExpandedQuadruple times) {
-        String a, b;
-        a = findFactor(source, times.getArgument1());
-        b = findFactor(source, times.getArgument2());
-
-        if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
-            double result = Double.parseDouble(a) * Double.parseDouble(b);
-
-            /**
-             * Realiza a verificação se o numero é negativo, caso seja,transforma o mesmo em positivo e atribui o operador MINUS a quadrupla do mesmo.
-             */
-            if (result < 0) {
-                result *= -1;
-                times.setOperator("MINUS");
-            } else
-                times.setOperator("");
-
-            /**
-             * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
-             */
-            if (result % 1 == 0)
-                times.setArgument1(String.valueOf((int) result));
-            else
-                times.setArgument1(String.valueOf(result));
-
-            times.setArgument2("");
+        //Verificar se esse if está certo
+        String result;
+        if (StringUtil.match(parenthesesOperation.get(0).getSource().get(0).getLeft(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            result = parenthesesOperation.get(0).getSource().get(0).getExpandedQuadruples().get(0).getArgument1();
+        } else {
+            result = parenthesesOperation.get(0).getMathExpression();
         }
 
-        return Double.parseDouble(times.getArgument1());
-    }
+        ExpandedQuadruple aux = sources.get(0).findQuadrupleByArgument1(lastQuadResult);
 
-    /**
-     * Realiza a operaçao de potencia nas quadruplas que possuem a operaçao
-     *
-     * @param source Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
-     * @param powers Lista de quadruplas expandidas que possuem a operacação de exponenciacao.
-     */
-    private double power(List<ThreeAddressCode> source, ExpandedQuadruple powers) {
-        String a, b;
-        a = findFactor(source, powers.getArgument1());
-        b = findFactor(source, powers.getArgument2());
-
-        if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
-
-            /**
-             * Mascara para limitar as casas decimais em caso de potencia negativa.
-             */
-            double result = Math.pow(Double.parseDouble(a), Double.parseDouble(b));
-            result = NumberUtil.formatDouble(result);
-            /**
-             * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
-             */
-            if (result % 1 == 0)
-                powers.setArgument1(String.valueOf((int) result));
-            else
-                powers.setArgument1(String.valueOf(result));
-            powers.setOperator("");
-            powers.setArgument2("");
+        if (aux == null) {
+            aux = sources.get(0).findQuadrupleByArgument2(lastQuadResult);
+            aux.setArgument2(result);
+        } else {
+            aux.setArgument1(result);
         }
-
-        return Double.parseDouble(powers.getArgument1());
+        sources.get(0).getExpandedQuadruples().removeAll(sameLevelQuadruples);
+        Step lastStep = parenthesesOperation.get(parenthesesOperation.size() - 1);
+        lastStep.setSource(sources);
+        lastStep.setLatexExpression(sources.get(0).toLaTeXNotation().trim());
+        lastStep.setMathExpression(sources.get(0).toMathNotation().trim());
+        lastStep.setReason(lastStep.getReason().replace(".", " dentro dos parênteses."));
+        steps.add(lastStep);
+        //retorna o passo do for que esse metodo esta, para avançar caso pegue mais de uma quadrupla por vez
+        return sameLevelQuadruples.size() - 1;
     }
 
-    /**
-     * Encontra os fatores a e b para a multiplicacao, conforme a expressao: a * b, para cada uma
-     * das quadruplas que tem alguma operação de multiplicacao.
-     *
-     * @param source {@link ThreeAddressCode} que contem todas as quadruplas.
-     * @param factor Fator a ser verificado e encontrado dentro das quadruplas(a ou b).
-     * @return {@link String} que contem o valor numérico do fator.
-     */
-    private String findFactor(List<ThreeAddressCode> source, String factor) {
-        if (StringUtil.match(factor, RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return findInnerFactor(source, factor);
+    private List<ExpandedQuadruple> getQuadruplesInSameLevel(ExpandedQuadruple expandedQuadruple, List<ThreeAddressCode> sources) {
+        List<ExpandedQuadruple> expandedQuadruples = new ArrayList<>();
+        for (ExpandedQuadruple sourceQuadruple : sources.get(0).getExpandedQuadruples()) {
+            if (sourceQuadruple.getLevel() == expandedQuadruple.getLevel() && (sourceQuadruple.getOperator().equals(expandedQuadruple.getOperator()) || (sourceQuadruple.isPlusOrMinus() && expandedQuadruple.isPlusOrMinus()))) {
+                expandedQuadruples.add(sourceQuadruple);
+            } else {
+                expandedQuadruples.forEach(lowQuadruple -> lowQuadruple.setLevel(lowQuadruple.getLevel() - 1));
+                return expandedQuadruples;
+            }
         }
-        return factor;
+        expandedQuadruples.forEach(expandedQuadruple1 -> expandedQuadruple1.setLevel(expandedQuadruple1.getLevel() - 1));
+        return expandedQuadruples;
     }
 
-    /**
-     * Encontra o valor  dentro das variaveis temporarias que esta envolvida
-     * em uma operacao de multiplicaçao e verifica caso o mesmo seja negativo, caso seja, adiciona o "-".
-     *
-     * @param source  Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
-     * @param tempVar Variavel provida pela quadrupla expandida que esta sendo processada no método {@link #multiply}.
-     * @return Retorna o valor da quadrupla que foi acessada atraves do parametro tempVar, em caso de a quadrupla ser negativa (MINUS), retorna o valor concatenado com "-".
-     */
-    private String findInnerFactor(List<ThreeAddressCode> source, String tempVar) {
-        ExpandedQuadruple innerQuadruple = source.get(0).findQuadrupleByResult(tempVar);
-        if (!innerQuadruple.getOperator().equals("") && innerQuadruple.isNegative()) {
-            expandedQuadruples.remove(innerQuadruple);
-            return "-" + innerQuadruple.getArgument1();
-        }
-        return innerQuadruple.getArgument1();
-    }
 
     private boolean isThereOperationsBetweenParentheses(List<ExpandedQuadruple> expandedQuadruples) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
