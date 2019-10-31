@@ -22,6 +22,7 @@ public class PolynomialRuleParenthesesOperationsTest {
     private IExpertSystem expertSystem;
     private String stepTwoExplicationExpected;
     private String stepThreeExplicationExpected;
+    private String stepFourExplicationExpected;
     private String finalResultExplicationExpected;
     private List<NumericValueVariable> userInput = new ArrayList<>();
 
@@ -31,7 +32,8 @@ public class PolynomialRuleParenthesesOperationsTest {
         compiler = new Compiler();
         expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
-        stepThreeExplicationExpected = "Realizando as operações dentro dos parênteses.";
+        stepThreeExplicationExpected = "Somando os valores.";
+        stepFourExplicationExpected = "Realizando as operações dentro dos parênteses.";
         finalResultExplicationExpected = "Multiplicando os valores.";
 
         userInput.add(new NumericValueVariable("a", 777));
@@ -65,6 +67,38 @@ public class PolynomialRuleParenthesesOperationsTest {
 
         assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
         assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
+        assertEquals(stepThree.getMathExpression(), stepThreeValueExpected);
+        assertEquals(stepThree.getReason(), stepThreeExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+    @Test()
+    public void sum_operation_in_parentheses_scenery_one_with_success() {
+        //Arrange
+        String expression = "y * (8 - 2)";
+
+        int positionTwo = 1;
+
+        String stepTwoValueExpected = "3 * (8 - 2)";
+        String stepThreeValueExpected = "3 * 6";
+        String lastStepValueExpected = "18";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(positionTwo);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepThreeExplicationExpected);
         assertEquals(stepThree.getMathExpression(), stepThreeValueExpected);
         assertEquals(stepThree.getReason(), stepThreeExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);

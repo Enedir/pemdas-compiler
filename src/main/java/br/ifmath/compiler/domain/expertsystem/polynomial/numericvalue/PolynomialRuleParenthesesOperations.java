@@ -10,11 +10,14 @@ import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 public class PolynomialRuleParenthesesOperations implements IRule {
     private List<ExpandedQuadruple> expandedQuadruples;
+    private List<Step> steps = new ArrayList<>();
+
 
     @Override
     public boolean match(List<ThreeAddressCode> source) {
@@ -23,7 +26,6 @@ public class PolynomialRuleParenthesesOperations implements IRule {
 
     @Override
     public List<Step> handle(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
-        List<Step> steps = new ArrayList<>();
         expandedQuadruples = new ArrayList<>();
         expandedQuadruples.addAll(source.get(0).getExpandedQuadruples());
 
@@ -47,35 +49,60 @@ public class PolynomialRuleParenthesesOperations implements IRule {
         }
     }
 
-    private void resolveInnerOperations(List<ThreeAddressCode> source) {
+    private void resolveInnerOperations(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
         for (int i = 0; i < expandedQuadruples.size() - 1; i++) {
             ExpandedQuadruple expandedQuadruple = expandedQuadruples.get(i);
-            ExpandedQuadruple nextQuadruple = expandedQuadruples.get(i + 1);
             if (expandedQuadruple.getLevel() != 0) {
-                selectCorrectOperation(expandedQuadruple, nextQuadruple, source);
+                selectCorrectOperation(expandedQuadruple, source);
             }
         }
     }
 
-    private void selectCorrectOperation(ExpandedQuadruple expandedQuadruple, ExpandedQuadruple nextQuadruple, List<ThreeAddressCode> source) {
-        double newValue = 0;
+    private void selectCorrectOperation(ExpandedQuadruple expandedQuadruple, List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+//        double newValue = 0;
+        List<ThreeAddressCode> source = new ArrayList<>();
+        expandedQuadruple.setLevel(0);
+        source.add(new ThreeAddressCode("T1", Arrays.asList(expandedQuadruple)));
+
         if (expandedQuadruple.isPlusOrMinus()) {
-            newValue = this.sumTerms(source.get(0), expandedQuadruple.getResult(), false);
+            PolynomialRuleSumNumbers sum = new PolynomialRuleSumNumbers();
+            List<Step> parenthesesSum = sum.handle(source);
+
+            String result = parenthesesSum.get(0).getSource().get(0).getLeft();
+
+            ExpandedQuadruple aux = sources.get(0).findQuadrupleByArgument1(expandedQuadruple.getResult());
+
+            if (aux == null) {
+                aux = sources.get(0).findQuadrupleByArgument2(expandedQuadruple.getResult());
+                aux.setArgument2(result);
+            } else {
+                aux.setArgument1(result);
+            }
+
+            source.get(0).setExpandedQuadruples(Arrays.asList(aux));
+
+            parenthesesSum.get(parenthesesSum.size() - 1).setSource(source);
+            parenthesesSum.get(parenthesesSum.size() - 1).setLatexExpression(source.get(0).toLaTeXNotation().trim());
+            parenthesesSum.get(parenthesesSum.size() - 1).setMathExpression(source.get(0).toMathNotation().trim());
+            steps.add(parenthesesSum.get(parenthesesSum.size() - 1));
         } else if (expandedQuadruple.isTimes()) {
-            newValue = this.multiply(source, expandedQuadruple);
+
+
         } else if (expandedQuadruple.isPotentiation()) {
-            newValue = this.power(source, expandedQuadruple);
-        } else if (expandedQuadruple.isNegative()) {
+
 
         }
 
-        if (nextQuadruple.getArgument1().equals(expandedQuadruple.getResult())) {
-            nextQuadruple.setArgument1(String.valueOf(newValue));
-        }
 
-        if (nextQuadruple.getArgument2().equals(expandedQuadruple.getResult())) {
-            nextQuadruple.setArgument2(String.valueOf(newValue));
-        }
+//
+//
+//        if (nextQuadruple.getArgument1().equals(expandedQuadruple.getResult())) {
+//            nextQuadruple.setArgument1(String.valueOf(newValue));
+//        }
+//
+//        if (nextQuadruple.getArgument2().equals(expandedQuadruple.getResult())) {
+//            nextQuadruple.setArgument2(String.valueOf(newValue));
+//        }
 
     }
 
