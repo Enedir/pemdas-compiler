@@ -202,4 +202,35 @@ public class PolynomialRuleParenthesesOperationsTest {
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), stepSixExplicationExpected);
     }
+
+    @Test()
+    public void multiply_operation_in_double_parentheses_scenery_one_with_success() {
+        //Arrange
+        String expression = "(2 * 7 * (y - 2))";
+
+
+        String stepTwoValueExpected = "(2 * 7 * (3 - 2))";
+        String stepThreeValueExpected = "(2 * 7 * 1)";
+        String lastStepValueExpected = "14";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
+        assertEquals(stepThree.getMathExpression(), stepThreeValueExpected);
+        assertEquals(stepThree.getReason(), stepFiveExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), stepFourExplicationExpected);
+    }
 }

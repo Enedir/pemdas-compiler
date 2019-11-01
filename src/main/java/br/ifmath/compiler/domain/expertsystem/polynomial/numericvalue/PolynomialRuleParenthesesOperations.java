@@ -9,8 +9,6 @@ import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class PolynomialRuleParenthesesOperations implements IRule {
@@ -48,47 +46,70 @@ public class PolynomialRuleParenthesesOperations implements IRule {
     }
 
     private int selectCorrectOperation(ExpandedQuadruple expandedQuadruple, List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+        IRule operation = this.associateRule(expandedQuadruple);
 
-        IRule operation;
-        if (expandedQuadruple.isPotentiation()) {
-            operation = new PolynomialRuleNumbersPotentiation();
-        } else if (expandedQuadruple.isTimes()) {
-            operation = new PolynomialRuleMultiplyNumbers();
-        } else {
-            operation = new PolynomialRuleSumNumbers();
-        }
-
-        List<ThreeAddressCode> operationsSource = new ArrayList<>();
         List<ExpandedQuadruple> sameLevelQuadruples = getQuadruplesInSameLevel(expandedQuadruple, sources);
         String lastQuadResult = sameLevelQuadruples.get(sameLevelQuadruples.size() - 1).getResult();
+
+        List<ThreeAddressCode> operationsSource = new ArrayList<>();
         operationsSource.add(new ThreeAddressCode(lastQuadResult, sameLevelQuadruples));
         List<Step> parenthesesOperation = operation.handle(operationsSource);
 
-        //Verificar se esse if está certo
-        String result;
-        if (StringUtil.match(parenthesesOperation.get(0).getSource().get(0).getLeft(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            result = parenthesesOperation.get(0).getSource().get(0).getExpandedQuadruples().get(0).getArgument1();
-        } else {
-            result = parenthesesOperation.get(0).getMathExpression();
-        }
+
+        String result = this.getFinalResult(parenthesesOperation);
 
         ExpandedQuadruple aux = sources.get(0).findQuadrupleByArgument1(lastQuadResult);
 
         if (aux == null) {
+
             aux = sources.get(0).findQuadrupleByArgument2(lastQuadResult);
-            aux.setArgument2(result);
+
+            if (aux == null) {
+                aux = sources.get(0).findQuadrupleByResult(lastQuadResult);
+            } else {
+                aux.setArgument2(result);
+            }
+
         } else {
             aux.setArgument1(result);
         }
+
+
         sources.get(0).getExpandedQuadruples().removeAll(sameLevelQuadruples);
-        Step lastStep = parenthesesOperation.get(parenthesesOperation.size() - 1);
+
+        if (sources.get(0).getExpandedQuadruples().isEmpty()) {
+            sources.get(0).getExpandedQuadruples().add(aux);
+        }
+
+        this.addStep(parenthesesOperation.get(parenthesesOperation.size() - 1), sources);
+
+        return sameLevelQuadruples.size() - 1;
+    }
+
+    private IRule associateRule(ExpandedQuadruple expandedQuadruple) {
+        if (expandedQuadruple.isPotentiation()) {
+            return new PolynomialRuleNumbersPotentiation();
+        } else if (expandedQuadruple.isTimes()) {
+            return new PolynomialRuleMultiplyNumbers();
+        } else {
+            return new PolynomialRuleSumNumbers();
+        }
+    }
+
+    private String getFinalResult(List<Step> parenthesesOperation) {
+        if (StringUtil.match(parenthesesOperation.get(0).getSource().get(0).getLeft(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            List<ExpandedQuadruple> innerQuadruples = parenthesesOperation.get(0).getSource().get(0).getExpandedQuadruples();
+            return innerQuadruples.get(innerQuadruples.size() - 1).getArgument1();
+        }
+        return parenthesesOperation.get(0).getMathExpression();
+    }
+
+    private void addStep(Step lastStep, List<ThreeAddressCode> sources) {
         lastStep.setSource(sources);
         lastStep.setLatexExpression(sources.get(0).toLaTeXNotation().trim());
         lastStep.setMathExpression(sources.get(0).toMathNotation().trim());
         lastStep.setReason(lastStep.getReason().replace(".", " dentro dos parênteses."));
         steps.add(lastStep);
-        //retorna o passo do for que esse metodo esta, para avançar caso pegue mais de uma quadrupla por vez
-        return sameLevelQuadruples.size() - 1;
     }
 
     private List<ExpandedQuadruple> getQuadruplesInSameLevel(ExpandedQuadruple expandedQuadruple, List<ThreeAddressCode> sources) {
