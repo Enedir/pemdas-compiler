@@ -30,7 +30,7 @@ public class PolynomialRuleNumbersPotentiationTest {
         compiler = new Compiler();
         expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
-        stepThreeExplicationExpected = "Elevando os valores a suas potências.";
+        stepThreeExplicationExpected = "Resolvendo as suas  potências.";
         stepFourExplicationExpected = "Multiplicando os valores.";
         finalResultExplicationExpected = "Somando os valores.";
 

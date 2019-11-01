@@ -115,11 +115,8 @@ public class PolynomialRuleParenthesesOperations implements IRule {
     private List<ExpandedQuadruple> getQuadruplesInSameLevel(ExpandedQuadruple expandedQuadruple, List<ThreeAddressCode> sources) {
         List<ExpandedQuadruple> expandedQuadruples = new ArrayList<>();
         for (ExpandedQuadruple sourceQuadruple : sources.get(0).getExpandedQuadruples()) {
-            if (sourceQuadruple.getLevel() == expandedQuadruple.getLevel() && (sourceQuadruple.getOperator().equals(expandedQuadruple.getOperator()) || (sourceQuadruple.isPlusOrMinus() && expandedQuadruple.isPlusOrMinus()))) {
+            if ((sourceQuadruple.getLevel() == expandedQuadruple.getLevel()) && (sourceQuadruple.getOperator().equals(expandedQuadruple.getOperator()) || (sourceQuadruple.isPlusOrMinus() && expandedQuadruple.isPlusOrMinus()))) {
                 expandedQuadruples.add(sourceQuadruple);
-            } else {
-                expandedQuadruples.forEach(lowQuadruple -> lowQuadruple.setLevel(lowQuadruple.getLevel() - 1));
-                return expandedQuadruples;
             }
         }
         expandedQuadruples.forEach(expandedQuadruple1 -> expandedQuadruple1.setLevel(expandedQuadruple1.getLevel() - 1));
