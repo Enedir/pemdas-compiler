@@ -69,7 +69,7 @@ public class PolynomialRuleMultiplyNumbersTest {
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = "8 * 1 * 3 * 4";
+        String stepTwoValueExpected = "8 . 1 . 3 . 4";
         String lastStepValueExpected = "96";
 
         // Act
@@ -98,7 +98,7 @@ public class PolynomialRuleMultiplyNumbersTest {
         int positionTwo = 1;
         int positionThree = 2;
 
-        String stepTwoValueExpected = "2 + 8 * 2 + 1 * 3 * 4 * 2 - 5";
+        String stepTwoValueExpected = "2 + 8 . 2 + 1 . 3 . 4 . 2 - 5";
         String stepThreeValueExpected = "2 + 16 + 24 - 5";
         String lastStepValueExpected = "37";
 

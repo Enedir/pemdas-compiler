@@ -53,7 +53,7 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         ThreeAddressCode step = new ThreeAddressCode(left, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Substituindo os valores nas variáveis correspondentes."));
+        steps.add(new Step(codes, step.toLaTeXNotation().replace("*", ".").trim(), step.toMathNotation().replace("*", ".").trim(), "Substituindo os valores nas variáveis correspondentes."));
 
         return steps;
     }

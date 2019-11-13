@@ -54,8 +54,8 @@ public class PolynomialRuleParenthesesOperationsTest {
         //Arrange
         String expression = "y * (8 - 2)";
 
-        String stepTwoValueExpected = "3 * (8 - 2)";
-        String stepThreeValueExpected = "3 * 6";
+        String stepTwoValueExpected = "3 . (8 - 2)";
+        String stepThreeValueExpected = "3 . 6";
         String lastStepValueExpected = "18";
 
         // Act
@@ -85,10 +85,10 @@ public class PolynomialRuleParenthesesOperationsTest {
         String expression = "y * (8 - (2 * (3 ^ 2)))";
 
 
-        String stepTwoValueExpected = "3 * (8 - (2 * (3 ^ 2)))";
-        String stepThreeValueExpected = "3 * (8 - (2 * 9))";
-        String stepFourValueExpected = "3 * (8 - 18)";
-        String stepFiveValueExpected = "3 * -10";
+        String stepTwoValueExpected = "3 . (8 - (2 . (3 ^ 2)))";
+        String stepThreeValueExpected = "3 . (8 - (2 . 9))";
+        String stepFourValueExpected = "3 . (8 - 18)";
+        String stepFiveValueExpected = "3 . -10";
         String lastStepValueExpected = "-30";
 
         // Act
@@ -158,13 +158,13 @@ public class PolynomialRuleParenthesesOperationsTest {
         //Arrange
         String expression = "(y + 3 * (2 - 7 + (a - 770))) + (z * (6 - (2 ^ 2)))";
 
-        String stepTwoValueExpected = "(3 + 3 * (2 - 7 + (777 - 770))) + (4 * (6 - (2 ^ 2)))";
-        String stepThreeValueExpected = "(3 + 3 * (2 - 7 + 7)) + (4 * (6 - (2 ^ 2)))";
-        String stepFourValueExpected = "(3 + 3 * 2) + (4 * (6 - (2 ^ 2)))";
-        String stepFiveValueExpected = "(3 + 6) + (4 * (6 - (2 ^ 2)))";
-        String stepSixValueExpected = "9 + (4 * (6 - (2 ^ 2)))";
-        String stepSevenValueExpected = "9 + (4 * (6 - 4))";
-        String stepEightValueExpected = "9 + (4 * 2)";
+        String stepTwoValueExpected = "(3 + 3 . (2 - 7 + (777 - 770))) + (4 . (6 - (2 ^ 2)))";
+        String stepThreeValueExpected = "(3 + 3 . (2 - 7 + 7)) + (4 . (6 - (2 ^ 2)))";
+        String stepFourValueExpected = "(3 + 3 . 2) + (4 . (6 - (2 ^ 2)))";
+        String stepFiveValueExpected = "(3 + 6) + (4 . (6 - (2 ^ 2)))";
+        String stepSixValueExpected = "9 + (4 . (6 - (2 ^ 2)))";
+        String stepSevenValueExpected = "9 + (4 . (6 - 4))";
+        String stepEightValueExpected = "9 + (4 . 2)";
         String stepNineValueExpected = "9 + 8";
         String lastStepValueExpected = "17";
 
@@ -213,8 +213,8 @@ public class PolynomialRuleParenthesesOperationsTest {
         String expression = "(2 * 7 * (y - 2))";
 
 
-        String stepTwoValueExpected = "(2 * 7 * (3 - 2))";
-        String stepThreeValueExpected = "(2 * 7 * 1)";
+        String stepTwoValueExpected = "(2 . 7 . (3 - 2))";
+        String stepThreeValueExpected = "(2 . 7 . 1)";
         String lastStepValueExpected = "14";
 
         // Act
@@ -244,10 +244,10 @@ public class PolynomialRuleParenthesesOperationsTest {
         String expression = "3 * x^8 + 2 * x + 2 * (5 + 7 * x)";
 
 
-        String stepTwoValueExpected = "3 * 2^8 + 2 * 2 + 2 * (5 + 7 * 2)";
-        String stepThreeValueExpected = "3 * 2^8 + 2 * 2 + 2 * (5 + 14)";
-        String stepFourValueExpected = "3 * 2^8 + 2 * 2 + 2 * 19";
-        String stepFiveValueExpected = "3 * 256 + 2 * 2 + 2 * 19";
+        String stepTwoValueExpected = "3 . 2^8 + 2 . 2 + 2 . (5 + 7 . 2)";
+        String stepThreeValueExpected = "3 . 2^8 + 2 . 2 + 2 . (5 + 14)";
+        String stepFourValueExpected = "3 . 2^8 + 2 . 2 + 2 . 19";
+        String stepFiveValueExpected = "3 . 256 + 2 . 2 + 2 . 19";
         String stepSixValueExpected = "768 + 4 + 38";
         String lastStepValueExpected = "810";
 

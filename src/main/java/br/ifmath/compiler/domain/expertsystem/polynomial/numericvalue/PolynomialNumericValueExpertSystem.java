@@ -39,7 +39,7 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
 
         AnswerPolynomialNumericValue answer = new AnswerPolynomialNumericValue(steps);
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().trim(), sources.get(0).toMathNotation().trim(), "Equação inicial."));
+        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().replace("*", ".").trim(), sources.get(0).toMathNotation().replace("*", ".").trim(), "Equação inicial."));
 
         validateExpressions(sources);
         if (substituteVariable.match(sources)) {
