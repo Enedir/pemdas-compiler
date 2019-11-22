@@ -23,24 +23,21 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialAddAndSubExpertSystem();
-        stepTwoResultExpected = "Substituindo os valores nas variáveis correspondentes.";
-        finalResultExplicationExpected = "Somando os valores.";
+        finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
     }
 
     @Test()
-    public void groupTerms() {
+    public void group_simple_terms() {
         //Arrange
-        String leftExpression = "x + 7";
-        String rightExpression = "x + 5";
+        String expression = "x + 7 + x + 5";
 
-        String stepTwoValueExpected = "3 + 3";
-        String lastStepValueExpected = "6";
+        String lastStepValueExpected = "2x + 12";
 
         // Act)
         IAnswer answer = null;
         try {
-            // answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -49,10 +46,56 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
-        assertEquals(stepTwo.getReason(), stepTwoResultExpected);
-        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
-        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
+
+    @Test()
+    public void group_numbers() {
+        //Arrange
+        String expression = "7 + 7 + 18 - 18";
+
+        String lastStepValueExpected = "14";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void group_variables() {
+        //Arrange
+        String expression = "x  + x + z + x + y";
+
+        String lastStepValueExpected = "3x + y + z";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
+
 
 }

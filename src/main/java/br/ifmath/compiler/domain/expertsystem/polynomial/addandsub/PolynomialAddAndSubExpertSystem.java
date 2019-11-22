@@ -36,11 +36,11 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
 
-        validateExpressions(sources);
-        if (shiftSign.match(sources)) {
-            steps.addAll(shiftSign.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
+//        validateExpressions(sources);
+//        if (shiftSign.match(sources)) {
+//            steps.addAll(shiftSign.handle(sources));
+//            sources = steps.get(steps.size() - 1).getSource();
+//        }
 
 
         validateExpressions(sources);

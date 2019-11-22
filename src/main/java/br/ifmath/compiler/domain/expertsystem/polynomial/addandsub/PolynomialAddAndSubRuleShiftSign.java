@@ -21,6 +21,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
 
     @Override
     public boolean match(List<ThreeAddressCode> source) {
+
         return isThereOnlyPlusAndMinus(source.get(0).getExpandedQuadruples()) &&
                 (isThereInnerOperation(source.get(0), source.get(0).getLeft(), false, 0, false)
                         || isThereInnerOperation(source.get(0), source.get(0).getRight(), false, 0, false));

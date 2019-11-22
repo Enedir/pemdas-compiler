@@ -36,19 +36,19 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
         double leftIndependentTermValue = sumTerms(sources.get(0), sources.get(0).getLeft(), false, false);
         double leftVariableValue = sumTerms(sources.get(0), sources.get(0).getLeft(), false, true);
 
-        double rightIndependentTermValue = sumTerms(sources.get(0), sources.get(0).getRight(), false, false);
-        double rightVariableValue = sumTerms(sources.get(0), sources.get(0).getRight(), false, true);
+        //double rightIndependentTermValue = sumTerms(sources.get(0), sources.get(0).getRight(), false, false);
+        //double rightVariableValue = sumTerms(sources.get(0), sources.get(0).getRight(), false, true);
 
         String leftVariable = findVariable(sources.get(0), sources.get(0).getLeft());
-        String rightVariable = findVariable(sources.get(0), sources.get(0).getRight());
+        //String rightVariable = findVariable(sources.get(0), sources.get(0).getRight());
 
         String left = generateParameter(leftVariableValue, leftIndependentTermValue, leftVariable, 0);
-        String right = generateParameter(rightVariableValue, rightIndependentTermValue, rightVariable, 1);
+        //String right = generateParameter(rightVariableValue, rightIndependentTermValue, rightVariable, 1);
 
-        ThreeAddressCode step = new ThreeAddressCode(left, sources.get(0).getComparison(), right, expandedQuadruples);
+        ThreeAddressCode step = new ThreeAddressCode(left, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation(), step.toMathNotation(), "Soma dos termos semelhantes do mesmo lado da igualdade."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Soma dos termos semelhantes."));
 
         return steps;
     }
@@ -192,6 +192,26 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
                 variableAmount++;
         }
 
-        return (variableAmount > 1 && numberAmount > 0) || (numberAmount > 1 && variableAmount > 0);
+        return (variableAmount > 1 || numberAmount > 1);
+    }
+
+
+    private void sumVariables(List<ThreeAddressCode> sources, String variable) {
+        List<ExpandedQuadruple> expandedQuadruple = sources.get(0).getExpandedQuadruples();
+        for (int i = 0; i < expandedQuadruple.size()-1; i++) {
+            String arg;
+            arg = expandedQuadruple.get(i).getArgument1();
+            if (!arg.equals(variable)) {
+                arg = expandedQuadruple.get(i).getArgument2();
+                if (arg.equals(variable)){
+                    expandedQuadruple.get(i).setArgument2("");
+                }
+            }else{
+                expandedQuadruple.get(i).setArgument1("");
+            }
+        }
+        String aux;
+    //TODO percorrer novamente as quadruplas para realocar as variaveis que estao sozinhas
+
     }
 }
