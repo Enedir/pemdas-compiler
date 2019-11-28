@@ -96,6 +96,29 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
+    @Test()
+    public void test() {
+        //Arrange
+        String expression = "(x  + x + z + x + y) - [7 + 7 + 18 * x - 18]";
+
+        String lastStepValueExpected = "3x + y + z";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
 
 
 }

@@ -117,6 +117,22 @@ public class ThreeAddressCode {
         return null;
     }
 
+    public String findNonEmptyArgs(String result){
+        ExpandedQuadruple expandedQuadruple = this.findQuadrupleByResult(result);
+
+        if (expandedQuadruple.getArgument1().isEmpty() && !(expandedQuadruple.getArgument2().isEmpty())){
+            return expandedQuadruple.getArgument2();
+        }
+        if (expandedQuadruple.getArgument2().isEmpty() && !(expandedQuadruple.getArgument1().isEmpty())){
+            return expandedQuadruple.getArgument1();
+        }
+        if (!(expandedQuadruple.getArgument1().isEmpty() && expandedQuadruple.getArgument2().isEmpty())){
+            return result;
+        }
+        return "";
+
+    }
+
     public List<ExpandedQuadruple> getDerivatedOperationsFromParent(String param) {
         ExpandedQuadruple parent = findQuadrupleByResult(param);
 

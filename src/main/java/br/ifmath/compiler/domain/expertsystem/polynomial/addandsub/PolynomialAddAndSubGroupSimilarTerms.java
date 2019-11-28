@@ -5,6 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -15,6 +16,7 @@ import java.util.List;
 public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
 
     private final List<ExpandedQuadruple> expandedQuadruples;
+    private List<NumericValueVariable> termsAndValuesList = new ArrayList<>();
 
     public PolynomialAddAndSubGroupSimilarTerms() {
         this.expandedQuadruples = new ArrayList<>();
@@ -30,12 +32,17 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
     @Override
     public List<Step> handle(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
         expandedQuadruples.clear();
+        expandedQuadruples.addAll(sources.get(0).getExpandedQuadruples());
 
         List<Step> steps = new ArrayList<>();
+
+        groupVariables(sources.get(0),sources.get(0).getLeft(),false);
 
         double leftIndependentTermValue = sumTerms(sources.get(0), sources.get(0).getLeft(), false, false);
         double leftVariableValue = sumTerms(sources.get(0), sources.get(0).getLeft(), false, true);
 
+        //TODO Testar enumerate
+        enumerateVariables(sources,termsAndValuesList);
         //double rightIndependentTermValue = sumTerms(sources.get(0), sources.get(0).getRight(), false, false);
         //double rightVariableValue = sumTerms(sources.get(0), sources.get(0).getRight(), false, true);
 
@@ -52,6 +59,7 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
 
         return steps;
     }
+
 
     private String generateParameter(double valueVariable, double valueTermIndependent, String variable, int position) {
         String parameter = "";
@@ -151,6 +159,52 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
 
         return sum;
     }
+    private void groupVariables(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
+
+        //TODO vericicaoes para valores numericos nao serem adicionados a lista da classe criada
+        if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
+
+            if (expandedQuadruple.isNegative()) {
+                groupVariables(threeAddressCode, expandedQuadruple.getArgument1(), false);
+            } else {
+                groupVariables(threeAddressCode, expandedQuadruple.getArgument1(), lastOperationIsMinus);
+                groupVariables(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus());
+            }
+        } else {
+            if (StringUtil.isVariable(param)) {
+                String aux = StringUtil.removeNonNumericChars(param);
+                int index = 0;
+                int cont = 0;
+                if (termsAndValuesList.isEmpty()) {
+                    this.termsAndValuesList.add(new NumericValueVariable(param, 0));
+                } else {
+                    for (int i = 0; i < termsAndValuesList.size(); i++) {
+                        if (!termsAndValuesList.get(i).getLabel().equals(param)) {
+                            cont++;
+                            if (cont == termsAndValuesList.size()) {
+                                this.termsAndValuesList.add(new NumericValueVariable(param, 0));
+                            }
+                        } else {
+                            index = i;
+                        }
+                    }
+                }
+                if (StringUtil.isEmpty(aux)) {
+                    if (lastOperationIsMinus)
+                        this.termsAndValuesList.get(index).setValue(this.termsAndValuesList.get(index).getValue() - 1);
+                    else
+                        this.termsAndValuesList.get(index).setValue(this.termsAndValuesList.get(index).getValue() + 1);
+                } else {
+                    if (lastOperationIsMinus)
+                        Double.parseDouble(aux.replace(",", "."));
+                    else
+                        Double.parseDouble(aux.replace(",", "."));
+                }
+
+            }
+        }
+    }
 
 
     private String findVariable(ThreeAddressCode threeAddressCode, String param) {
@@ -197,21 +251,55 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
 
 
     private void sumVariables(List<ThreeAddressCode> sources, String variable) {
+
+        List<ExpandedQuadruple> expandedQuadruples = sources.get(0).getExpandedQuadruples();
+        this.clearArgumentsOnQuadruples(expandedQuadruples, variable);
+        //TODO percorrer novamente as quadruplas para realocar as variaveis que estao sozinhas
+
+        List<ExpandedQuadruple> iterableList = new ArrayList<>();
+        iterableList.addAll(expandedQuadruples);
+
+        for (ExpandedQuadruple expandedQuadruple : iterableList) {
+            String nextIteration = sources.get(0).findNonEmptyArgs(expandedQuadruple.getResult());
+
+            ExpandedQuadruple quadrupleWithVariable = sources.get(0).findQuadrupleByArgument(expandedQuadruple.getResult());
+
+            if (quadrupleWithVariable.getArgument1().equals(expandedQuadruple.getResult())) {
+                quadrupleWithVariable.setArgument1(nextIteration);
+            }
+            if (quadrupleWithVariable.getArgument2().equals(expandedQuadruple.getResult())) {
+                quadrupleWithVariable.setArgument2(nextIteration);
+            }
+
+            if(nextIteration.isEmpty()){
+                expandedQuadruples.remove(expandedQuadruple);
+            }
+        }
+
+
+    }
+
+    private void enumerateVariables(List<ThreeAddressCode> sources, List<NumericValueVariable> termsAndValuesList) {
         List<ExpandedQuadruple> expandedQuadruple = sources.get(0).getExpandedQuadruples();
-        for (int i = 0; i < expandedQuadruple.size()-1; i++) {
+        for (NumericValueVariable nvv : termsAndValuesList) {
+            this.clearArgumentsOnQuadruples(expandedQuadruple,nvv.getLabel());
+        }
+    }
+
+
+
+    private void clearArgumentsOnQuadruples(List<ExpandedQuadruple> expandedQuadruple, String variable) {
+        for (int i = 0; i < expandedQuadruple.size() - 1; i++) {
             String arg;
             arg = expandedQuadruple.get(i).getArgument1();
             if (!arg.equals(variable)) {
                 arg = expandedQuadruple.get(i).getArgument2();
-                if (arg.equals(variable)){
+                if (arg.equals(variable)) {
                     expandedQuadruple.get(i).setArgument2("");
                 }
-            }else{
+            } else {
                 expandedQuadruple.get(i).setArgument1("");
             }
         }
-        String aux;
-    //TODO percorrer novamente as quadruplas para realocar as variaveis que estao sozinhas
-
     }
 }

@@ -20,4 +20,6 @@ public abstract class ValueVariable {
     public void setValue(Integer value) {
         this.value = value;
     }
+
+
 }
