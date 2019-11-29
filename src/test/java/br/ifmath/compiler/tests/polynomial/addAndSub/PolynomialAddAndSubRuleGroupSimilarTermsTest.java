@@ -30,9 +30,9 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     @Test()
     public void group_simple_terms() {
         //Arrange
-        String expression = "x + 7 + x + 5";
+        String expression = "x + 2x + 7 - 8y - 5 + 12x + 2y + z";
 
-        String lastStepValueExpected = "2x + 12";
+        String lastStepValueExpected = "3x + 12";
 
         // Act)
         IAnswer answer = null;
@@ -46,7 +46,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
@@ -69,7 +69,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
@@ -92,7 +92,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
@@ -115,10 +115,9 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(lastStepValueExpected,finalStep.getMathExpression());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
-
 
 
 }
