@@ -10,6 +10,7 @@ import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
@@ -37,23 +38,37 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
 
         int numbersSum = sumTerms(sources.get(0), sources.get(0).getLeft(), false, termsAndValuesList);
 
-        replaceExpandedQuadruples(sources.get(0), termsAndValuesList, numbersSum);
-        // List<ExpandedQuadruple> newExpandedQuadruples = generateNewExpandedQuadruples(termsAndValuesList, numbersSum);
+        String nonVariableResult = "T1";
+        ThreeAddressCode step;
+        if (termsAndValuesList.isEmpty()) {
+            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("", String.valueOf(numbersSum), "", nonVariableResult, 0, 0);
+            step = new ThreeAddressCode(nonVariableResult, Arrays.asList(newQuadruple));
+        } else {
+            replaceExpandedQuadruples(sources.get(0), termsAndValuesList, numbersSum);
+            clearUnusedQuadruple(sources.get(0));
+            step = new ThreeAddressCode(sources.get(0).getLeft(), sources.get(0).getExpandedQuadruples());
+        }
 
-        //   ThreeAddressCode step = new ThreeAddressCode(left, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
-        //  codes.add(step);
-        //  steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Soma dos termos semelhantes."));
+        codes.add(step);
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Soma dos termos semelhantes."));
 
         return steps;
     }
 
+    private void clearUnusedQuadruple(ThreeAddressCode source) {
+        int size = expandedQuadruples.size() - 1;
+        for (int i = 1; i <= size; i++) {
+            source.getExpandedQuadruples().remove(1);
+        }
+    }
+
     private void replaceExpandedQuadruples(ThreeAddressCode source, List<NumericValueVariable> termsAndValuesList, int numbersSum) {
-        //FIXME Arrumar iteração do operador da quadrupla
         ExpandedQuadruple iterationQuadruple = null;
-        for (int i = 0; i <= termsAndValuesList.size() - 1; i++) {
+        int i = 0;
+        while (!termsAndValuesList.isEmpty()) {
             iterationQuadruple = (i == 0 || i == 1) ? expandedQuadruples.get(0) : source.findQuadrupleByResult(iterationQuadruple.getArgument2());
-            NumericValueVariable iterationNVV = termsAndValuesList.get(i);
+            NumericValueVariable iterationNVV = termsAndValuesList.get(0);
             if (iterationNVV.getValue() != 0) {
                 String nvvValue = String.valueOf(Math.abs(iterationNVV.getValue()));
                 if (nvvValue.equals("1"))
@@ -74,23 +89,32 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
                             iterationQuadruple.setArgument2(newQuadruple.getResult());
                         }
                     }
-                }
-                if (i % 2 == 0 && i == 0) {
-                    iterationQuadruple.setArgument1(nvvValue + iterationNVV.getLabel());
                 } else {
-                    if (numbersSum == 0) {
-                        iterationQuadruple.setOperator("+");
-                        iterationQuadruple.setArgument2(nvvValue + iterationNVV.getLabel());
+                    if (i % 2 == 0 && i == 0) {
+                        iterationQuadruple.setArgument1(nvvValue + iterationNVV.getLabel());
                     } else {
-                        iterationQuadruple.setOperator("+");
-                        ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", "T" + (source.getExpandedQuadruples().size() + 1), 0, 0);
-                        source.getExpandedQuadruples().add(newQuadruple);
-                        iterationQuadruple.setArgument2(newQuadruple.getResult());
+                        if (numbersSum == 0) {
+                            if (termsAndValuesList.size() > 1) {
+                                iterationQuadruple.setOperator("+");
+                                ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", "T" + (source.getExpandedQuadruples().size() + 1), 0, 0);
+                                source.getExpandedQuadruples().add(newQuadruple);
+                                iterationQuadruple.setArgument2(newQuadruple.getResult());
+                            } else {
+                                iterationQuadruple.setOperator("+");
+                                iterationQuadruple.setArgument2(nvvValue + iterationNVV.getLabel());
+                            }
+                        } else {
+                            iterationQuadruple.setOperator("+");
+                            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", "T" + (source.getExpandedQuadruples().size() + 1), 0, 0);
+                            source.getExpandedQuadruples().add(newQuadruple);
+                            iterationQuadruple.setArgument2(newQuadruple.getResult());
+                        }
                     }
                 }
             }
 
-
+            termsAndValuesList.remove(0);
+            i++;
         }
 
         if (numbersSum != 0) {

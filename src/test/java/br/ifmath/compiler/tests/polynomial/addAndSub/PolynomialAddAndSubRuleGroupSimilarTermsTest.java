@@ -28,11 +28,11 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     }
 
     @Test()
-    public void group_simple_terms() {
+    public void group_terms_with_three_variables_test() {
         //Arrange
-        String expression = "x + 2x + 7 - 8y - 5 + 12x + 2y + z";
+        String expression = "x + 2x + 7 - 8y - 5 + 12x + 2y - z";
 
-        String lastStepValueExpected = "3x + 12";
+        String lastStepValueExpected = "15x - 6y - z + 2";
 
         // Act)
         IAnswer answer = null;
@@ -51,7 +51,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     }
 
     @Test()
-    public void group_numbers() {
+    public void group_only_numbers_test() {
         //Arrange
         String expression = "7 + 7 + 18 - 18";
 
@@ -74,11 +74,11 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     }
 
     @Test()
-    public void group_variables() {
+    public void group_only_variables_test() {
         //Arrange
-        String expression = "x  + x + z + x + y";
+        String expression = "x + x + z + x + y";
 
-        String lastStepValueExpected = "3x + y + z";
+        String lastStepValueExpected = "3x + z + y";
 
         // Act)
         IAnswer answer = null;
@@ -97,11 +97,11 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     }
 
     @Test()
-    public void test() {
+    public void group_variables_and_numbers_test() {
         //Arrange
-        String expression = "(x  + x + z + x + y) - [7 + 7 + 18 * x - 18]";
+        String expression = "x + x + z + x + y - 7 + 7 + 18=x - 18";
 
-        String lastStepValueExpected = "3x + y + z";
+        String lastStepValueExpected = "21x + z + y - 18";
 
         // Act)
         IAnswer answer = null;
