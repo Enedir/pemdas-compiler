@@ -185,24 +185,6 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
     }
 
 
-    private String findVariable(ThreeAddressCode threeAddressCode, String param) {
-        String variable = null;
-        if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
-
-            variable = findVariable(threeAddressCode, expandedQuadruple.getArgument1());
-
-            if (StringUtil.isEmpty(variable)) {
-                variable = findVariable(threeAddressCode, expandedQuadruple.getArgument2());
-            }
-        } else if (StringUtil.isVariable(param)) {
-            variable = StringUtil.removeNumericChars(param);
-        }
-
-        return variable;
-    }
-
-
     private boolean isThereEquivalentTermsToJoin(List<ExpandedQuadruple> expandedQuadruples) {
         int variableAmount = 0;
         int numberAmount = 0;

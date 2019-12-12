@@ -28,15 +28,83 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     }
 
     @Test()
-    public void groupTerms() {
+    public void shift_sign_simple_numbers_scenery_one_with_success() {
         //Arrange
-        String expression = "(2 + (2x + 7)) - (4x - 7)";
-        String lastStepValueExpected = "2x + 7 - 4x + 7";
+        String expression = "(2 + 5) - (4 - 2)";
+        String lastStepValueExpected = "5";
 
-        // Act)
+        // Act
         IAnswer answer = null;
         try {
-             answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+    @Test()
+    public void shift_sign_simple_variables_scenery_one_with_success() {
+        //Arrange
+        //TODO Verificar que o 4 não trocou de sinal
+        String expression = "(2x + 5) - (-4y - (2y + 4))";
+        String lastStepValueExpected = "2x + 2y + 1";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+
+    @Test()
+    public void shift_sign_many_values_scenery_one_with_success() {
+        //Arrange
+        String expression = "(2x + 5) - (((4y + 3) - x) - (-2y + 4))";
+        String lastStepValueExpected = "3x - 2y - 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+    @Test()
+    public void shift_sign_numbers_and_variables_scenery_one_with_success() {
+        //Arrange
+        String expression = "(2 + 2x) - ((-4x + 2) - 7)";
+        String lastStepValueExpected = "6x + 7";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
