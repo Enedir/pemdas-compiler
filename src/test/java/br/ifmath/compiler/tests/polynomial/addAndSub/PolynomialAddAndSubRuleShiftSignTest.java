@@ -17,13 +17,13 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String finalResultExplicationExpected;
-    private String stepTwoResultExpected;
+    private String stepTwoExplicationExpected;
 
     @Before
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialAddAndSubExpertSystem();
-        finalResultExplicationExpected = "Trocando os sinais";
+        finalResultExplicationExpected = "Aplicação da regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.";
 
     }
 
@@ -31,7 +31,7 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     public void shift_sign_simple_numbers_scenery_one_with_success() {
         //Arrange
         String expression = "(2 + 5) - (4 - 2)";
-        String lastStepValueExpected = "5";
+        String lastStepValueExpected = "(2 + 5) - (4 + 2)";
 
         // Act
         IAnswer answer = null;
@@ -43,7 +43,6 @@ public class PolynomialAddAndSubRuleShiftSignTest {
 
         // Assert
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
 
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
@@ -52,9 +51,8 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     @Test()
     public void shift_sign_simple_variables_scenery_one_with_success() {
         //Arrange
-        //TODO Verificar que o 4 não trocou de sinal
         String expression = "(2x + 5) - (-4y - (2y + 4))";
-        String lastStepValueExpected = "2x + 2y + 1";
+        String lastStepValueExpected = "(2x + 5) - (4y + ( -2y - 4))";
 
         // Act
         IAnswer answer = null;
@@ -65,8 +63,8 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
 
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
