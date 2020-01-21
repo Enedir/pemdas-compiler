@@ -3,7 +3,6 @@ package br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue;
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PolynomialRuleSumNumbers implements IRule {
-    private List<ExpandedQuadruple> expandedQuadruples;
 
     @Override
     public boolean match(List<ThreeAddressCode> source) {
@@ -21,13 +19,13 @@ public class PolynomialRuleSumNumbers implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> sources) {
         List<Step> steps = new ArrayList<>();
 
         double result = sumTerms(sources.get(0), sources.get(0).getLeft(), false);
 
         String left;
-        /**
+        /*
          * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
          */
         if (result % 1 == 0)
@@ -35,7 +33,7 @@ public class PolynomialRuleSumNumbers implements IRule {
         else
             left = String.valueOf(result);
 
-        expandedQuadruples = sources.get(0).getExpandedQuadruples();
+        List<ExpandedQuadruple> expandedQuadruples = sources.get(0).getExpandedQuadruples();
 
         ThreeAddressCode step = new ThreeAddressCode(left, expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
@@ -57,9 +55,9 @@ public class PolynomialRuleSumNumbers implements IRule {
     private double sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus) {
         double sum = 0;
 
-        /**
-         * verifica se entre a operacao ha uma variavel temporaria, e abre a mesma, para poder obter os numeros contidos.
-         * caso seja a soma entre numeros, entrara no else.
+        /*
+          verifica se entre a operacao ha uma variavel temporaria, e abre a mesma, para poder obter os numeros contidos.
+          caso seja a soma entre numeros, entrara no else.
          */
 
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
@@ -72,8 +70,8 @@ public class PolynomialRuleSumNumbers implements IRule {
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus());
             }
         } else {
-            /**
-             * entra no if caso seja uma subtracao, e no else caso seja uma soma
+            /*
+              entra no if caso seja uma subtracao, e no else caso seja uma soma
              */
             if (lastOperationIsMinus)
                 sum -= Double.parseDouble(param.replace(",", "."));

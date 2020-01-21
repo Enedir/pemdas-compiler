@@ -3,15 +3,12 @@ package br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue;
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
-import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PolynomialRuleSubstituteVariables implements IRule {
@@ -32,14 +29,11 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
     @Override
     public boolean match(List<ThreeAddressCode> sources) {
-        /**
-         * pegando operacoes da direita pois nao havera sinal de igualdade. EX: x=3y^2
-         */
         return this.isThereVariablesToSubstitute(sources.get(0).getOperationsFromLeft());
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> sources) {
         expandedQuadruples.clear();
 
         List<Step> steps = new ArrayList<>();
@@ -93,8 +87,6 @@ public class PolynomialRuleSubstituteVariables implements IRule {
      * @param expandedQuadruple uma {@link ExpandedQuadruple} expecifica a ser analisada
      */
     private void replaceTemporaryVariables(ExpandedQuadruple expandedQuadruple) {
-
-        //FIXME: deve ser alterado quando forem utilizados valores reais do frontend
         if (!this.userInput.isEmpty()) {
 
             if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())

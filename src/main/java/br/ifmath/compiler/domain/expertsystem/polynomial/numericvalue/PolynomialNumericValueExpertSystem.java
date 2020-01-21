@@ -83,13 +83,13 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
     }
 
     @Override
-    public void validateExpressions(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public void validateExpressions(List<ThreeAddressCode> sources) {
         List<String> variables = new ArrayList<>();
         double coeficient = 0d;
         String variable;

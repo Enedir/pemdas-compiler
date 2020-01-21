@@ -3,13 +3,11 @@ package br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue;
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +21,7 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> sources) {
         List<Step> steps = new ArrayList<>();
         expandedQuadruples = new ArrayList<>();
 
@@ -79,12 +77,12 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
             if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
                 expandedQuadruples.remove(eq);
 
-                /**
+                /*
                  * Mascara para limitar as casas decimais em caso de potencia negativa.
                  */
                 double result = Math.pow(Double.parseDouble(a), Double.parseDouble(b));
                 result = NumberUtil.formatDouble(result);
-                /**
+                /*
                  * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
                  */
                 if (result % 1 == 0)
