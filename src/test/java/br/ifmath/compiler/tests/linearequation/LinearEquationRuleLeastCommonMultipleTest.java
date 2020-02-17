@@ -144,7 +144,7 @@ public class LinearEquationRuleLeastCommonMultipleTest {
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = "5 *  -(5x - 2) / 20 + 20 * 5 / 20 - 4 * 2x / 20 = 10 * x / 20 - 20 * 1 / 20 + 20 * ( -x) / 20 + 10 * 3x / 20";
+        String stepTwoValueExpected = "5 *  -(5x - 2) / 20 + 20 * 5 / 20 - 4 * 2x / 20 = 10 * x / 20 - 20 * 1 / 20 + 20 * (-x) / 20 + 10 * 3x / 20";
         String lastStepValueExpected = "x = 130 / 53";
 
         // Act
@@ -172,7 +172,7 @@ public class LinearEquationRuleLeastCommonMultipleTest {
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = " -35 * (5x - 2) / 140 + 140 * 5 / 140 - 28 * 2x / 140 = 70 * x / 140 - 140 * 1 / 140 + 140 * ( -x) / 140 + 10 * 3x / 140";
+        String stepTwoValueExpected = " -35 * (5x - 2) / 140 + 140 * 5 / 140 - 28 * 2x / 140 = 70 * x / 140 - 140 * 1 / 140 + 140 * (-x) / 140 + 10 * 3x / 140";
         String lastStepValueExpected = "x = 910 / 191";
 
         // Act
@@ -200,7 +200,7 @@ public class LinearEquationRuleLeastCommonMultipleTest {
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = " -35 * (5x - 2) / 140 + 140 * 5 / 140 - 28 * 2x / 140 = 70 * x / 140 - 140 * 1 / 140 + ( -140) * ( -x) / 140 + 10 * 3x / 140";
+        String stepTwoValueExpected = " -35 * (5x - 2) / 140 + 140 * 5 / 140 - 28 * 2x / 140 = 70 * x / 140 - 140 * 1 / 140 + (-140) * (-x) / 140 + 10 * 3x / 140";
         String lastStepValueExpected = "x = 910 / 471";
 
         // Act

@@ -61,7 +61,7 @@ public class LinearEquationRuleGeneralWithCoeficientInVariableTest {
         int positionTwo = 1;
         int positionFour = 3;
 
-        String stepTwoValueExpected = " -2x * ( -1) = 4 * ( -1)";
+        String stepTwoValueExpected = " -2x * (-1) = 4 * (-1)";
         String stepFourValueExpected = "x =  -4 / 2";
         String lastStepValueExpected = "x =  -2";
 

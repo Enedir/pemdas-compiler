@@ -117,16 +117,16 @@ public class ThreeAddressCode {
         return null;
     }
 
-    public String findNonEmptyArgs(String result){
+    public String findNonEmptyArgs(String result) {
         ExpandedQuadruple expandedQuadruple = this.findQuadrupleByResult(result);
 
-        if (expandedQuadruple.getArgument1().isEmpty() && !(expandedQuadruple.getArgument2().isEmpty())){
+        if (expandedQuadruple.getArgument1().isEmpty() && !(expandedQuadruple.getArgument2().isEmpty())) {
             return expandedQuadruple.getArgument2();
         }
-        if (expandedQuadruple.getArgument2().isEmpty() && !(expandedQuadruple.getArgument1().isEmpty())){
+        if (expandedQuadruple.getArgument2().isEmpty() && !(expandedQuadruple.getArgument1().isEmpty())) {
             return expandedQuadruple.getArgument1();
         }
-        if (!(expandedQuadruple.getArgument1().isEmpty() && expandedQuadruple.getArgument2().isEmpty())){
+        if (!(expandedQuadruple.getArgument1().isEmpty() && expandedQuadruple.getArgument2().isEmpty())) {
             return result;
         }
         return "";
@@ -236,7 +236,10 @@ public class ThreeAddressCode {
                 builder.append("(");
 
             if (operation.isNegative()) {
-                builder.append(" -");
+                if (builder.length() != 0 && (builder.charAt(builder.length() - 1) == '('))
+                    builder.append("-");
+                else
+                    builder.append(" -");
                 generateMathNotation(operation.getArgument1(), operation.getLevel(), builder);
             } else {
                 generateMathNotation(operation.getArgument1(), operation.getLevel(), builder);

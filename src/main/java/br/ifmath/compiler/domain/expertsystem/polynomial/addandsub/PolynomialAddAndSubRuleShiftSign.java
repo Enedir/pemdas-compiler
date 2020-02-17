@@ -13,11 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PolynomialAddAndSubRuleShiftSign implements IRule {
-    private List<ExpandedQuadruple> expandedQuadruples;
     private boolean isFirstIteration = true;
 
     public PolynomialAddAndSubRuleShiftSign() {
-        this.expandedQuadruples = new ArrayList<>();
+
     }
 
     @Override
@@ -32,8 +31,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
-        this.expandedQuadruples = new ArrayList<>();
+    public List<Step> handle(List<ThreeAddressCode> source) {
 
         ExpandedQuadruple rightPart = source.get(0).findQuadrupleByResult(source.get(0).findQuadrupleByResult(source.get(0).getLeft()).getArgument2());
         changeSign(rightPart, source.get(0), rightPart.getLevel());
@@ -55,10 +53,11 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
 
         shiftSigns(iterationQuadruple, source, iterationLeft, false);
 
-        isFirstIteration = false;
+        this.isFirstIteration = false;
 
         shiftSigns(iterationQuadruple, source, iterationRight, true);
 
+        source.findQuadrupleByResult(source.getLeft()).setOperator("+");
 
     }
 
@@ -79,11 +78,11 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             } else {
                 changeSign(expandedQuadruple, source, expandedQuadruple.getLevel());
             }
-        } else if (!isFirstIteration && !isArgument2) {
-            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("MINUS", iterationResult, "", "T" + (source.getExpandedQuadruples().size() + 1), 0, iterationQuadruple.getLevel());
+        } else if (!isArgument2) {
+            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("MINUS", iterationResult, null, "T" + (source.getExpandedQuadruples().size() + 1), 0, iterationQuadruple.getLevel());
             source.getExpandedQuadruples().add(newQuadruple);
             source.findQuadrupleByResult(iterationQuadruple.getResult()).setArgument1(newQuadruple.getResult());
-            isFirstIteration = false;
+            this.isFirstIteration = false;
         }
     }
 

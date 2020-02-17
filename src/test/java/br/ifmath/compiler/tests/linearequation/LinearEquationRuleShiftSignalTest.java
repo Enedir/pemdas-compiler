@@ -32,7 +32,7 @@ public class LinearEquationRuleShiftSignalTest {
 
         int positionTwo = 4;
 
-        String stepTwoValueExpected = " -2x * ( -1) = 0 * ( -1)";
+        String stepTwoValueExpected = " -2x * (-1) = 0 * (-1)";
         String lastStepValueExpected = "x = 0";
 
         // Act
@@ -60,7 +60,7 @@ public class LinearEquationRuleShiftSignalTest {
 
         int positionTwo = 2;
 
-        String stepTwoValueExpected = " -x * ( -1) = 8 * ( -1)";
+        String stepTwoValueExpected = " -x * (-1) = 8 * (-1)";
         String lastStepValueExpected = "x =  -8";
 
         // Act
