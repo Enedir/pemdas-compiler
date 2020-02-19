@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
+public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
 
     private final List<ExpandedQuadruple> expandedQuadruples;
 
-    public PolynomialAddAndSubGroupSimilarTerms() {
+    public PolynomialAddAndSubRuleGroupSimilarTerms() {
         this.expandedQuadruples = new ArrayList<>();
     }
 
@@ -46,6 +46,7 @@ public class PolynomialAddAndSubGroupSimilarTerms implements IRule {
         } else {
             replaceExpandedQuadruples(sources.get(0), termsAndValuesList, numbersSum);
             clearUnusedQuadruple(sources.get(0));
+            sources.get(0).setLeft(nonVariableResult);
             step = new ThreeAddressCode(sources.get(0).getLeft(), sources.get(0).getExpandedQuadruples());
         }
 

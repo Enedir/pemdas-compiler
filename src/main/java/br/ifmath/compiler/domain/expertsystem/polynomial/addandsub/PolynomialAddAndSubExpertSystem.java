@@ -7,7 +7,6 @@ import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
-import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -19,12 +18,15 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
     private static PolynomialAddAndSubRuleShiftSign shiftSign;
 
-    private static PolynomialAddAndSubGroupSimilarTerms groupTerms;
+    private static PolynomialAddAndSubRuleRemoveParenthesis removeParenthesis;
+
+    private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
 
 
     public PolynomialAddAndSubExpertSystem() {
         shiftSign = new PolynomialAddAndSubRuleShiftSign();
-        groupTerms = new PolynomialAddAndSubGroupSimilarTerms();
+        removeParenthesis = new PolynomialAddAndSubRuleRemoveParenthesis();
+        groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
     }
 
 
@@ -39,6 +41,12 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (removeParenthesis.match(sources)) {
+            steps.addAll(removeParenthesis.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 

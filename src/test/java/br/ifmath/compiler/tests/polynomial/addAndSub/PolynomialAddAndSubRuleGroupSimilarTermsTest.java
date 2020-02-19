@@ -18,11 +18,14 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     private IExpertSystem expertSystem;
     private String finalResultExplicationExpected;
     private String stepTwoResultExpected;
+    private String stepThreeResultExpected;
 
     @Before
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialAddAndSubExpertSystem();
+        stepTwoResultExpected = "Aplicação da regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.";
+        stepThreeResultExpected = "Removendo os parenteses";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
     }
@@ -115,6 +118,39 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void group_shiftSign_and_removeParenthesis_test_scenery_one_with_success() {
+        //Arrange
+        String expression = "(-25a + 7ab) + (-4ab + 16a - (5a - 3ab))";
+
+        String stepTwoValueExpected = "(-25a + 7ab) + (-4ab + 16a + (-5a + 3ab))";
+
+        String stepThreeValueExpected = "-25a + 7ab - 4ab + 16a - 5a + 3ab";
+
+        String lastStepValueExpected = "-14a + 6ab";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResultExpected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
