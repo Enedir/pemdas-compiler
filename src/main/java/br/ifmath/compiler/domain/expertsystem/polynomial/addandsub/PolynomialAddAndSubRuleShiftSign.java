@@ -25,27 +25,30 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
         return isThereAMinusBetweenParentheses(source);
     }
 
-    private boolean isThereAMinusBetweenParentheses(List<ThreeAddressCode> source) {
-        ExpandedQuadruple middleQuadruple = source.get(0).findQuadrupleByResult(source.get(0).getLeft());
-        return middleQuadruple.isMinus();
-    }
+
 
     @Override
     public List<Step> handle(List<ThreeAddressCode> source) {
 
+
         ExpandedQuadruple rightPart = source.get(0).findQuadrupleByResult(source.get(0).findQuadrupleByResult(source.get(0).getLeft()).getArgument2());
         changeSign(rightPart, source.get(0), rightPart.getLevel());
 
+        String left = getHigherLevelQuadruples(source,source.get(0).getLeft());
+
         List<Step> steps = new ArrayList<>();
 
-        ThreeAddressCode step = new ThreeAddressCode(source.get(0).getLeft(), "", "", source.get(0).getExpandedQuadruples());
+        source.get(0).clearNonUsedQuadruples();
+
+        ThreeAddressCode step = new ThreeAddressCode(left, "", "", source.get(0).getExpandedQuadruples());
 
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Aplicação da regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Aplicação da regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos. Também, removendo parenteses dos polinômios."));
 
         return steps;
     }
+
 
     private void changeSign(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source, int level) {
         String iterationLeft = iterationQuadruple.getArgument1();
@@ -85,6 +88,36 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             this.isFirstIteration = false;
         }
     }
+    private String getHigherLevelQuadruples(List<ThreeAddressCode> source, String result) {
+        ExpandedQuadruple expandedQuadruple = source.get(0).findQuadrupleByResult(result);
 
+        if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            this.getHigherLevelQuadruples(source, expandedQuadruple.getArgument1());
+        }
+
+        if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            this.getHigherLevelQuadruples(source, expandedQuadruple.getArgument2());
+        }
+
+        if (expandedQuadruple.getLevel() > 0) {
+            if (expandedQuadruple.isNegative()) {
+                ExpandedQuadruple parent = source.get(0).findQuadrupleByArgument(expandedQuadruple.getResult());
+                ExpandedQuadruple grandParent = source.get(0).findQuadrupleByArgument(parent.getResult());
+                if (!grandParent.getArgument1().equals(parent.getResult())) {
+                    grandParent.setOperator("-");
+                    parent.setArgument1(expandedQuadruple.getArgument1());
+                }
+            }
+            expandedQuadruple.setLevel(0);
+
+        }
+
+        return expandedQuadruple.getResult();
+    }
+
+    private boolean isThereAMinusBetweenParentheses(List<ThreeAddressCode> source) {
+        ExpandedQuadruple middleQuadruple = source.get(0).findQuadrupleByResult(source.get(0).getLeft());
+        return middleQuadruple.isMinus();
+    }
 
 }

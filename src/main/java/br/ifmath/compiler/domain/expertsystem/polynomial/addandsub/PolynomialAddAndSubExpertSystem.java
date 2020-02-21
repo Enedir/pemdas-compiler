@@ -18,14 +18,11 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
     private static PolynomialAddAndSubRuleShiftSign shiftSign;
 
-    private static PolynomialAddAndSubRuleRemoveParenthesis removeParenthesis;
-
     private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
 
 
     public PolynomialAddAndSubExpertSystem() {
         shiftSign = new PolynomialAddAndSubRuleShiftSign();
-        removeParenthesis = new PolynomialAddAndSubRuleRemoveParenthesis();
         groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
     }
 
@@ -38,18 +35,13 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
 
+        setUpQuadruples(sources);
+
         validateExpressions(sources);
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-
-        validateExpressions(sources);
-        if (removeParenthesis.match(sources)) {
-            steps.addAll(removeParenthesis.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
-
 
         validateExpressions(sources);
         if (groupTerms.match(sources)) {
@@ -67,6 +59,11 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         }
 
         return answer;
+    }
+
+    private void setUpQuadruples(List<ThreeAddressCode> source) {
+        setUpExponent(source ,source.get(0).getLeft());
+        source.get(0).clearNonUsedQuadruples();
     }
 
     @Override
@@ -112,12 +109,42 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         }
     }
 
+    private void setUpExponent(List<ThreeAddressCode> source, String result) {
+
+        ExpandedQuadruple expandedQuadruple = source.get(0).findQuadrupleByResult(result);
+
+        if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            this.setUpExponent(source, expandedQuadruple.getArgument1());
+        }
+
+        if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            this.setUpExponent(source, expandedQuadruple.getArgument2());
+        }
+
+        if(expandedQuadruple.isPotentiation()){
+            String nvvLabel = expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
+
+            ExpandedQuadruple parent;
+            parent = source.get(0).findQuadrupleByArgument1(result);
+
+            if(parent != null){
+                parent.setArgument1(nvvLabel);
+            }else{
+                parent = source.get(0).findQuadrupleByArgument2(result);
+                if(parent != null){
+                    parent.setArgument2(nvvLabel);
+                }
+            }
+
+
+
+        }
+
+    }
+
     @Override
     public void setVariables(List<NumericValueVariable> variables) {
-        //FIXME: Utilizar para as outras expressoes polinomiais
-//        for (ValueVariable variable : variables) {
-//            this.substituteVariable.Add((NumericValueVariable) variable);
-//        }
+
     }
 
 

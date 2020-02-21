@@ -76,7 +76,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                     nvvValue = "";
                 if (iterationNVV.getValue() < 0) {
                     if (i % 2 == 0 && i == 0) {
-                        ExpandedQuadruple newQuadruple = new ExpandedQuadruple("MINUS", nvvValue + iterationNVV.getLabel(), "T" + (source.getExpandedQuadruples().size() + 1), 0, 0);
+                        ExpandedQuadruple newQuadruple = new ExpandedQuadruple("MINUS", nvvValue + iterationNVV.getLabel(), source.retrieveNextTemporary(), 0, 0);
                         source.getExpandedQuadruples().add(newQuadruple);
                         iterationQuadruple.setArgument1(newQuadruple.getResult());
                     } else {
@@ -85,7 +85,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                             iterationQuadruple.setArgument2(nvvValue + iterationNVV.getLabel());
                         } else {
                             iterationQuadruple.setOperator("-");
-                            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", "T" + (source.getExpandedQuadruples().size() + 1), 0, 0);
+                            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", source.retrieveNextTemporary(), 0, 0);
                             source.getExpandedQuadruples().add(newQuadruple);
                             iterationQuadruple.setArgument2(newQuadruple.getResult());
                         }
@@ -97,7 +97,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                         if (numbersSum == 0) {
                             if (termsAndValuesList.size() > 1) {
                                 iterationQuadruple.setOperator("+");
-                                ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", "T" + (source.getExpandedQuadruples().size() + 1), 0, 0);
+                                ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "",source.retrieveNextTemporary(), 0, 0);
                                 source.getExpandedQuadruples().add(newQuadruple);
                                 iterationQuadruple.setArgument2(newQuadruple.getResult());
                             } else {
@@ -106,7 +106,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                             }
                         } else {
                             iterationQuadruple.setOperator("+");
-                            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", "T" + (source.getExpandedQuadruples().size() + 1), 0, 0);
+                            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", source.retrieveNextTemporary(), 0, 0);
                             source.getExpandedQuadruples().add(newQuadruple);
                             iterationQuadruple.setArgument2(newQuadruple.getResult());
                         }

@@ -23,7 +23,8 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialAddAndSubExpertSystem();
-        finalResultExplicationExpected = "Aplicação da regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.";
+        stepTwoExplicationExpected = "Aplicação da regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos. Também, removendo parenteses dos polinômios.";
+        finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
     }
 
@@ -31,7 +32,8 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     public void shift_sign_simple_numbers_scenery_one_with_success() {
         //Arrange
         String expression = "(2 + 5) - (4 - 2)";
-        String lastStepValueExpected = "(2 + 5) + (-4 + 2)";
+        String stepTwoValueExpected = "2 + 5 - 4 + 2";
+        String lastStepValueExpected = "5";
 
         // Act
         IAnswer answer = null;
@@ -42,8 +44,11 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
@@ -51,8 +56,9 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     @Test()
     public void shift_sign_simple_variables_scenery_one_with_success() {
         //Arrange
-        String expression = "(2x + 5) - (-4y - (2y + 4))";
-        String lastStepValueExpected = "(2x + 5) + (4y + (-2y - 4))";
+        String expression = "(2x + 5) - (-4x - (2x + 4))";
+        String stepTwoValueExpected = "2x + 5 + 4x - 2x + 4))";
+        String lastStepValueExpected = "4x + 9";
 
         // Act
         IAnswer answer = null;
@@ -63,8 +69,11 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }

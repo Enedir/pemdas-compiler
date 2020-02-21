@@ -56,9 +56,9 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     @Test()
     public void group_only_numbers_test_scenery_one_with_success() {
         //Arrange
-        String expression = "7 + 7 + 18 - 18";
+        String expression = "x^2 + x^2 + 18 - 18";
 
-        String lastStepValueExpected = "14";
+        String lastStepValueExpected = "2x^2";
 
         // Act)
         IAnswer answer = null;

@@ -62,6 +62,26 @@ public class ThreeAddressCode {
         this.expandedQuadruples = expandedQuadruples;
     }
 
+
+    public void clearNonUsedQuadruples(){
+        List<ExpandedQuadruple> quadruplesToRemove = new ArrayList<>();
+
+        for (ExpandedQuadruple expandedQuadruple: this.getExpandedQuadruples()) {
+            if(expandedQuadruple.getResult() != this.getLeft()
+                    && this.findQuadrupleByArgument(expandedQuadruple.getResult()) == null){
+                quadruplesToRemove.add(expandedQuadruple);
+            }
+        }
+        this.expandedQuadruples.removeAll(quadruplesToRemove);
+    }
+
+    public String retrieveNextTemporary(){
+        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() -1).getResult();
+        int value =  Integer.parseInt(lastQuadrupleResult.replace("T",""));
+
+        return "T" + (value + 1);
+    }
+
     public ExpandedQuadruple findQuadrupleByResult(String result) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
             if (expandedQuadruple.getResult().equals(result)) {
