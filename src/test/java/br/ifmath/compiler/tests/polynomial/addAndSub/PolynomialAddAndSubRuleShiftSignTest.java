@@ -57,7 +57,7 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     public void shift_sign_simple_variables_scenery_one_with_success() {
         //Arrange
         String expression = "(2x + 5) - (-4x - (2x + 4))";
-        String stepTwoValueExpected = "2x + 5 + 4x - 2x + 4))";
+        String stepTwoValueExpected = "2x + 5 + 4x + 2x + 4";
         String lastStepValueExpected = "4x + 9";
 
         // Act
@@ -82,8 +82,34 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     @Test()
     public void shift_sign_many_values_scenery_one_with_success() {
         //Arrange
-        String expression = "(2x + 5) - (((4y + 3) - x) - (-2y + 4))";
-        String lastStepValueExpected = "(2x + 5) + ((( -4y - 3) + x) + (2y - 4))";
+        String expression = "(2x^2 + 5) - (((4x^2 + 3) - x^2) - (-2x + 4))";
+        String steptwoValueExpected = "2x^2 + 5 - 4x^2 - 3 + x^2 + 2y - 4";
+        String lastStepValueExpected = "-x^2 + 2y - 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwo.getMathExpression(), steptwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+    @Test()
+    public void shift_sign_numbers_and_variables_scenery_one_with_success() {
+        //Arrange
+        String expression = "(2 + 2x) - ((-4x + 2) - 7)";
+        String stepTwoValueExpected = "2 + 2x + 4x - 2 + 7";
+        String lastStepValueExpected = "6x + 7";
 
         // Act
         IAnswer answer = null;
@@ -102,10 +128,11 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     }
 
     @Test()
-    public void shift_sign_numbers_and_variables_scenery_one_with_success() {
+    public void shift_sign_on_left_side_scenery_one_with_success() {
         //Arrange
-        String expression = "(2 + 2x) - ((-4x + 2) - 7)";
-        String lastStepValueExpected = "(2 + 2x) - ((x + 7))";
+        String expression = "(2x^2 - ((2x - 3x) + x^2)) - (-4x)";
+        String stepTwoValueExpected = "2x^2 - 2x + 3x - x^2 + 4x";
+        String lastStepValueExpected = "x^2 + 2x";
 
         // Act
         IAnswer answer = null;
@@ -116,11 +143,12 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
-
 }
