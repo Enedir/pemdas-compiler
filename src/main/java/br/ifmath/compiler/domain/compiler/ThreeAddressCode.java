@@ -63,21 +63,21 @@ public class ThreeAddressCode {
     }
 
 
-    public void clearNonUsedQuadruples(){
+    public void clearNonUsedQuadruples() {
         List<ExpandedQuadruple> quadruplesToRemove = new ArrayList<>();
 
-        for (ExpandedQuadruple expandedQuadruple: this.getExpandedQuadruples()) {
-            if(expandedQuadruple.getResult() != this.getLeft()
-                    && this.findQuadrupleByArgument(expandedQuadruple.getResult()) == null){
+        for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
+            if (expandedQuadruple.getResult() != this.getLeft()
+                    && this.findQuadrupleByArgument(expandedQuadruple.getResult()) == null) {
                 quadruplesToRemove.add(expandedQuadruple);
             }
         }
         this.expandedQuadruples.removeAll(quadruplesToRemove);
     }
 
-    public String retrieveNextTemporary(){
-        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() -1).getResult();
-        int value =  Integer.parseInt(lastQuadrupleResult.replace("T",""));
+    public String retrieveNextTemporary() {
+        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() - 1).getResult();
+        int value = Integer.parseInt(lastQuadrupleResult.replace("T", ""));
 
         return "T" + (value + 1);
     }
@@ -192,6 +192,7 @@ public class ThreeAddressCode {
         return expandedQuadruples;
     }
 
+
     private void generateDependencyThree(String param, List<ExpandedQuadruple> expandedQuadruples) {
         ExpandedQuadruple expandedQuadruple = findQuadrupleByResult(param);
 
@@ -207,6 +208,42 @@ public class ThreeAddressCode {
                 generateLaTeXNotation(left, 0, new StringBuilder()).toString(),
                 comparison,
                 generateLaTeXNotation(right, 0, new StringBuilder()).toString());
+    }
+
+    /**
+     * Substitui o valor de um argumento ou operador de uma quadrupla, pelo valor de um dado argumento ou operador do seu filho. Ex.:
+     * A = B + 1 e B = 2 + 3. Escolhendo B como son, 1 como o argument, entao obterá o valor do argument1 de B,
+     * e substituirá onde B aparecer, resultando em: A = 2 + 1.
+     *
+     * @param son      {@link ExpandedQuadruple} de onde será obtido o valor a ser substituído.
+     * @param argument int que pode ser: <ul> <li> 0, caso deseje obter o operator do parâmetro son;</li>
+     *                 <li> 1, caso deseje obter o argument1 do parâmetro son;</li>
+     *                 <li>2, caso deseje obter o argument2 do parâmetro son.</li></ul>
+     */
+    public void replaceFatherArgumentForSons(ExpandedQuadruple son, int argument) {
+        String newArgument;
+        if (argument == 1) {
+            newArgument = son.getArgument1();
+        } else if (argument == 2) {
+            newArgument = son.getArgument2();
+        } else {
+            newArgument = son.getOperator();
+        }
+
+        ExpandedQuadruple father = this.findQuadrupleByArgument(son.getResult());
+        if (argument == 0) {
+            if (newArgument.equals("MINUS")) {
+                father.setOperator("-");
+            } else {
+                father.setOperator(newArgument);
+            }
+        } else {
+            if (father.getArgument1().equals(son.getResult())) {
+                father.setArgument1(newArgument);
+            } else {
+                father.setArgument2(newArgument);
+            }
+        }
     }
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {

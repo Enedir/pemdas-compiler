@@ -33,9 +33,9 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     @Test()
     public void group_terms_with_three_variables_test_scenery_one_with_success() {
         //Arrange
-        String expression = "x + 2x + 7 - 8y - 5 + 12x + 2y - z";
+        String expression = "x + 2x + 7 - 8x - 5 + 12x + 2x - x";
 
-        String lastStepValueExpected = "15x - 6y - z + 2";
+        String lastStepValueExpected = "8x + 2";
 
         // Act)
         IAnswer answer = null;

@@ -38,6 +38,9 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         setUpQuadruples(sources);
 
         validateExpressions(sources);
+
+        this.handlePotentiation(sources.get(0));
+
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
@@ -61,8 +64,42 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         return answer;
     }
 
+    /**
+     * Ajusta as quadruplas que tem algum grau e estao com o formato incorreto. Necessario para os casos que ha uma
+     * quadrupla de MINUS com um grau de potenciacao (Ex.: -2x^2), essas ficam como temporarias com grau de potenciação
+     * (Ex.: T4^2), o que não é desejável.
+     *
+     * @param source {@link ThreeAddressCode} que contém todas as quadruplas a serem analisadas e formatadas
+     */
+    private void handlePotentiation(ThreeAddressCode source) {
+        for (ExpandedQuadruple expandedQuadruple : source.getExpandedQuadruples()) {
+            if (!expandedQuadruple.isNegative() && (expandedQuadruple.getArgument1().contains("^") || expandedQuadruple.getArgument2().contains("^"))) {
+                String argument = "";
+                boolean isArgument1 = true;
+                if (expandedQuadruple.getArgument1().contains("^"))
+                    argument = expandedQuadruple.getArgument1();
+                if (expandedQuadruple.getArgument2().contains("^")) {
+                    argument = expandedQuadruple.getArgument2();
+                    isArgument1 = false;
+                }
+
+                if (argument.startsWith("T")) {
+                    String potentiation = argument.substring(argument.indexOf("^"));
+                    argument = argument.replace(potentiation, "");
+                    if (isArgument1)
+                        expandedQuadruple.setArgument1(argument);
+                    else
+                        expandedQuadruple.setArgument2(argument);
+                    ExpandedQuadruple quadruple = source.findQuadrupleByResult(argument);
+                    quadruple.setArgument1(quadruple.getArgument1() + potentiation);
+                }
+
+            }
+        }
+    }
+
     private void setUpQuadruples(List<ThreeAddressCode> source) {
-        setUpExponent(source ,source.get(0).getLeft());
+        setUpExponent(source, source.get(0).getLeft());
         source.get(0).clearNonUsedQuadruples();
     }
 
@@ -121,21 +158,20 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
             this.setUpExponent(source, expandedQuadruple.getArgument2());
         }
 
-        if(expandedQuadruple.isPotentiation()){
+        if (expandedQuadruple.isPotentiation()) {
             String nvvLabel = expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
 
             ExpandedQuadruple parent;
             parent = source.get(0).findQuadrupleByArgument1(result);
 
-            if(parent != null){
+            if (parent != null) {
                 parent.setArgument1(nvvLabel);
-            }else{
+            } else {
                 parent = source.get(0).findQuadrupleByArgument2(result);
-                if(parent != null){
+                if (parent != null) {
                     parent.setArgument2(nvvLabel);
                 }
             }
-
 
 
         }

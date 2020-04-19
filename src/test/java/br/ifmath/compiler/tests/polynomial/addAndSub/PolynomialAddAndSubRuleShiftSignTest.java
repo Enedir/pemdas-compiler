@@ -29,6 +29,31 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     }
 
     @Test()
+    public void take_off_parentheses_scenery_one_with_success() {
+        //Arrange
+        String expression = "(8 + 5) + (4 - 3)";
+        String stepTwoValueExpected = "8 + 5 + 4 - 3";
+        String lastStepValueExpected = "14";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+    @Test()
     public void shift_sign_simple_numbers_scenery_one_with_success() {
         //Arrange
         String expression = "(2 + 5) - (4 - 2)";
@@ -54,11 +79,37 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     }
 
     @Test()
+    public void shift_sign_negative_on_both_sides_scenery_one_with_success() {
+        //Arrange
+        String expression = "(6 - (2x - 5x)) - (-2)";
+        String stepTwoValueExpected = "6 - 2x + 5x + 2";
+        String lastStepValueExpected = "3x + 8";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+
+    @Test()
     public void shift_sign_simple_variables_scenery_one_with_success() {
         //Arrange
         String expression = "(2x + 5) - (-4x - (2x + 4))";
         String stepTwoValueExpected = "2x + 5 + 4x + 2x + 4";
-        String lastStepValueExpected = "4x + 9";
+        String lastStepValueExpected = "8x + 9";
 
         // Act
         IAnswer answer = null;
@@ -82,9 +133,9 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     @Test()
     public void shift_sign_many_values_scenery_one_with_success() {
         //Arrange
-        String expression = "(2x^2 + 5) - (((4x^2 + 3) - x^2) - (-2x + 4))";
-        String steptwoValueExpected = "2x^2 + 5 - 4x^2 - 3 + x^2 + 2y - 4";
-        String lastStepValueExpected = "-x^2 + 2y - 2";
+        String expression = "(2x^2+ 5) - (((4x^2 + 3) - x^2) - (-2x + 4))";
+        String steptwoValueExpected = "2x^2 + 5 - 4x^2 - 3 + x^2 - 2x + 4";
+        String lastStepValueExpected = "-x^2 - 2x + 6";
 
         // Act
         IAnswer answer = null;
@@ -120,9 +171,11 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         }
 
         // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
@@ -151,4 +204,32 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
+
+    @Test()
+    public void shift_sign_on_both_sides_scenery_one_with_success() {
+        //Arrange
+
+        String expression = "(9x^2 - (-7x + (2x^2 + x))) - ((- 4x^2) - (3x - (2x^2 + 6)))";
+        String stepTwoValueExpected = "9x^2 + 7x - 2x^2 - x + 4x^2 + 3x - 2x^2 - 6";
+        String lastStepValueExpected = "9x^2 + 9x - 6";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
+        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
+        assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
+        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+    }
+
+
 }
