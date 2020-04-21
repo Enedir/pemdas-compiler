@@ -82,6 +82,11 @@ public enum RegexPattern {
         }
     },
 
+    VARIABLE_AND_COEFICIENT{
+        @Override
+        public String toString() { return "([0-9]+(\\,[0-9]+)?)?[a-zA-Z]([\\^][0-9]+)?$";        }
+    },
+
     POSSIBLE_NUMBER {
 
         @Override
