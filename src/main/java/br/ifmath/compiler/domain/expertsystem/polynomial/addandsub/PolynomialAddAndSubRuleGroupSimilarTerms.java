@@ -3,7 +3,6 @@ package br.ifmath.compiler.domain.expertsystem.polynomial.addandsub;
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
@@ -29,7 +28,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> sources) {
         List<NumericValueVariable> termsAndValuesList = new ArrayList<>();
         expandedQuadruples.clear();
         expandedQuadruples.addAll(sources.get(0).getExpandedQuadruples());
@@ -37,16 +36,15 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
         List<Step> steps = new ArrayList<>();
 
         int numbersSum = sumTerms(sources.get(0), sources.get(0).getLeft(), false, termsAndValuesList);
-
-        String nonVariableResult = "T1";
+        sortNVVList(termsAndValuesList);
         ThreeAddressCode step;
         if (termsAndValuesList.isEmpty()) {
-            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("", String.valueOf(numbersSum), "", nonVariableResult, 0, 0);
-            step = new ThreeAddressCode(nonVariableResult, Arrays.asList(newQuadruple));
+            ExpandedQuadruple newQuadruple = new ExpandedQuadruple("", String.valueOf(numbersSum), "", "T1", 0, 0);
+            step = new ThreeAddressCode("T1", Arrays.asList(newQuadruple));
         } else {
             replaceExpandedQuadruples(sources.get(0), termsAndValuesList, numbersSum);
             clearUnusedQuadruple(sources.get(0));
-            sources.get(0).setLeft(nonVariableResult);
+            sources.get(0).setLeft(expandedQuadruples.get(0).getResult());
             step = new ThreeAddressCode(sources.get(0).getLeft(), sources.get(0).getExpandedQuadruples());
         }
 
@@ -57,6 +55,25 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
         return steps;
     }
 
+    private void sortNVVList(List<NumericValueVariable> termsAndValuesList) {
+        for (int i = 0; i < termsAndValuesList.size(); i++) {
+            for (int j = 0; j < termsAndValuesList.size() - 1; j++) {
+                String currentLabel = termsAndValuesList.get(j).getLabel();
+                Integer currentValue = 1;
+                if (currentLabel.contains("^"))
+                    currentValue = Integer.parseInt(currentLabel.substring(currentLabel.indexOf("^") + 1));
+                String nextLabel = termsAndValuesList.get(j + 1).getLabel();
+                Integer nextValue = 1;
+                if (nextLabel.contains("^"))
+                    nextValue = Integer.parseInt(nextLabel.substring(nextLabel.indexOf("^") + 1));
+                if (nextValue > currentValue) {
+                    NumericValueVariable aux = termsAndValuesList.remove(j);
+                    termsAndValuesList.add(j + 1, aux);
+                }
+            }
+        }
+    }
+
     private void clearUnusedQuadruple(ThreeAddressCode source) {
         int size = expandedQuadruples.size() - 1;
         for (int i = 1; i <= size; i++) {
@@ -65,6 +82,10 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
     }
 
     private void replaceExpandedQuadruples(ThreeAddressCode source, List<NumericValueVariable> termsAndValuesList, int numbersSum) {
+        boolean hasOnlyOneItemOnList = false;
+        if (termsAndValuesList.size() == 1)
+            hasOnlyOneItemOnList = true;
+
         ExpandedQuadruple iterationQuadruple = null;
         int i = 0;
         while (!termsAndValuesList.isEmpty()) {
@@ -97,7 +118,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                         if (numbersSum == 0) {
                             if (termsAndValuesList.size() > 1) {
                                 iterationQuadruple.setOperator("+");
-                                ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "",source.retrieveNextTemporary(), 0, 0);
+                                ExpandedQuadruple newQuadruple = new ExpandedQuadruple("+", nvvValue + iterationNVV.getLabel(), "", source.retrieveNextTemporary(), 0, 0);
                                 source.getExpandedQuadruples().add(newQuadruple);
                                 iterationQuadruple.setArgument2(newQuadruple.getResult());
                             } else {
@@ -134,6 +155,11 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
 
             quadruple.setArgument2(String.valueOf(Math.abs(numbersSum)));
 
+        } else {
+            if (hasOnlyOneItemOnList) {
+                iterationQuadruple.setOperator("");
+                iterationQuadruple.setArgument2("");
+            }
         }
 
     }
@@ -152,8 +178,14 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
             }
         } else {
             if (StringUtil.isVariable(param)) {
-                String paramValue = StringUtil.removeNonNumericChars(param);
-                String paramVariable = StringUtil.removeNumericChars(param);
+                String paramValue, paramVariable;
+                if (StringUtil.match(param, RegexPattern.VARIABLE_AND_COEFICIENT.toString())) {
+                    paramValue = param.substring(0, param.indexOf("^") - 1);
+                    paramVariable = param.substring(param.indexOf("^") - 1);
+                } else {
+                    paramValue = StringUtil.removeNonNumericChars(param);
+                    paramVariable = StringUtil.removeNumericChars(param);
+                }
                 int index = 0;
                 int cont = 0;
                 if (termsAndValuesList.isEmpty()) {

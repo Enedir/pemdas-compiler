@@ -18,12 +18,14 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     private IExpertSystem expertSystem;
     private String finalResultExplicationExpected;
     private String stepTwoExplicationExpected;
+    private String stepThreeExplicationExpected;
 
     @Before
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialAddAndSubExpertSystem();
-        stepTwoExplicationExpected = "Aplicação da regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos. Também, removendo parenteses dos polinômios.";
+        stepTwoExplicationExpected = "Aplicando regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.Também, removendo parenteses dos polinômios.";
+        stepThreeExplicationExpected = "Removendo parênteses dos polinômios";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
     }
@@ -48,7 +50,7 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
-        assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
+        assertEquals(stepTwo.getReason(), stepThreeExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
@@ -185,7 +187,7 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         //Arrange
         String expression = "(2x^2 - ((2x - 3x) + x^2)) - (-4x)";
         String stepTwoValueExpected = "2x^2 - 2x + 3x - x^2 + 4x";
-        String lastStepValueExpected = "x^2 + 2x";
+        String lastStepValueExpected = "x^2 + 5x";
 
         // Act
         IAnswer answer = null;

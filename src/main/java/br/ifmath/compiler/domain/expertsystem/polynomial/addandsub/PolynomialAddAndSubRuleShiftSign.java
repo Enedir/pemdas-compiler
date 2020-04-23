@@ -24,9 +24,8 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
 
     @Override
     public List<Step> handle(List<ThreeAddressCode> sources) {
-        String reason = "Removendo parenteses dos polinomios";
+        String reason = "Removendo parênteses dos polinômios";
         this.source = sources.get(0);
-
 
         ExpandedQuadruple root = this.source.findQuadrupleByResult(this.source.getLeft());
         ExpandedQuadruple sideQuadruple = this.getQuadrupleWithMinus(this.source.findQuadrupleByResult(root.getArgument1()));

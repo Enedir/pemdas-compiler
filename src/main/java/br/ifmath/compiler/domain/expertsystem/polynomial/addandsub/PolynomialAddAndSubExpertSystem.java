@@ -14,6 +14,7 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
     private static PolynomialAddAndSubRuleShiftSign shiftSign;
