@@ -14,7 +14,6 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("ALL")
 public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
     private static PolynomialAddAndSubRuleShiftSign shiftSign;
@@ -89,7 +88,7 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
                     isArgument1 = false;
                 }
 
-                /** Nesse caso não há como fazer comparação através do {@link StringUtil.match} pois uma
+                /* Nesse caso não há como fazer comparação através do {@link StringUtil.match} pois uma
                  * variável temporaria não deveria ter um expoente, e então sempre daria um resultado false */
                 if (argument.startsWith("T")) {
                     String potentiation = argument.substring(argument.indexOf("^"));
@@ -116,13 +115,13 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
     }
 
     @Override
-    public void validateExpressions(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public void validateExpressions(List<ThreeAddressCode> sources) {
         List<String> variables = new ArrayList<>();
         double coeficient = 0d;
         String variable;

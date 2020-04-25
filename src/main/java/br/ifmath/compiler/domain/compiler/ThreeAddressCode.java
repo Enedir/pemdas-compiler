@@ -246,6 +246,21 @@ public class ThreeAddressCode {
         }
     }
 
+    public void addQuadrupleToList(String operator, String argument1, String argument2, ExpandedQuadruple quadruple, boolean setNewOnArgument1) {
+        ExpandedQuadruple newQuadruple;
+        if (operator.equals("MINUS"))
+            newQuadruple = new ExpandedQuadruple("MINUS", argument1, this.retrieveNextTemporary(), 0, 0);
+        else
+            newQuadruple = new ExpandedQuadruple(operator, argument1, argument2, this.retrieveNextTemporary(), 0, 0);
+
+        this.getExpandedQuadruples().add(newQuadruple);
+
+        if (setNewOnArgument1)
+            quadruple.setArgument1(newQuadruple.getResult());
+        else
+            quadruple.setArgument2(newQuadruple.getResult());
+    }
+
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple operation = findQuadrupleByResult(param);
