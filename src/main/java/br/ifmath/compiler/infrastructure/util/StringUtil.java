@@ -490,7 +490,7 @@ public class StringUtil {
 
 
     public static boolean isVariable(String param) {
-        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())
+        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString(), RegexPattern.VARIABLE_AND_COEFICIENT.toString())
                 && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
     }
 

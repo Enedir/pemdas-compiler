@@ -1,11 +1,11 @@
 package br.ifmath.compiler.infrastructure.util;
 
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author alex_
  */
 public class MathOperatorUtil {
@@ -52,12 +52,12 @@ public class MathOperatorUtil {
         Pattern pattern = Pattern.compile(RegexPattern.REDUCED_DISTRIBUTIVE_OPERATION.toString());
         Matcher matcher = pattern.matcher(inputStr);
         int plusSpace = 0;
-        while(matcher.find()){
-            source = source.substring(0, matcher.end() + plusSpace - 1 ) + "*" + source.substring(matcher.end() + plusSpace - 1 );
+        while (matcher.find()) {
+            source = source.substring(0, matcher.end() + plusSpace - 1) + "*" + source.substring(matcher.end() + plusSpace - 1);
             plusSpace++;
         }
-        
+
         return source;
     }
-    
+
 }

@@ -3,7 +3,6 @@ package br.ifmath.compiler.infrastructure.props;
 public enum RegexPattern {
 
     NON_NUMERIC {
-
         @Override
         public String toString() {
             return "[^0-9]";
@@ -11,7 +10,6 @@ public enum RegexPattern {
     },
 
     NUMERIC {
-
         @Override
         public String toString() {
             return "[0-9\\.\\,]";
@@ -19,7 +17,6 @@ public enum RegexPattern {
     },
 
     NON_ALPHANUMERIC {
-
         @Override
         public String toString() {
             return "[^A-Za-z0-9]";
@@ -27,7 +24,6 @@ public enum RegexPattern {
     },
 
     DECIMAL_NUMBER {
-
         @Override
         public String toString() {
             return "(\\-)?[0-9]+(\\,[0-9]+)?";
@@ -35,7 +31,6 @@ public enum RegexPattern {
     },
 
     POSITIVE_DECIMAL_NUMBER {
-
         @Override
         public String toString() {
             return "[0-9]+(\\,[0-9]+)?";
@@ -43,7 +38,6 @@ public enum RegexPattern {
     },
 
     INTEGER_NUMBER {
-
         @Override
         public String toString() {
             return "(\\-)?[0-9]+";
@@ -51,7 +45,6 @@ public enum RegexPattern {
     },
 
     NATURAL_NUMBER {
-
         @Override
         public String toString() {
             return "[0-9]+";
@@ -59,7 +52,6 @@ public enum RegexPattern {
     },
 
     NON_INTEGER {
-
         @Override
         public String toString() {
             return "[^-][^0-9]";
@@ -67,7 +59,6 @@ public enum RegexPattern {
     },
 
     VARIABLE {
-
         @Override
         public String toString() {
             return "[a-zA-Z]([0-9]+)?$";
@@ -75,15 +66,20 @@ public enum RegexPattern {
     },
 
     VARIABLE_WITH_COEFICIENT {
-
         @Override
         public String toString() {
             return "[0-9]+(\\,[0-9]+)?[a-zA-Z]([0-9]+)?$";
         }
     },
 
-    POSSIBLE_NUMBER {
+    VARIABLE_AND_COEFICIENT {
+        @Override
+        public String toString() {
+            return "([0-9]+(\\,[0-9]+)?)?[a-zA-Z][\\^][0-9]+$";
+        }
+    },
 
+    POSSIBLE_NUMBER {
         @Override
         public String toString() {
             return "([\\d]+\\,)";
@@ -91,7 +87,6 @@ public enum RegexPattern {
     },
 
     TEMPORARY_VARIABLE {
-
         @Override
         public String toString() {
             return "T[0-9]([0-9]+)?";
@@ -99,7 +94,6 @@ public enum RegexPattern {
     },
 
     REDUCED_DISTRIBUTIVE_OPERATION {
-
         @Override
         public String toString() {
             return "(?<![a-zA-Z0-9])([0-9]+[a-zA-Z]|[a-zA-Z]|[0-9]+)\\(";
