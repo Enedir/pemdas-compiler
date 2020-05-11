@@ -110,9 +110,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
         }
 
         //retira os parenteses
-        for (ExpandedQuadruple expandedQuadruple : this.source.getExpandedQuadruples()) {
-            expandedQuadruple.setLevel(0);
-        }
+        this.source.removeQuadruplesParentheses();
     }
 
     /**

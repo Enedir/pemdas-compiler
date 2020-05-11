@@ -207,6 +207,7 @@ public class PolynomialAddAndSubRuleShiftSignTest {
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
     }
 
+    //TODO foi ajustado o método de clearQuadruples, verificar o que está de errado
     @Test()
     public void shift_sign_on_both_sides_scenery_one_with_success() {
         //Arrange

@@ -23,10 +23,13 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
     private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
 
+    private static PolynomialMultiplicationRuleDistributive distributive;
+
 
     public PolynomialMultiplicationExpertSystem() {
         shiftSign = new PolynomialAddAndSubRuleShiftSign();
         groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
+        distributive = new PolynomialMultiplicationRuleDistributive();
     }
 
 
@@ -38,12 +41,17 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
 
+
         setUpQuadruples(sources);
 
         validateExpressions(sources);
 
-        this.handlePotentiation(sources.get(0));
 
+        if (distributive.match(sources)) {
+            steps.addAll(distributive.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+/*
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
@@ -53,7 +61,7 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
         if (groupTerms.match(sources)) {
             steps.addAll(groupTerms.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
-        }
+        }*/
 
 
         sources = substituteNullFields(sources);
@@ -78,7 +86,7 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
     private void handlePotentiation(ThreeAddressCode source) {
         for (ExpandedQuadruple expandedQuadruple : source.getExpandedQuadruples()) {
             // Verifica se não é uma quadrupla de MINUS que contém um expoente, pois não tem o argument2 para obter depois
-            if (!expandedQuadruple.isNegative() && (expandedQuadruple.getArgument1().contains("^") || expandedQuadruple.getArgument2().contains("^"))) {
+            if (!expandedQuadruple.isNegative() && this.isTemporaryVariableWithPotentiation(expandedQuadruple)) {
                 String argument = "";
 
                 //Variável responsável por identificar qual argumento está sendo tratado
@@ -112,8 +120,14 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
         }
     }
 
+    private boolean isTemporaryVariableWithPotentiation(ExpandedQuadruple expandedQuadruple) {
+        return (expandedQuadruple.getArgument1().contains("T") && expandedQuadruple.getArgument1().contains("^"))
+                || (expandedQuadruple.getArgument2().contains("T") && expandedQuadruple.getArgument2().contains("^"));
+    }
+
     private void setUpQuadruples(List<ThreeAddressCode> source) {
         setUpExponent(source, source.get(0).getLeft());
+        handlePotentiation(source.get(0));
         source.get(0).clearNonUsedQuadruples();
     }
 

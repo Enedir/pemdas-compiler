@@ -63,16 +63,36 @@ public class ThreeAddressCode {
     }
 
 
+    /**
+     * Remove todas as quadruplas que não estão sendo usadas, ou seja, remove as quadruplas que não
+     * são utilizadas por outras quadruplas
+     */
     public void clearNonUsedQuadruples() {
-        List<ExpandedQuadruple> quadruplesToRemove = new ArrayList<>();
+        //Valor que representa se todas as quadruplas não usadas já foram retiradas
+        boolean hasRemovedAllQuadruples = false;
 
-        for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
-            if (expandedQuadruple.getResult() != this.getLeft()
+        //Indice para iterar na lista de quádruplas
+        int i = 0;
+
+        while (!hasRemovedAllQuadruples) {
+            ExpandedQuadruple expandedQuadruple = this.getExpandedQuadruples().get(i);
+            /*verifica caso não seja a quadrupla presente no atributo "left" e
+             e se não há alguma quadrupla que aponte para esta*/
+            if (!expandedQuadruple.getResult().equals(this.getLeft())
                     && this.findQuadrupleByArgument(expandedQuadruple.getResult()) == null) {
-                quadruplesToRemove.add(expandedQuadruple);
+                this.getExpandedQuadruples().remove(i);
+
+                //Volta o indice para zero, para iterar desde o começo a lista
+                i = 0;
+            } else {
+                /*condição de parada, que é caso tenha iterado por toda a lista, e não
+                removeu nenhum elemento*/
+                if (i == this.getExpandedQuadruples().size() - 1) {
+                    hasRemovedAllQuadruples = true;
+                }
+                i++;
             }
         }
-        this.expandedQuadruples.removeAll(quadruplesToRemove);
     }
 
     public String retrieveNextTemporary() {
@@ -246,7 +266,18 @@ public class ThreeAddressCode {
         }
     }
 
-    public void addQuadrupleToList(String operator, String argument1, String argument2, ExpandedQuadruple quadruple, boolean setNewOnArgument1) {
+    /**
+     * Adiciona uma nova quadrupla ao final da lista de quadruplas, e a adiciona no argumento correto
+     * da {@code quadruple}.
+     *
+     * @param operator          {@link String} que representa o operador da nova quadrupla
+     * @param argument1         {@link String} que representa o argument1 da nova quadrupla
+     * @param argument2         {@link String} que representa o argument2 da nova quadrupla
+     * @param quadruple         {@link ExpandedQuadruple} que um dos argumentos se tornará a nova quadrupla
+     * @param setNewOnArgument1 {@link Boolean} que indica qual argumento da {@code quadruple} será substituída
+     */
+    public ExpandedQuadruple addQuadrupleToList(String operator, String argument1, String argument2, ExpandedQuadruple quadruple,
+                                                boolean setNewOnArgument1) {
         ExpandedQuadruple newQuadruple;
         if (operator.equals("MINUS"))
             newQuadruple = new ExpandedQuadruple("MINUS", argument1, this.retrieveNextTemporary(), 0, 0);
@@ -259,7 +290,39 @@ public class ThreeAddressCode {
             quadruple.setArgument1(newQuadruple.getResult());
         else
             quadruple.setArgument2(newQuadruple.getResult());
+
+        return newQuadruple;
     }
+
+    /**
+     * Remove todos os parenteses na lista {@code expandedQuadruples}, ou seja, define o nível dessas {@link ExpandedQuadruple}
+     * para zero (0).
+     */
+    public void removeQuadruplesParentheses() {
+        for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
+            expandedQuadruple.setLevel(0);
+        }
+    }
+
+    /**
+     * Remove os parenteses na lista {@code expandedQuadruples}, ou seja, define o nível dessas {@link ExpandedQuadruple}
+     * para zero (0), podendo escolher se remove ou não as quádruplas com operador MINUS.
+     *
+     * @param keepMinusQuadruples {@link Boolean} que indica se as quádruplas com operador MINUS serão mantidas, no qual:
+     *                            <ul>
+     *                                 <li>true - As quadruplas com MINUS, serão mantidas.</li>
+     *                              <li>false - As quadruplas com MINUS, serão retiradas.</li>
+     *                                    </ul>
+     */
+    public void removeQuadruplesParentheses(boolean keepMinusQuadruples) {
+        for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
+            if (!keepMinusQuadruples)
+                expandedQuadruple.setLevel(0);
+            else if (!expandedQuadruple.isNegative())
+                expandedQuadruple.setLevel(0);
+        }
+    }
+
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
