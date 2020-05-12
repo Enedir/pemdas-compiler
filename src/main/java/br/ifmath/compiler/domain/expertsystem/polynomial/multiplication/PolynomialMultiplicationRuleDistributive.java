@@ -254,24 +254,27 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
 
     private boolean isThereADistributiveCase(List<ThreeAddressCode> source) {
         ExpandedQuadruple expandedQuadruple = source.get(0).findQuadrupleByResult(source.get(0).getLeft());
-        ExpandedQuadruple innerOperation1 = null;
-        ExpandedQuadruple innerOperation2 = null;
+
 
         if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && !StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            innerOperation1 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
-            if (innerOperation1.isNegative())
-                return false;
+            ExpandedQuadruple innerOperation = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
+            if (!innerOperation.isNegative())
+                return true;
         }
 
         if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            innerOperation2 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
+            ExpandedQuadruple innerOperation = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
 
-            if (innerOperation2.isNegative())
-                return false;
+            if (!innerOperation.isNegative())
+                return true;
         }
 
-        if (innerOperation1 != null && innerOperation2 != null)
+        if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            ExpandedQuadruple innerOperation1 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
+            ExpandedQuadruple innerOperation2 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
+            
             return !innerOperation1.isNegative() || !innerOperation2.isNegative();
-        return true;
+        }
+        return false;
     }
 }
