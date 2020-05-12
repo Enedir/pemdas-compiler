@@ -107,11 +107,11 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
             }
         }
+        source.clearNonUsedQuadruples();
     }
 
     private void setUpQuadruples(List<ThreeAddressCode> source) {
         setUpExponent(source, source.get(0).getLeft());
-        source.get(0).clearNonUsedQuadruples();
     }
 
     @Override

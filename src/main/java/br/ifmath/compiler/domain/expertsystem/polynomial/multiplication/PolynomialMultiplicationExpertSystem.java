@@ -25,16 +25,18 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
     private static PolynomialMultiplicationRuleDistributive distributive;
 
+    private static PolynomialMultiplicationRuleMultiplication multiplication;
 
     public PolynomialMultiplicationExpertSystem() {
         shiftSign = new PolynomialAddAndSubRuleShiftSign();
         groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
         distributive = new PolynomialMultiplicationRuleDistributive();
+        multiplication = new PolynomialMultiplicationRuleMultiplication();
     }
 
 
     @Override
-    public IAnswer findBestAnswer(List<ThreeAddressCode> sources) {
+    public IAnswer findBestAnswer(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
         List<Step> steps = new ArrayList<>();
 
         AnswerPolynomialMultiplication answer = new AnswerPolynomialMultiplication(steps);
@@ -51,6 +53,11 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
             steps.addAll(distributive.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
+
+//        if (multiplication.match(sources)) {
+//            steps.addAll(multiplication.handle(sources));
+//            sources = steps.get(steps.size() - 1).getSource();
+//        }
 /*
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));

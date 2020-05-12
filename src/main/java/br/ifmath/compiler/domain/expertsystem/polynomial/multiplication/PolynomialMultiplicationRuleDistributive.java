@@ -5,7 +5,6 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
-import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -39,49 +38,6 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
     private void fixingQuadruples() {
         this.source.clearNonUsedQuadruples();
         this.source.removeQuadruplesParentheses(true);
-    }
-
-    private void adjustMinusSigns() {
-        for (ExpandedQuadruple expandedQuadruple : this.source.getExpandedQuadruples()) {
-            if (!expandedQuadruple.getResult().equals(this.source.getLeft()) &&
-                    StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                ExpandedQuadruple argument1Quadruple = this.source.findQuadrupleByResult(expandedQuadruple.getArgument1());
-                if (argument1Quadruple.isNegative()) {
-                    this.handleMinusParentheses(expandedQuadruple);
-                }
-            }
-        }
-    }
-
-    /**
-     * Faz as alteracoes de sinais e de argumentos em casos de uma quadrupla com MINUS.
-     *
-     * @param expandedQuadruple {@link ExpandedQuadruple} que contém o operador MINUS
-     */
-    private void handleMinusParentheses(ExpandedQuadruple expandedQuadruple) {
-        ExpandedQuadruple grandfather = this.findDirectFather(expandedQuadruple);
-        if (grandfather != null) {
-            grandfather.setOperator(MathOperatorUtil.signalRule(grandfather.getOperator(), "-"));
-            ExpandedQuadruple minusQuadruple = this.source.findQuadrupleByResult(expandedQuadruple.getArgument1());
-            expandedQuadruple.setArgument1(minusQuadruple.getArgument1());
-        }
-    }
-
-    /**
-     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}
-     *
-     * @param iterationQuadruple {@link ExpandedQuadruple} de onde sera encontrado o pai
-     * @return {@link ExpandedQuadruple} que contem o operador anterior relativo a {@code iterationQuadruple}
-     */
-    private ExpandedQuadruple findDirectFather(ExpandedQuadruple iterationQuadruple) {
-        ExpandedQuadruple father = this.source.findQuadrupleByArgument(iterationQuadruple.getResult());
-        if (father.getArgument1().equals(iterationQuadruple.getResult())) {
-            if (father.getResult().equals(this.source.getLeft()))
-                return null;
-            return this.findDirectFather(father);
-        }
-        return father;
-
     }
 
     private String applyDistributive(ExpandedQuadruple distributiveQuadruple) {
@@ -184,6 +140,7 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         }
     }
 
+    //FIXME esse metodo provavelmente poderá ser unido com o polynomialRightTermDistributive
     private String polynomialDistributive(ExpandedQuadruple leftDistQuadruple, ExpandedQuadruple rightDistQuadruple, ThreeAddressCode newSource) {
         if (StringUtil.match(leftDistQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
             return this.polynomialDistributive(this.source.findQuadrupleByResult(leftDistQuadruple.getArgument1()), rightDistQuadruple, newSource);
@@ -248,18 +205,6 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         }
     }
 
-
-    //FIXME será usado na proxima regra
-    private String findArgument1Operator(ExpandedQuadruple expandedQuadruple) {
-        if (expandedQuadruple.getResult().equals(this.source.getLeft()))
-            return "+";
-        ExpandedQuadruple father = this.source.findQuadrupleByArgument(expandedQuadruple.getResult());
-        if (father.getArgument1().equals(expandedQuadruple.getResult()) || father.isTimes()) {
-            return this.findArgument1Operator(father);
-        }
-        return father.getOperator();
-    }
-
     private ThreeAddressCode polynomialRightTermDistributive(String leftQuadrupleMultiplier, ExpandedQuadruple rightQuadruple, ThreeAddressCode newSource) {
         if (StringUtil.match(rightQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
             return this.polynomialRightTermDistributive(leftQuadrupleMultiplier, this.source.findQuadrupleByResult(rightQuadruple.getArgument1()), newSource);
@@ -308,56 +253,25 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
     }
 
     private boolean isThereADistributiveCase(List<ThreeAddressCode> source) {
-        for (ExpandedQuadruple expandedQuadruple : source.get(0).getExpandedQuadruples()) {
-            if (expandedQuadruple.isTimes()) {
-                if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && !StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                    ExpandedQuadruple innerOperation = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
+        ExpandedQuadruple expandedQuadruple = source.get(0).findQuadrupleByResult(source.get(0).getLeft());
+        ExpandedQuadruple innerOperation1 = null;
+        ExpandedQuadruple innerOperation2 = null;
 
-                    if (StringUtil.isVariable(expandedQuadruple.getArgument2()) && !innerOperation.isNegative())
-                        return true;
-
-                    if (isThereAVariableInQuadruple(source.get(0), innerOperation)) {
-                        return true;
-                    }
-                }
-
-                if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                    ExpandedQuadruple innerOperation = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
-
-                    if (StringUtil.isVariable(expandedQuadruple.getArgument1()) && !innerOperation.isNegative())
-                        return true;
-
-                    if (isThereAVariableInQuadruple(source.get(0), innerOperation)) {
-                        return true;
-                    }
-                }
-
-                if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                    ExpandedQuadruple innerOperation1 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
-                    ExpandedQuadruple innerOperation2 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
-
-                    if (!innerOperation1.isNegative() && !innerOperation2.isNegative())
-                        return true;
-
-                    if (innerOperation1.isNegative() && isThereAVariableInQuadruple(source.get(0), innerOperation2))
-                        return true;
-
-                    if (innerOperation2.isNegative() && isThereAVariableInQuadruple(source.get(0), innerOperation1))
-                        return true;
-                }
-            }
+        if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && !StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            innerOperation1 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
+            if (innerOperation1.isNegative())
+                return false;
         }
 
-        return false;
-    }
+        if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            innerOperation2 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
 
-    private boolean isThereAVariableInQuadruple(ThreeAddressCode source, ExpandedQuadruple innerOperation) {
-        if (StringUtil.match(innerOperation.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-            return isThereAVariableInQuadruple(source, source.findQuadrupleByResult(innerOperation.getArgument1()));
+            if (innerOperation2.isNegative())
+                return false;
+        }
 
-        if (StringUtil.match(innerOperation.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-            return isThereAVariableInQuadruple(source, source.findQuadrupleByResult(innerOperation.getArgument2()));
-
-        return StringUtil.isVariable(innerOperation.getArgument1()) || StringUtil.isVariable(innerOperation.getArgument2());
+        if (innerOperation1 != null && innerOperation2 != null)
+            return !innerOperation1.isNegative() || !innerOperation2.isNegative();
+        return true;
     }
 }
