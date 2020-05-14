@@ -272,7 +272,7 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple innerOperation1 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
             ExpandedQuadruple innerOperation2 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
-            
+
             return !innerOperation1.isNegative() || !innerOperation2.isNegative();
         }
         return false;

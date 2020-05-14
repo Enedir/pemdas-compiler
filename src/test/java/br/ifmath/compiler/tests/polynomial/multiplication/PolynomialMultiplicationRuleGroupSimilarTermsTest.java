@@ -6,7 +6,6 @@ import br.ifmath.compiler.domain.expertsystem.AnswerType;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.addandsub.PolynomialAddAndSubExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.polynomial.multiplication.PolynomialMultiplicationExpertSystem;
 import org.junit.Before;
 import org.junit.Test;

@@ -54,10 +54,10 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
             sources = steps.get(steps.size() - 1).getSource();
         }
 
-//        if (multiplication.match(sources)) {
-//            steps.addAll(multiplication.handle(sources));
-//            sources = steps.get(steps.size() - 1).getSource();
-//        }
+        if (multiplication.match(sources)) {
+            steps.addAll(multiplication.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
 /*
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));

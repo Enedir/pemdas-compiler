@@ -23,12 +23,18 @@ public class NumericValueVariable extends ValueVariable {
 
     public void setAttributesFromString(String argument) {
         if (StringUtil.match(argument, RegexPattern.VARIABLE_AND_COEFICIENT.toString())) {
-            this.value = Integer.parseInt(argument.substring(0, argument.indexOf("^") - 1));
+            this.value = this.getValueFromString(argument.substring(0, argument.indexOf("^") - 1));
             this.label = argument.substring(argument.indexOf("^") - 1);
         } else {
-            this.value = Integer.parseInt(StringUtil.removeNonNumericChars(argument));
+            this.value = this.getValueFromString(StringUtil.removeNonNumericChars(argument));
             this.label = StringUtil.removeNumericChars(argument);
         }
+    }
+
+    private int getValueFromString(String param) {
+        if (param.equals(""))
+            return 1;
+        return Integer.parseInt(param);
     }
 
     public int getLabelPower() {
