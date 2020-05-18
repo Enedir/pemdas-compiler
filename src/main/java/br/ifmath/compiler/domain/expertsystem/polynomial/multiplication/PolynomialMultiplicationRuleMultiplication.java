@@ -73,7 +73,7 @@ public class PolynomialMultiplicationRuleMultiplication implements IRule {
                             if (father.getResult().equals(this.source.getLeft())) {
                                 this.source.addQuadrupleToList("MINUS", father.getArgument1(), "", father, true);
                             } else
-                                this.findArgumentFather(father).setOperator("-");
+                                this.source.findDirectFather(father.getResult()).setOperator("-");
                         }
                     } else {
                         father.setArgument2(result);
@@ -113,15 +113,6 @@ public class PolynomialMultiplicationRuleMultiplication implements IRule {
         if (product.getValue() == 1 && !product.getLabel().equals(""))
             return product.getLabel();
         return product.getValue() + product.getLabel();
-    }
-
-
-    private ExpandedQuadruple findArgumentFather(ExpandedQuadruple expandedQuadruple) {
-        ExpandedQuadruple father = this.source.findQuadrupleByArgument(expandedQuadruple.getResult());
-        if (father.getArgument1().equals(expandedQuadruple.getResult())) {
-            return this.findArgumentFather(father);
-        }
-        return father;
     }
 
 }

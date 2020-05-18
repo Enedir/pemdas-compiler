@@ -323,6 +323,24 @@ public class ThreeAddressCode {
         }
     }
 
+    /**
+     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}
+     *
+     * @param quadrupleResult {@link String} que eh o {@code result} da {@link ExpandedQuadruple}
+     *                        de onde sera encontrado o pai
+     * @return {@link ExpandedQuadruple} que contem o operador anterior relativo a {@code iterationQuadruple}
+     */
+    public ExpandedQuadruple findDirectFather(String quadrupleResult) {
+        if (this.getLeft().equals(quadrupleResult))
+            return null;
+        ExpandedQuadruple father = this.findQuadrupleByArgument(quadrupleResult);
+        if (father.getArgument1().equals(quadrupleResult)) {
+            return this.findDirectFather(father.getResult());
+        }
+        return father;
+
+    }
+
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {

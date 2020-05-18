@@ -30,9 +30,8 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
         stepTwoResultExpected = "Aplicando a propriedade distributiva, onde cada elemento dentro dos parênteses é multiplicado pelo elemento do outro termo";
         stepThreeResultExpected = "Aplicando a propriedade distributiva, onde cada elemento do primeiro termo é multiplicado por cada um dos elementos do segundo termo.";
         stepFourResultExpected = "Multiplica-se os coeficientes, considerando a regra dos sinais, e para as variáveis, somam-se os expoentes pela propriedade das potências.";
-        stepFiveResultExpected = "Aplicando regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.Também, removendo parenteses dos polinômios.";
-        stepSixResultExpected = "Removendo parênteses dos polinômios";
-        finalResultExplicationExpected = "Soma dos termos semelhantes.";
+        stepFiveResultExpected = "Agrupando os termos semelhantes";
+        finalResultExplicationExpected = "Adicionando dos termos semelhantes.";
 
     }
 

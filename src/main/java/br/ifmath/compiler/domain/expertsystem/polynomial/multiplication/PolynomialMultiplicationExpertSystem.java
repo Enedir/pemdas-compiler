@@ -6,9 +6,6 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.addandsub.AnswerPolynomialAddAndSub;
-import br.ifmath.compiler.domain.expertsystem.polynomial.addandsub.PolynomialAddAndSubRuleGroupSimilarTerms;
-import br.ifmath.compiler.domain.expertsystem.polynomial.addandsub.PolynomialAddAndSubRuleShiftSign;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -19,17 +16,15 @@ import java.util.List;
 
 public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
-    private static PolynomialAddAndSubRuleShiftSign shiftSign;
 
-    private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
+    private static PolynomialMultiplicationRuleSortSimilarTerms groupTerms;
 
     private static PolynomialMultiplicationRuleDistributive distributive;
 
     private static PolynomialMultiplicationRuleMultiplication multiplication;
 
     public PolynomialMultiplicationExpertSystem() {
-        shiftSign = new PolynomialAddAndSubRuleShiftSign();
-        groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
+        groupTerms = new PolynomialMultiplicationRuleSortSimilarTerms();
         distributive = new PolynomialMultiplicationRuleDistributive();
         multiplication = new PolynomialMultiplicationRuleMultiplication();
     }
@@ -58,17 +53,12 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
             steps.addAll(multiplication.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-/*
-        if (shiftSign.match(sources)) {
-            steps.addAll(shiftSign.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
 
-        validateExpressions(sources);
-        if (groupTerms.match(sources)) {
-            steps.addAll(groupTerms.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }*/
+//        validateExpressions(sources);
+//        if (groupTerms.match(sources)) {
+//            steps.addAll(groupTerms.handle(sources));
+//            sources = steps.get(steps.size() - 1).getSource();
+//        }
 
 
         sources = substituteNullFields(sources);

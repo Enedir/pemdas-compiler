@@ -119,7 +119,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
      * @param expandedQuadruple {@link ExpandedQuadruple} que contém o operador MINUS
      */
     private void handleMinusParentheses(ExpandedQuadruple expandedQuadruple) {
-        ExpandedQuadruple grandfather = this.findDirectFather(expandedQuadruple);
+        ExpandedQuadruple grandfather = this.source.findDirectFather(expandedQuadruple.getResult());
         grandfather.setOperator(MathOperatorUtil.signalRule(grandfather.getOperator(), "-"));
         this.source.replaceFatherArgumentForSons(expandedQuadruple, 1);
 
@@ -128,20 +128,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
         expandedQuadruple.setLevel(-1);
     }
 
-    /**
-     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}
-     *
-     * @param iterationQuadruple {@link ExpandedQuadruple} de onde sera encontrado o pai
-     * @return {@link ExpandedQuadruple} que contem o operador anterior relativo a {@code iterationQuadruple}
-     */
-    private ExpandedQuadruple findDirectFather(ExpandedQuadruple iterationQuadruple) {
-        ExpandedQuadruple father = this.source.findQuadrupleByArgument(iterationQuadruple.getResult());
-        if (father.getArgument1().equals(iterationQuadruple.getResult())) {
-            return this.findDirectFather(father);
-        }
-        return father;
 
-    }
 
     /**
      * Faz as alteracoes de sinais e de argumentos em casos de operador "-" precedido da {@code expandedQuadruple},
