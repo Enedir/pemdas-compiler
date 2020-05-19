@@ -17,14 +17,14 @@ import java.util.List;
 public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
 
-    private static PolynomialMultiplicationRuleSortSimilarTerms groupTerms;
+    private static PolynomialMultiplicationRuleSortSimilarTerms sortTerms;
 
     private static PolynomialMultiplicationRuleDistributive distributive;
 
     private static PolynomialMultiplicationRuleMultiplication multiplication;
 
     public PolynomialMultiplicationExpertSystem() {
-        groupTerms = new PolynomialMultiplicationRuleSortSimilarTerms();
+        sortTerms = new PolynomialMultiplicationRuleSortSimilarTerms();
         distributive = new PolynomialMultiplicationRuleDistributive();
         multiplication = new PolynomialMultiplicationRuleMultiplication();
     }
@@ -42,23 +42,22 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
         setUpQuadruples(sources);
 
         validateExpressions(sources);
-
-
         if (distributive.match(sources)) {
             steps.addAll(distributive.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
+        validateExpressions(sources);
         if (multiplication.match(sources)) {
             steps.addAll(multiplication.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
-//        validateExpressions(sources);
-//        if (groupTerms.match(sources)) {
-//            steps.addAll(groupTerms.handle(sources));
-//            sources = steps.get(steps.size() - 1).getSource();
-//        }
+        validateExpressions(sources);
+        if (sortTerms.match(sources)) {
+            steps.addAll(sortTerms.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
 
 
         sources = substituteNullFields(sources);
@@ -91,7 +90,7 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
                 if (expandedQuadruple.getArgument1().contains("^"))
                     argument = expandedQuadruple.getArgument1();
-                if (expandedQuadruple.getArgument2().contains("^")) {
+                else if (expandedQuadruple.getArgument2().contains("^")) {
                     argument = expandedQuadruple.getArgument2();
                     isArgument1 = false;
                 }
