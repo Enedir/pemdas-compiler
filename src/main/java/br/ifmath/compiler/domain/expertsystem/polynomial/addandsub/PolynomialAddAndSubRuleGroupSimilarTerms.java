@@ -167,18 +167,20 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
             /*Caso haja uma variável temporária no argument2, abrirá essa temporária, e adicionará
              * a soma desses números no argument2 dessa temporária. Caso contrário somente substituirá
              * no argument2 da quadrupla atual*/
-            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-                quadruple = source.findQuadrupleByResult(iterationQuadruple.getArgument2());
-            else
-                quadruple = iterationQuadruple;
+            if (iterationQuadruple != null) {
+                if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                    quadruple = source.findQuadrupleByResult(iterationQuadruple.getArgument2());
+                else
+                    quadruple = iterationQuadruple;
 
-            if (numbersSum < 0)
-                quadruple.setOperator("-");
-            else
-                quadruple.setOperator("+");
 
-            quadruple.setArgument2(String.valueOf(Math.abs(numbersSum)));
+                if (numbersSum < 0)
+                    quadruple.setOperator("-");
+                else
+                    quadruple.setOperator("+");
 
+                quadruple.setArgument2(String.valueOf(Math.abs(numbersSum)));
+            }
         } else {
             /*caso só haja um item na lista, e sem uma soma de número sem variável, haverá uma quadrupla
              * com somente o argument1*/
@@ -207,7 +209,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
 
             if (expandedQuadruple.isNegative()) {
-                sum -= sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), false, termsAndValuesList);
+                sum -= sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), true, termsAndValuesList);
             } else {
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), lastOperationIsMinus, termsAndValuesList);
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus(), termsAndValuesList);

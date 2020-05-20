@@ -120,14 +120,15 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
      */
     private void handleMinusParentheses(ExpandedQuadruple expandedQuadruple) {
         ExpandedQuadruple grandfather = this.source.findDirectFather(expandedQuadruple.getResult());
-        grandfather.setOperator(MathOperatorUtil.signalRule(grandfather.getOperator(), "-"));
-        this.source.replaceFatherArgumentForSons(expandedQuadruple, 1);
+        if (grandfather != null) {
+            grandfather.setOperator(MathOperatorUtil.signalRule(grandfather.getOperator(), "-"));
+            this.source.replaceFatherArgumentForSons(expandedQuadruple, 1);
 
-        //simboliza que estas quadruplas ja foram alteradas
-        grandfather.setLevel(-1);
+            //simboliza que estas quadruplas ja foram alteradas
+            grandfather.setLevel(-1);
+        }
         expandedQuadruple.setLevel(-1);
     }
-
 
 
     /**

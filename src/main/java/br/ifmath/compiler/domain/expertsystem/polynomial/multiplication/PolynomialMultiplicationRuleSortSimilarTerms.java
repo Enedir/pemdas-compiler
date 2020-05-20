@@ -3,7 +3,6 @@ package br.ifmath.compiler.domain.expertsystem.polynomial.multiplication;
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
@@ -15,7 +14,6 @@ import java.util.List;
 public class PolynomialMultiplicationRuleSortSimilarTerms implements IRule {
 
     private ThreeAddressCode source;
-    private boolean hasElementsToSort = true;
 
     @Override
     public boolean match(List<ThreeAddressCode> source) {
@@ -24,7 +22,7 @@ public class PolynomialMultiplicationRuleSortSimilarTerms implements IRule {
 
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> source) {
         this.source = source.get(0);
 
         boolean hasElementsToSort = true;

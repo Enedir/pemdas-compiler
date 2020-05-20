@@ -30,17 +30,17 @@ public class PolynomialMultiplicationRuleSortSimilarTermsTest {
         stepThreeResultExpected = "Aplicando a propriedade distributiva, onde cada elemento do primeiro termo é multiplicado por cada um dos elementos do segundo termo.";
         stepFourResultExpected = "Multiplica-se os coeficientes, considerando a regra dos sinais, e para as variáveis, somam-se os expoentes pela propriedade das potências.";
         stepFiveResultExpected = "Agrupando os termos semelhantes.";
-        finalResultExplicationExpected = "Adicionando dos termos semelhantes.";
+        finalResultExplicationExpected = "Adicionando os termos semelhantes.";
     }
 
     @Test()
     public void sort_simple_terms_scenery_one_with_success() {
         //Arrange
-        String expression = "(x^2 - 3x^3) * 5";
+        String expression = "(x^3 + 3x^3) * 5";
 
-        String stepTwoValueExpected = "5 * x^2 + 5 * (-3x^3)";
-        String stepThreeValueExpected = "5x^2 - 15x^3";
-        String lastStepValueExpected = "-15x^3 + 5x^2";
+        String stepTwoValueExpected = "5 * x^3 + 5 * 3x^3";
+        String stepThreeValueExpected = "5x^3 + 15x^3";
+        String lastStepValueExpected = "20x^3";
 
 
         // Act)
@@ -61,7 +61,7 @@ public class PolynomialMultiplicationRuleSortSimilarTermsTest {
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
         assertEquals(stepFourResultExpected, stepThree.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepFiveResultExpected, finalStep.getReason());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
     @Test()

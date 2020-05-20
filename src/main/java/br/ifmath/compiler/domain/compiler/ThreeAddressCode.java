@@ -341,6 +341,55 @@ public class ThreeAddressCode {
 
     }
 
+    /**
+     * Ajusta as quadruplas que tem algum grau e estao com o formato incorreto. Necessario para os casos que ha uma
+     * quadrupla de MINUS com um grau de potenciacao (Ex.: -2x^2), essas ficam como temporarias com grau de potenciação
+     * (Ex.: T4^2, sendo T4 = MINUS 2x), o que não é desejável. Assim, o expoente é retirado do lado da variavel temporaria e adicionado a
+     * quadrupla de MINUS. No caso do exemplo, seria T4 = MINUS 2x^2.
+     *
+     */
+    public void handlePotentiation() {
+        for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
+            // Verifica se não é uma quadrupla de MINUS que contém um expoente, pois não tem o argument2 para obter depois
+            if (!expandedQuadruple.isNegative() && this.isTemporaryVariableWithPotentiation(expandedQuadruple)) {
+                String argument = "";
+
+                //Variável responsável por identificar qual argumento está sendo tratado
+                boolean isArgument1 = true;
+
+                if (expandedQuadruple.getArgument1().contains("^"))
+                    argument = expandedQuadruple.getArgument1();
+                else if (expandedQuadruple.getArgument2().contains("^")) {
+                    argument = expandedQuadruple.getArgument2();
+                    isArgument1 = false;
+                }
+
+                /* Nesse caso não há como fazer comparação através do {@link StringUtil.match} pois uma
+                 * variável temporaria não deveria ter um expoente, e então sempre daria um resultado false */
+                if (argument.startsWith("T")) {
+                    String potentiation = argument.substring(argument.indexOf("^"));
+                    argument = argument.replace(potentiation, "");
+
+                    //Retirado expoente da variável temporaria
+                    if (isArgument1)
+                        expandedQuadruple.setArgument1(argument);
+                    else
+                        expandedQuadruple.setArgument2(argument);
+
+                    //Adicionado o expoente ao argument1 da quadrupla MINUS.
+                    ExpandedQuadruple quadruple = this.findQuadrupleByResult(argument);
+                    quadruple.setArgument1(quadruple.getArgument1() + potentiation);
+                }
+
+            }
+        }
+    }
+
+    private boolean isTemporaryVariableWithPotentiation(ExpandedQuadruple expandedQuadruple) {
+        return (expandedQuadruple.getArgument1().contains("T") && expandedQuadruple.getArgument1().contains("^"))
+                || (expandedQuadruple.getArgument2().contains("T") && expandedQuadruple.getArgument2().contains("^"));
+    }
+
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
