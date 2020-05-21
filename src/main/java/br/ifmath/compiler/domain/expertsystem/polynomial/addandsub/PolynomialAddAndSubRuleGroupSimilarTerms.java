@@ -127,7 +127,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                          * substituído no argument2*/
                     else {
                         iterationQuadruple.setOperator("-");
-                        if (numbersSum == 0)
+                        if (numbersSum == 0 && termsAndValuesList.size() == 1)
                             iterationQuadruple.setArgument2(iterationNVV.getLabel());
                             /* Já se a soma dos números for diferente de 0, será criada uma nova quadrupla para ser
                              *  adicionado o iterationNVV no argument1, e a soma dos números no argument2*/

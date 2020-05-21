@@ -32,6 +32,7 @@ public class PolynomialMultiplicationRuleSortSimilarTerms implements IRule {
             else
                 hasElementsToSort = false;
         }
+        this.source.clearNonUsedQuadruples();
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), this.source.getExpandedQuadruples());
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();

@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.addandsub.PolynomialAddAndSubRuleGroupSimilarTerms;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -23,11 +24,11 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
     private static PolynomialMultiplicationRuleMultiplication multiplication;
 
-    private static PolynomialMultiplicationRuleGroupSimilarTerms groupTerms;
+    private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
 
     public PolynomialMultiplicationExpertSystem() {
         sortTerms = new PolynomialMultiplicationRuleSortSimilarTerms();
-        groupTerms = new PolynomialMultiplicationRuleGroupSimilarTerms();
+        groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
         distributive = new PolynomialMultiplicationRuleDistributive();
         multiplication = new PolynomialMultiplicationRuleMultiplication();
     }
@@ -62,6 +63,7 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
             sources = steps.get(steps.size() - 1).getSource();
         }
 
+        //Está sendo usado a regra de agrupar termos do addandsub, pois é equivalente
         validateExpressions(sources);
         if (groupTerms.match(sources)) {
             steps.addAll(groupTerms.handle(sources));
