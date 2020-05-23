@@ -95,12 +95,6 @@ public class ThreeAddressCode {
         }
     }
 
-    public String retrieveNextTemporary() {
-        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() - 1).getResult();
-        int value = Integer.parseInt(lastQuadrupleResult.replace("T", ""));
-
-        return "T" + (value + 1);
-    }
 
     public ExpandedQuadruple findQuadrupleByResult(String result) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
@@ -275,6 +269,7 @@ public class ThreeAddressCode {
      * @param argument2         {@link String} que representa o argument2 da nova quadrupla
      * @param quadruple         {@link ExpandedQuadruple} que um dos argumentos se tornará a nova quadrupla
      * @param setNewOnArgument1 {@link Boolean} que indica qual argumento da {@code quadruple} será substituída
+     * @return Nova {@link ExpandedQuadruple} que foi adicionada a lista
      */
     public ExpandedQuadruple addQuadrupleToList(String operator, String argument1, String argument2, ExpandedQuadruple quadruple,
                                                 boolean setNewOnArgument1) {
@@ -292,6 +287,18 @@ public class ThreeAddressCode {
             quadruple.setArgument2(newQuadruple.getResult());
 
         return newQuadruple;
+    }
+
+    /**
+     * Obtem a String que sera utilizada como {@code result} da nova quadrupla
+     *
+     * @return {@link String} que eh o numero da ultima temporaria da lista, mais um (+1).
+     */
+    public String retrieveNextTemporary() {
+        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() - 1).getResult();
+        int value = Integer.parseInt(lastQuadrupleResult.replace("T", ""));
+
+        return "T" + (value + 1);
     }
 
     /**
@@ -346,7 +353,6 @@ public class ThreeAddressCode {
      * quadrupla de MINUS com um grau de potenciacao (Ex.: -2x^2), essas ficam como temporarias com grau de potenciação
      * (Ex.: T4^2, sendo T4 = MINUS 2x), o que não é desejável. Assim, o expoente é retirado do lado da variavel temporaria e adicionado a
      * quadrupla de MINUS. No caso do exemplo, seria T4 = MINUS 2x^2.
-     *
      */
     public void handlePotentiation() {
         for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
@@ -385,6 +391,12 @@ public class ThreeAddressCode {
         }
     }
 
+    /**
+     * Verifica se a {@code expandedQuadruple} é uma variavel temporaria com uma potenciação. Ex.: T5^2
+     *
+     * @param expandedQuadruple {@link ExpandedQuadruple} a ser verificada.
+     * @return {@code true} caso ela seja uma temporaria com potenciacao, e {@code false} caso contrario.
+     */
     private boolean isTemporaryVariableWithPotentiation(ExpandedQuadruple expandedQuadruple) {
         return (expandedQuadruple.getArgument1().contains("T") && expandedQuadruple.getArgument1().contains("^"))
                 || (expandedQuadruple.getArgument2().contains("T") && expandedQuadruple.getArgument2().contains("^"));
