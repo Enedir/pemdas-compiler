@@ -191,54 +191,82 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         }
     }
 
-    //FIXME esse metodo provavelmente poderá ser unido com o polynomialRightTermDistributive
+    /**
+     * Realiza a iteracao do polinomio a esquerda da multiplicacao
+     *
+     * @param leftDistQuadruple  {@link ExpandedQuadruple} que representa o polinomio a esquerda da multiplicacao
+     * @param rightDistQuadruple {@link ExpandedQuadruple} que representa o polinomio a direita da multiplicacao
+     * @param newSource          {@link ThreeAddressCode} que será inserido as quadruplas com o resultado da distributiva
+     * @return {@link String} que representa a {@code reason} dessa regra, ou seja, a explicação adequada do que foi realizado
+     */
     private String polynomialDistributive(ExpandedQuadruple leftDistQuadruple, ExpandedQuadruple rightDistQuadruple, ThreeAddressCode newSource) {
         if (StringUtil.match(leftDistQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
             return this.polynomialDistributive(this.source.findQuadrupleByResult(leftDistQuadruple.getArgument1()), rightDistQuadruple, newSource);
 
-        if (leftDistQuadruple.isNegative()) {
-            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(leftDistQuadruple.getArgument1(), newSource.getExpandedQuadruples(), true);
-            this.polynomialRightTermDistributive(minusQuadruple.getResult(), rightDistQuadruple, newSource);
-            leftDistQuadruple = this.source.findQuadrupleByArgument(leftDistQuadruple.getResult());
-        } else
-            this.polynomialRightTermDistributive(leftDistQuadruple.getArgument1(), rightDistQuadruple, newSource);
+        leftDistQuadruple = handleMinusOnArgument1(leftDistQuadruple, rightDistQuadruple, newSource);
 
         if (StringUtil.match(leftDistQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-
-            ExpandedQuadruple nextQuadruple = this.source.findQuadrupleByResult(leftDistQuadruple.getArgument2());
-
-            if (leftDistQuadruple.isMinus() && !StringUtil.match(nextQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(nextQuadruple.getArgument1(), newSource.getExpandedQuadruples(), false);
-                this.source.addQuadrupleToList(minusQuadruple.getOperator(), minusQuadruple.getArgument1(), minusQuadruple.getArgument2(), nextQuadruple, true);
-            }
-
-
+            ExpandedQuadruple nextQuadruple = this.getNextQuadruple(leftDistQuadruple, newSource);
             return this.polynomialDistributive(nextQuadruple, rightDistQuadruple, newSource);
         }
-        String leftQuadrupleMultiplier;
-        if (leftDistQuadruple.isMinus()) {
-            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(leftDistQuadruple.getArgument2(), newSource.getExpandedQuadruples(), true);
-            leftQuadrupleMultiplier = minusQuadruple.getResult();
-        } else
-            leftQuadrupleMultiplier = leftDistQuadruple.getArgument2();
+        String leftQuadrupleMultiplier = handleNegativeOnQuadruple(leftDistQuadruple, newSource);
 
-        this.polynomialRightTermDistributive(leftQuadrupleMultiplier, rightDistQuadruple, newSource);
-        this.adjustLastQuadruple(newSource);
+        /*pelo modo como as quadruplas sao inseriadas no newSource, é preciso ajustar a última quadrupla
+        para não ficar um valor vazio
+         */
+        this.adjustLastQuadruple(this.polynomialRightTermDistributive(leftQuadrupleMultiplier, rightDistQuadruple, newSource));
         this.source = newSource;
 
         return "Aplicando a propriedade distributiva, onde cada elemento do primeiro termo é multiplicado " +
                 "por cada um dos elementos do segundo termo.";
     }
 
+    /**
+     * Realiza a efetiva distributiva de cada elemento do polinomio a esquerda, com o polinomio a direita
+     *
+     * @param leftQuadrupleMultiplier {@link String} que representa um valor no polinomio a esquerda
+     * @param rightQuadruple          {@link ExpandedQuadruple} que representa o polinomio a direita da multiplicacao
+     * @param newSource               {@link ThreeAddressCode} que será inserido as quadruplas com o resultado da distributiva
+     * @return {@link ThreeAddressCode} que contem as {@link ExpandedQuadruple} apos a realizacao da distributiva
+     */
+    private ThreeAddressCode polynomialRightTermDistributive(String leftQuadrupleMultiplier, ExpandedQuadruple rightQuadruple, ThreeAddressCode newSource) {
+        if (StringUtil.match(rightQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+            return this.polynomialRightTermDistributive(leftQuadrupleMultiplier, this.source.findQuadrupleByResult(rightQuadruple.getArgument1()), newSource);
+
+        rightQuadruple = this.handleMinusOnArgument1(leftQuadrupleMultiplier, rightQuadruple, newSource);
+
+        if (StringUtil.match(rightQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+
+            ExpandedQuadruple nextQuadruple = this.getNextQuadruple(rightQuadruple, newSource);
+            return this.polynomialRightTermDistributive(leftQuadrupleMultiplier, nextQuadruple, newSource);
+        }
+        String rightQuadrupleArgument = handleNegativeOnQuadruple(rightQuadruple, newSource);
+        this.addNewQuadrupleToSource(leftQuadrupleMultiplier, rightQuadrupleArgument, newSource);
+        return newSource;
+    }
+
+
     //o booleano é pra procurar de cima para baixo, ou de baixo para cima, no caso tiver 2 numeros negativos iguais nas
     // duas quadruplas
+
+    /**
+     * A partir de um {@code argument}, procura na lista de quadruplas ( {@code expandedQuadruples} por um valor igual.
+     *
+     * @param argument           {@link String} que é o valor a ser procurado na lista
+     * @param expandedQuadruples {@link List} de {@link ExpandedQuadruple} que contem a quadrupla a ser buscada
+     * @param isTopToBottom      define se eh uma busca ascendente ou descendente na lista
+     * @return {@link ExpandedQuadruple} com o mesmo valor do {@code argument}
+     */
     private ExpandedQuadruple getMinusQuadruple(String argument, List<ExpandedQuadruple> expandedQuadruples, boolean isTopToBottom) {
+        //descendente
         if (isTopToBottom) {
             for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
                 if (expandedQuadruple.isNegative() && expandedQuadruple.getArgument1().equals(argument))
                     return expandedQuadruple;
             }
         }
+
+        //ascendente
         for (int i = expandedQuadruples.size() - 1; i > 0; i--) {
             ExpandedQuadruple expandedQuadruple = expandedQuadruples.get(i);
             if (expandedQuadruple.isNegative() && expandedQuadruple.getArgument1().equals(argument))
@@ -247,6 +275,123 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         return expandedQuadruples.get(0);
     }
 
+    /**
+     * Cria uma quadrupla a partir de dois valores, e insere na lista de quadruplas de um codigo de tres enderecos
+     *
+     * @param leftQuadrupleMultiplier {@link String} que ira se tornar o {@code argument1} da nova {@link ExpandedQuadruple}
+     * @param rightQuadrupleArgument  {@link String} que ira se tornar o {@code argument2} da nova {@link ExpandedQuadruple}
+     * @param newSource               {@link ThreeAddressCode} que sera inserido a nova quadrupla em sua lista de quadruplas
+     */
+    private void addNewQuadrupleToSource(String leftQuadrupleMultiplier, String rightQuadrupleArgument, ThreeAddressCode newSource) {
+        ExpandedQuadruple iterationQuadruple = this.findIterationQuadruple(newSource);
+        newSource.addQuadrupleToList("*", leftQuadrupleMultiplier, rightQuadrupleArgument, iterationQuadruple, true);
+        newSource.addQuadrupleToList("", "", "", iterationQuadruple, false);
+        iterationQuadruple.setOperator("+");
+    }
+
+    /**
+     * Encontra a quadrupla onde serao inseridos os novos valores
+     *
+     * @param newSource {@link ThreeAddressCode} que contem a {@link List} de {@link ExpandedQuadruple}
+     *                  de qual sera feita a busca
+     * @return {@link ExpandedQuadruple} que sera alterada e adicionado novos valores
+     */
+    private ExpandedQuadruple findIterationQuadruple(ThreeAddressCode newSource) {
+        for (ExpandedQuadruple expandedQuadruple : newSource.getExpandedQuadruples()) {
+
+            if (expandedQuadruple.getArgument1().equals("") &&
+                    expandedQuadruple.getArgument2().equals("") && !expandedQuadruple.isNegative())
+                return expandedQuadruple;
+        }
+        return newSource.getExpandedQuadruples().get(0);
+    }
+
+    /**
+     * Faz a verificacao se o {@code argument1} de uma quadrupla tem operador "MINUS" ou nao, e realiza a operacao correta. Nesse caso, ira
+     * analisar a {@code leftQuadruple} e ira realizar a iteracao para inserir a lista do {@code source} de acordo com a verificacao.
+     *
+     * @param leftQuadruple  {@link ExpandedQuadruple} que sera analisada e que ira definir qual sera o multiplicador
+     *                       para a insercao na lista de quadruplas
+     * @param rightQuadruple {@link ExpandedQuadruple} que representa a quadrupla inicial, de que pode se obter
+     *                       o polinomio a direita da multiplicacao
+     * @param source         {@link ThreeAddressCode} de onde sera obtida a {@link List} de {@link ExpandedQuadruple}
+     *                       a serem iteradas
+     * @return o {@code leftQuadruple} com o valor correto para continuar a iteracao
+     */
+    private ExpandedQuadruple handleMinusOnArgument1(ExpandedQuadruple leftQuadruple, ExpandedQuadruple rightQuadruple, ThreeAddressCode source) {
+        if (leftQuadruple.isNegative()) {
+            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(leftQuadruple.getArgument1(), source.getExpandedQuadruples(), true);
+            this.polynomialRightTermDistributive(minusQuadruple.getResult(), rightQuadruple, source);
+            return this.source.findQuadrupleByArgument(leftQuadruple.getResult());
+        }
+        this.polynomialRightTermDistributive(leftQuadruple.getArgument1(), rightQuadruple, source);
+        return leftQuadruple;
+    }
+
+    /**
+     * Faz a verificacao se o {@code argument1} de uma quadrupla tem operador "MINUS" ou nao, e realiza a operacao correta. Nesse caso, ira
+     * analisar a {@code rightQuadruple} e inserir uma quadrupla a lista do {@code source} de acordo com a verificacao.
+     *
+     * @param leftQuadrupleMultiplier {@link String} que representa o multiplicador atual, ou seja, o valor
+     *                                que ira se tornar o {@code argument1} da {@link ExpandedQuadruple}
+     * @param rightQuadruple          {@link ExpandedQuadruple} que sera verificada e associada a {@code leftQuadrupleMultiplier}
+     *                                para ser inserida na lista de quadruplas
+     * @param source                  {@link ThreeAddressCode} que contem a {@link List} de {@link ExpandedQuadruple}
+     *                                de qual sera inserida a nova quadrupla
+     * @return o {@code rightQuadruple} com o valor correto para continuar a iteracao
+     */
+    private ExpandedQuadruple handleMinusOnArgument1(String leftQuadrupleMultiplier, ExpandedQuadruple rightQuadruple, ThreeAddressCode source) {
+        if (rightQuadruple.isNegative()) {
+            //insere a quadrupla com MINUS na lista, e depois pega seu pai, para continuar a iteracao com seu argument2
+            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(rightQuadruple.getArgument1(), source.getExpandedQuadruples(), false);
+            this.addNewQuadrupleToSource(leftQuadrupleMultiplier, minusQuadruple.getResult(), source);
+            return this.source.findQuadrupleByArgument(rightQuadruple.getResult());
+        }
+        this.addNewQuadrupleToSource(leftQuadrupleMultiplier, rightQuadruple.getArgument1(), source);
+        return rightQuadruple;
+    }
+
+
+    /**
+     * Faz a verificacao se uma quadrupla tem operador "-" ou nao, e retorna o valor correto que o representa
+     *
+     * @param expandedQuadruple {@link ExpandedQuadruple} a ser analisada e obtida o valor negativo correto
+     * @param source            {@link ThreeAddressCode} que contem a {@link List} de {@link ExpandedQuadruple} a auxiliar
+     *                          para obter o valor correto
+     * @return {@link String} que representa o valor numerico ou a quadrupla associada ao {@code argument2} da quadrupla
+     */
+    private String handleNegativeOnQuadruple(ExpandedQuadruple expandedQuadruple, ThreeAddressCode source) {
+        if (expandedQuadruple.isMinus()) {
+            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(expandedQuadruple.getArgument2(), source.getExpandedQuadruples(), true);
+            return minusQuadruple.getResult();
+        }
+        return expandedQuadruple.getArgument2();
+    }
+
+    /**
+     * Obtem a quadrupla correta, a partir do {@code argument2} que representa uma variavel temporaria
+     *
+     * @param expandedQuadruple {@link ExpandedQuadruple} de onde sera obtido e verificado o {@code argument2}
+     * @param source            @link ThreeAddressCode} que contem a {@link List} de {@link ExpandedQuadruple} a auxiliar
+     *                          para obter o valor correto
+     * @return proxima {@link ExpandedQuadruple} a ser iterada ou alterada
+     */
+    private ExpandedQuadruple getNextQuadruple(ExpandedQuadruple expandedQuadruple, ThreeAddressCode source) {
+        ExpandedQuadruple nextQuadruple = this.source.findQuadrupleByResult(expandedQuadruple.getArgument2());
+
+        if (expandedQuadruple.isMinus() && !StringUtil.match(nextQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(nextQuadruple.getArgument1(), source.getExpandedQuadruples(), false);
+            this.source.addQuadrupleToList(minusQuadruple.getOperator(), minusQuadruple.getArgument1(), minusQuadruple.getArgument2(), nextQuadruple, true);
+        }
+        return nextQuadruple;
+    }
+
+    /**
+     * Ajusta a ultima quadrupla, para que nao apresente um valor vazio ou ate mesmo uma quadrupla vazia
+     *
+     * @param newSource {@link ThreeAddressCode} que contem a {@link List} de {@link ExpandedQuadruple} a ser analisada
+     *                  e ajustada
+     */
     private void adjustLastQuadruple(ThreeAddressCode newSource) {
         ExpandedQuadruple lastQuadruple = newSource.getExpandedQuadruples().get(newSource.getExpandedQuadruples().size() - 1);
         if (lastQuadruple.getOperator().equals("")) {
@@ -255,53 +400,10 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         }
     }
 
-    private ThreeAddressCode polynomialRightTermDistributive(String leftQuadrupleMultiplier, ExpandedQuadruple rightQuadruple, ThreeAddressCode newSource) {
-        if (StringUtil.match(rightQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-            return this.polynomialRightTermDistributive(leftQuadrupleMultiplier, this.source.findQuadrupleByResult(rightQuadruple.getArgument1()), newSource);
-        if (rightQuadruple.isNegative()) {
-            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(rightQuadruple.getArgument1(), newSource.getExpandedQuadruples(), false);
-            this.addNewQuadrupleToSource(leftQuadrupleMultiplier, minusQuadruple.getResult(), newSource);
-            rightQuadruple = this.source.findQuadrupleByArgument(rightQuadruple.getResult());
-        } else
-            this.addNewQuadrupleToSource(leftQuadrupleMultiplier, rightQuadruple.getArgument1(), newSource);
 
-        if (StringUtil.match(rightQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-
-            ExpandedQuadruple nextQuadruple = this.source.findQuadrupleByResult(rightQuadruple.getArgument2());
-
-            if (rightQuadruple.isMinus() && !StringUtil.match(nextQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(nextQuadruple.getArgument1(), newSource.getExpandedQuadruples(), false);
-                this.source.addQuadrupleToList(minusQuadruple.getOperator(), minusQuadruple.getArgument1(), minusQuadruple.getArgument2(), nextQuadruple, true);
-            }
-
-            return this.polynomialRightTermDistributive(leftQuadrupleMultiplier, nextQuadruple, newSource);
-        }
-        String rightQuadrupleArgument;
-        if (rightQuadruple.isMinus()) {
-            ExpandedQuadruple minusQuadruple = this.getMinusQuadruple(rightQuadruple.getArgument2(), newSource.getExpandedQuadruples(), false);
-            rightQuadrupleArgument = minusQuadruple.getResult();
-        } else
-            rightQuadrupleArgument = rightQuadruple.getArgument2();
-        this.addNewQuadrupleToSource(leftQuadrupleMultiplier, rightQuadrupleArgument, newSource);
-        return newSource;
-    }
-
-    private void addNewQuadrupleToSource(String leftQuadrupleMultiplier, String rightQuadrupleArgument, ThreeAddressCode newSource) {
-        ExpandedQuadruple iterationQuadruple = this.findIterationQuadruple(newSource);
-        newSource.addQuadrupleToList("*", leftQuadrupleMultiplier, rightQuadrupleArgument, iterationQuadruple, true);
-        newSource.addQuadrupleToList("", "", "", iterationQuadruple, false);
-        iterationQuadruple.setOperator("+");
-    }
-
-    private ExpandedQuadruple findIterationQuadruple(ThreeAddressCode newSource) {
-        for (ExpandedQuadruple expandedQuadruple : newSource.getExpandedQuadruples()) {
-            if (expandedQuadruple.getArgument1().equals("") &&
-                    expandedQuadruple.getArgument2().equals("") && !expandedQuadruple.isNegative())
-                return expandedQuadruple;
-        }
-        return newSource.getExpandedQuadruples().get(0);
-    }
-
+    /**
+     * Limpa as quadruplas nao utilizadas e remove os parenteses das quadruplas
+     */
     private void fixingQuadruples() {
         this.source.clearNonUsedQuadruples();
         this.source.removeQuadruplesParentheses(true);
@@ -309,14 +411,14 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
 
     private boolean isThereADistributiveCase(List<ThreeAddressCode> source) {
         ExpandedQuadruple expandedQuadruple = source.get(0).findQuadrupleByResult(source.get(0).getLeft());
-
-
+        //Se o argument1 for uma temporaria, e o argument2 nao
         if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && !StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple innerOperation = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
             if (!innerOperation.isNegative())
                 return true;
         }
 
+        //Se o argument1 nao for uma temporaria, e o argument2 sim
         if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple innerOperation = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
 
@@ -324,6 +426,7 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
                 return true;
         }
 
+        //Se ambos os arguments sao temporarias
         if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) && StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple innerOperation1 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument1());
             ExpandedQuadruple innerOperation2 = source.get(0).findQuadrupleByResult(expandedQuadruple.getArgument2());
