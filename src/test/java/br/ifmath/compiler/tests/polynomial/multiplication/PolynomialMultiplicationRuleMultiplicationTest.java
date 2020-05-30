@@ -21,7 +21,6 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
     private String stepThreeResultExpected;
     private String stepFourResultExpected;
     private String stepFiveResultExpected;
-    private String stepSixResultExpected;
 
     @Before
     public void setUp() {

@@ -1,7 +1,6 @@
 package br.ifmath.compiler.tests.polynomial;
 
 
-import br.ifmath.compiler.domain.expertsystem.polynomial.multiplication.PolynomialMultiplicationRuleMultiplication;
 import br.ifmath.compiler.tests.polynomial.addAndSub.PolynomialAddAndSubRuleGroupSimilarTermsTest;
 import br.ifmath.compiler.tests.polynomial.addAndSub.PolynomialAddAndSubRuleShiftSignTest;
 import br.ifmath.compiler.tests.polynomial.multiplication.PolynomialMultiplicationRuleDistributiveTest;

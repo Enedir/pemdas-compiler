@@ -245,10 +245,6 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         return newSource;
     }
 
-
-    //o booleano é pra procurar de cima para baixo, ou de baixo para cima, no caso tiver 2 numeros negativos iguais nas
-    // duas quadruplas
-
     /**
      * A partir de um {@code argument}, procura na lista de quadruplas ( {@code expandedQuadruples} por um valor igual.
      *
@@ -409,6 +405,13 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         this.source.removeQuadruplesParentheses(true);
     }
 
+    /**
+     * Verifica se eh necessario realizar uma distributiva em dado {@code source}
+     *
+     * @param source {@link ThreeAddressCode} que contem a {@link List} de {@link ExpandedQuadruple}
+     *               a serem analisadas
+     * @return {@code true} caso seja necessario executar uma distributiva, e {@code false} caso contrario.
+     */
     private boolean isThereADistributiveCase(List<ThreeAddressCode> source) {
         ExpandedQuadruple expandedQuadruple = source.get(0).findQuadrupleByResult(source.get(0).getLeft());
         //Se o argument1 for uma temporaria, e o argument2 nao
