@@ -35,9 +35,9 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
     public IAnswer findBestAnswer(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
         List<Step> steps = new ArrayList<>();
 
-        setUp(sources);
-
         AnswerPolynomialNumericValue answer = new AnswerPolynomialNumericValue(steps);
+
+        sources.get(0).setUp();
 
         steps.add(new Step(sources, sources.get(0).toLaTeXNotation().replace("*", ".").trim(), sources.get(0).toMathNotation().replace("*", ".").trim(), "Equação inicial."));
 
@@ -131,12 +131,6 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
             this.substituteVariable.Add((NumericValueVariable) variable);
         }
     }
-
-    private void setUp(List<ThreeAddressCode> sources) {
-        sources.get(0).setComparison("");
-        sources.get(0).setRight("");
-    }
-
 
     private void getFinalResult(AnswerPolynomialNumericValue answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
         ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(possibleNumber);

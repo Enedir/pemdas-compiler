@@ -402,6 +402,14 @@ public class ThreeAddressCode {
                 || (expandedQuadruple.getArgument2().contains("T") && expandedQuadruple.getArgument2().contains("^"));
     }
 
+    /**
+     * Ajusta os valores iniciais da quadrupla
+     */
+    public void setUp() {
+        this.setComparison("");
+        this.setRight("");
+    }
+
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {

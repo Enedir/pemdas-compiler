@@ -40,8 +40,9 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
         AnswerPolynomialMultiplication answer = new AnswerPolynomialMultiplication(steps);
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
+        sources.get(0).setUp();
 
+        steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
 
         setUpQuadruples(sources);
 

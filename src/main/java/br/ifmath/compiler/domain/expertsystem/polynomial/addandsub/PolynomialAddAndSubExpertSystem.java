@@ -33,7 +33,9 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
         AnswerPolynomialAddAndSub answer = new AnswerPolynomialAddAndSub(steps);
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
+        sources.get(0).setUp();
+
+        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().trim(), sources.get(0).toMathNotation().trim(), "Equação inicial."));
 
         setUpQuadruples(sources);
 
