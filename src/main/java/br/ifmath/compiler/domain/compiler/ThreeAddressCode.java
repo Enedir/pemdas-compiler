@@ -63,6 +63,7 @@ public class ThreeAddressCode {
     }
 
 
+
     /**
      * Remove todas as quadruplas que não estão sendo usadas, ou seja, remove as quadruplas que não
      * são utilizadas por outras quadruplas
@@ -91,10 +92,18 @@ public class ThreeAddressCode {
                     hasRemovedAllQuadruples = true;
                 }
                 i++;
+
             }
         }
     }
 
+
+    public String retrieveNextTemporary() {
+        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() - 1).getResult();
+        int value = Integer.parseInt(lastQuadrupleResult.replace("T", ""));
+
+        return "T" + (value + 1);
+    }
 
     public ExpandedQuadruple findQuadrupleByResult(String result) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
@@ -390,7 +399,6 @@ public class ThreeAddressCode {
                     ExpandedQuadruple quadruple = this.findQuadrupleByResult(argument);
                     quadruple.setArgument1(quadruple.getArgument1() + potentiation);
                 }
-
             }
         }
     }
@@ -413,7 +421,6 @@ public class ThreeAddressCode {
         this.setComparison("");
         this.setRight("");
     }
-
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {

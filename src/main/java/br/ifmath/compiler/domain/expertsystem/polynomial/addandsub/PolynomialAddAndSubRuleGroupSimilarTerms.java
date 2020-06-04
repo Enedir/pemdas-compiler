@@ -172,7 +172,6 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                 else
                     quadruple = iterationQuadruple;
 
-
                 if (numbersSum < 0)
                     quadruple.setOperator("-");
                 else
@@ -297,8 +296,6 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                     return true;
                 }
             }
-
-
         }
 
         return false;

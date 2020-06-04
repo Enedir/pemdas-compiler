@@ -148,6 +148,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             son.setLevel(-1);
             expandedQuadruple.setLevel(-1);
         }
+        return father;
 
     }
 
