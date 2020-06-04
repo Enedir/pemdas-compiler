@@ -48,7 +48,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Soma dos termos semelhantes."));
+        steps.add(new Step(codes, step.toFormattedLaTeXNotation(), step.toFormattedMathNotation(), "Soma dos termos semelhantes."));
 
         return steps;
     }

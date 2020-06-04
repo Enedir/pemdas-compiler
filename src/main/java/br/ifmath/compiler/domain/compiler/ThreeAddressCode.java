@@ -221,7 +221,11 @@ public class ThreeAddressCode {
         return String.format("%s %s %s",
                 generateLaTeXNotation(left, 0, new StringBuilder()).toString(),
                 comparison,
-                generateLaTeXNotation(right, 0, new StringBuilder()).toString());
+                generateLaTeXNotation(right, 0, new StringBuilder()).toString()).replace("*", ".").trim();
+    }
+
+    public String toFormattedLaTeXNotation(){
+        return this.toLaTeXNotation().replace("*", ".").trim();
     }
 
     /**
@@ -448,6 +452,10 @@ public class ThreeAddressCode {
                 generateMathNotation(left, 0, new StringBuilder()).toString(),
                 comparison,
                 generateMathNotation(right, 0, new StringBuilder()).toString());
+    }
+
+    public String toFormattedMathNotation(){
+        return this.toMathNotation().replace("*", ".").trim();
     }
 
     private StringBuilder generateMathNotation(String param, int level, StringBuilder builder) {

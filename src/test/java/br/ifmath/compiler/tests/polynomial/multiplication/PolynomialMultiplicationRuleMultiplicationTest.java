@@ -26,7 +26,7 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialMultiplicationExpertSystem();
-        stepTwoResultExpected = "Aplicando a propriedade distributiva, onde cada elemento dentro dos parênteses é multiplicado pelo elemento do outro termo";
+        stepTwoResultExpected = "Aplicando a propriedade distributiva, onde cada elemento dentro dos parênteses é multiplicado pelo elemento do outro termo.";
         stepThreeResultExpected = "Aplicando a propriedade distributiva, onde cada elemento do primeiro termo é multiplicado por cada um dos elementos do segundo termo.";
         stepFourResultExpected = "Multiplica-se os coeficientes, considerando a regra dos sinais, e para as variáveis, somam-se os expoentes pela propriedade das potências.";
         stepFiveResultExpected = "Agrupando os termos semelhantes.";
@@ -83,7 +83,7 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
         //Arrange
         String expression = "(x^2 + 5x^5) * (-4)";
 
-        String stepTwoValueExpected = "(-4) * x^2 + (-4) * 5x^5";
+        String stepTwoValueExpected = "(-4) . x^2 + (-4) . 5x^5";
         String stepThreeValueExpected = "-4x^2 - 20x^5";
         String lastStepValueExpected = "-20x^5 - 4x^2";
 
@@ -113,7 +113,7 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
         //Arrange
         String expression = "x^3 * (-x^2 + 7)";
 
-        String stepTwoValueExpected = "x^3 * (-x^2) + x^3 * 7";
+        String stepTwoValueExpected = "x^3 . (-x^2) + x^3 . 7";
         String lastStepValueExpected = "-x^5 + 7x^3";
 
         // Act)
@@ -139,7 +139,7 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
         //Arrange
         String expression = "(5x + 2x^2) * (3x^2 - 7)";
 
-        String stepTwoValueExpected = "5x * 3x^2 + 5x * (-7) + 2x^2 * 3x^2 + 2x^2 * (-7)";
+        String stepTwoValueExpected = "5x . 3x^2 + 5x . (-7) + 2x^2 . 3x^2 + 2x^2 . (-7)";
         String stepThreeValueExpected = "15x^3 - 35x + 6x^4 - 14x^2";
         String lastStepValueExpected = "6x^4 + 15x^3 - 14x^2 - 35x";
 
@@ -169,7 +169,7 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
         //Arrange
         String expression = "(-3x^2 - 4) * (-2x^2 - 10)";
 
-        String stepTwoValueExpected = "(-3x^2) * (-2x^2) + (-3x^2) * (-10) + (-4) * (-2x^2) + (-4) * (-10)";
+        String stepTwoValueExpected = "(-3x^2) . (-2x^2) + (-3x^2) . (-10) + (-4) . (-2x^2) + (-4) . (-10)";
         String stepThreeValueExpected = "6x^4 + 30x^2 + 8x^2 + 40";
         String lastStepValueExpected = "6x^4 + 38x^2 + 40";
 
@@ -199,7 +199,7 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
         //Arrange
         String expression = "(x + 12) * (4x^2 - x^3 + 1)";
 
-        String stepTwoValueExpected = "x * 4x^2 + x * (-x^3) + x * 1 + 12 * 4x^2 + 12 * (-x^3) + 12 * 1";
+        String stepTwoValueExpected = "x . 4x^2 + x . (-x^3) + x . 1 + 12 . 4x^2 + 12 . (-x^3) + 12 . 1";
         String stepThreeValueExpected = "4x^3 - x^4 + x + 48x^2 - 12x^3 + 12";
         String stepFourValueExpected = "-x^4 + 4x^3 - 12x^3 + 48x^2 + x + 12";
         String lastStepValueExpected = "-x^4 - 8x^3 + 48x^2 + x + 12";
@@ -233,8 +233,8 @@ public class PolynomialMultiplicationRuleMultiplicationTest {
         //Arrange
         String expression = "(3 - 4x^3 + x - 2x^2) * (4x^2 - x)";
 
-        String stepTwoValueExpected = "3 * 4x^2 + 3 * (-x) + (-4x^3) * 4x^2 + (-4x^3) * (-x)" +
-                " + x * 4x^2 + x * (-x) + (-2x^2) * 4x^2 + (-2x^2) * (-x)";
+        String stepTwoValueExpected = "3 . 4x^2 + 3 . (-x) + (-4x^3) . 4x^2 + (-4x^3) . (-x)" +
+                " + x . 4x^2 + x . (-x) + (-2x^2) . 4x^2 + (-2x^2) . (-x)";
         String stepThreeValueExpected = "12x^2 - 3x - 16x^5 + 4x^4 + 4x^3 - x^2 - 8x^4 + 2x^3";
         String stepFourValueExpected = "-16x^5 + 4x^4 - 8x^4 + 4x^3 + 2x^3 + 12x^2 - x^2 - 3x";
         String lastStepValueExpected = "-16x^5 - 4x^4 + 6x^3 + 11x^2 - 3x";

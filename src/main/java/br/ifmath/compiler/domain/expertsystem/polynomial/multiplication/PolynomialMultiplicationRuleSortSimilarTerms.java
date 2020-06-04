@@ -38,7 +38,7 @@ public class PolynomialMultiplicationRuleSortSimilarTerms implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Agrupando os termos semelhantes."));
+        steps.add(new Step(codes, step.toFormattedLaTeXNotation(), step.toFormattedMathNotation(), "Agrupando os termos semelhantes."));
 
         return steps;
     }

@@ -30,7 +30,7 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), reason));
+        steps.add(new Step(codes, step.toFormattedLaTeXNotation(), step.toFormattedMathNotation(), reason));
 
         return steps;
     }
@@ -176,7 +176,7 @@ public class PolynomialMultiplicationRuleDistributive implements IRule {
         this.adjustMonomialQuadruples();
 
         return "Aplicando a propriedade distributiva, onde cada elemento dentro dos parênteses é multiplicado " +
-                "pelo elemento do outro termo";
+                "pelo elemento do outro termo.";
     }
 
     /**

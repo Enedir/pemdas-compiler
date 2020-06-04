@@ -36,7 +36,7 @@ public class PolynomialMultiplicationRuleMultiplication implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(),
+        steps.add(new Step(codes, step.toFormattedLaTeXNotation(), step.toFormattedMathNotation(),
                 "Multiplica-se os coeficientes, considerando a regra dos sinais, " +
                         "e para as variáveis, somam-se os expoentes pela propriedade das potências."));
 

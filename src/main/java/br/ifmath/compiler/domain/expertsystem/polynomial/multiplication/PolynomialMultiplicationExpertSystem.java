@@ -41,7 +41,7 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
         sources.get(0).setUp();
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().trim(), sources.get(0).toMathNotation().trim(), "Equação inicial."));
+        steps.add(new Step(sources, sources.get(0).toFormattedLaTeXNotation(), sources.get(0).toFormattedMathNotation(), "Equação inicial."));
 
         setUpQuadruples(sources);
 
