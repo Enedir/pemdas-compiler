@@ -23,8 +23,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
 
     @Override
     public boolean match(List<ThreeAddressCode> sources) {
-        return isThereEquivalentTermsToJoin(sources.get(0).getOperationsFromLeft())
-                || isThereEquivalentTermsToJoin(sources.get(0).getOperationsFromRight());
+        return isThereEquivalentTermsToJoin(sources.get(0));
     }
 
     @Override
@@ -49,7 +48,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Soma dos termos semelhantes."));
+        steps.add(new Step(codes, step.toFormattedLaTeXNotation(), step.toFormattedMathNotation(), "Soma dos termos semelhantes."));
 
         return steps;
     }
@@ -127,7 +126,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
                          * substituído no argument2*/
                     else {
                         iterationQuadruple.setOperator("-");
-                        if (numbersSum == 0)
+                        if (numbersSum == 0 && termsAndValuesList.size() == 1)
                             iterationQuadruple.setArgument2(iterationNVV.getLabel());
                             /* Já se a soma dos números for diferente de 0, será criada uma nova quadrupla para ser
                              *  adicionado o iterationNVV no argument1, e a soma dos números no argument2*/
@@ -167,18 +166,19 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
             /*Caso haja uma variável temporária no argument2, abrirá essa temporária, e adicionará
              * a soma desses números no argument2 dessa temporária. Caso contrário somente substituirá
              * no argument2 da quadrupla atual*/
-            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-                quadruple = source.findQuadrupleByResult(iterationQuadruple.getArgument2());
-            else
-                quadruple = iterationQuadruple;
+            if (iterationQuadruple != null) {
+                if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                    quadruple = source.findQuadrupleByResult(iterationQuadruple.getArgument2());
+                else
+                    quadruple = iterationQuadruple;
 
-            if (numbersSum < 0)
-                quadruple.setOperator("-");
-            else
-                quadruple.setOperator("+");
+                if (numbersSum < 0)
+                    quadruple.setOperator("-");
+                else
+                    quadruple.setOperator("+");
 
-            quadruple.setArgument2(String.valueOf(Math.abs(numbersSum)));
-
+                quadruple.setArgument2(String.valueOf(Math.abs(numbersSum)));
+            }
         } else {
             /*caso só haja um item na lista, e sem uma soma de número sem variável, haverá uma quadrupla
              * com somente o argument1*/
@@ -207,7 +207,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
 
             if (expandedQuadruple.isNegative()) {
-                sum -= sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), false, termsAndValuesList);
+                sum -= sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), true, termsAndValuesList);
             } else {
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument1(), lastOperationIsMinus, termsAndValuesList);
                 sum += sumTerms(threeAddressCode, expandedQuadruple.getArgument2(), expandedQuadruple.isMinus(), termsAndValuesList);
@@ -270,35 +270,80 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
     /**
      * Verifica se há dois ou mais numeros ou numeros com variáveis em uma lista, para serem agrupados.
      *
-     * @param expandedQuadruples {@link List} de {@link ExpandedQuadruple} que contém as quadruplas a serem verificadas
+     * @param source {@link ThreeAddressCode} que contémas {@link ExpandedQuadruple} a serem verificadas
      * @return <ul>
      * <li>true - caso haja valores a serem agrupados</li>
      * <li>false - caso não haja valores a serem agrupados</li>
      * </ul>
      */
-    private boolean isThereEquivalentTermsToJoin(List<ExpandedQuadruple> expandedQuadruples) {
-        int variableAmount = 0;
-        int numberAmount = 0;
+    private boolean isThereEquivalentTermsToJoin(ThreeAddressCode source) {
+        int index = 1;
+        //caso haja somente uma quadrupla com os dois argumentos
+        if (source.getExpandedQuadruples().size() == 1)
+            index--;
 
-        for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
-            if (!expandedQuadruple.isPlusOrMinus() || expandedQuadruple.getLevel() != 0)
-                return false;
+        /**/
+        for (int i = 0; i < source.getExpandedQuadruples().size() - index; i++) {
+            ExpandedQuadruple expandedQuadruple = source.getExpandedQuadruples().get(i);
 
-            if (StringUtil.matchAny(expandedQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.DECIMAL_NUMBER.toString()))
-                numberAmount++;
-
-            if (StringUtil.matchAny(expandedQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.DECIMAL_NUMBER.toString()))
-                numberAmount++;
-
-            if (StringUtil.isVariable(expandedQuadruple.getArgument1()))
-                variableAmount++;
-
-            if (StringUtil.isVariable(expandedQuadruple.getArgument2()))
-                variableAmount++;
+            if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                if (isThereAEqualLabel(source, expandedQuadruple, true)) {
+                    return true;
+                }
+            }
+            if (!StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                if (!expandedQuadruple.isNegative() && isThereAEqualLabel(source, expandedQuadruple, false)) {
+                    return true;
+                }
+            }
         }
 
-        return (variableAmount > 1 || numberAmount > 1);
+        return false;
     }
 
+    /**
+     * A partir de uma {@code expandedQuadruple} vai obter o label (Ex.: x^2) do argument1 ou 2, e verificar
+     * se ha em alguma outra quadrupla da lista, outro label igual.
+     *
+     * @param source            {@link ThreeAddressCode} que contem todas as quadruplas
+     * @param expandedQuadruple {@link ExpandedQuadruple} atual que sera comparada com o resto da lista
+     * @param isArgument1       {@link Boolean} que indentifica se esta sendo analisado o argument1 ou 2
+     *                          da {@code expandedQuadruple}
+     * @return {@code true} caso haja dois labels iguais na lista, ou {@code false} caso contrario
+     */
+    private boolean isThereAEqualLabel(ThreeAddressCode source, ExpandedQuadruple expandedQuadruple, boolean isArgument1) {
+        NumericValueVariable nvvExQuadruple = new NumericValueVariable();
+        if (isArgument1)
+            nvvExQuadruple.setAttributesFromString(expandedQuadruple.getArgument1());
+        else
+            nvvExQuadruple.setAttributesFromString(expandedQuadruple.getArgument2());
+
+        for (ExpandedQuadruple argumentQuadruple : source.getExpandedQuadruples()) {
+            NumericValueVariable nvvArgQuadruple = new NumericValueVariable();
+
+            /*caso seja o argument1 a ser analisado, nao podera obter a si mesmo para ser analisado. Mesmo
+             * caso da verificacao mais a baixo*/
+            if (!expandedQuadruple.equals(argumentQuadruple) || !isArgument1) {
+                if (!StringUtil.match(argumentQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                    nvvArgQuadruple.setAttributesFromString(argumentQuadruple.getArgument1());
+            }
+
+            //caso haja labels iguais para o argument1
+            if (nvvArgQuadruple.getLabel() != null && nvvArgQuadruple.getLabel().equals(nvvExQuadruple.getLabel()))
+                return true;
+
+            if (!expandedQuadruple.equals(argumentQuadruple) || isArgument1) {
+                if (!argumentQuadruple.isNegative() && !StringUtil.match(argumentQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                    nvvArgQuadruple.setAttributesFromString(argumentQuadruple.getArgument2());
+            }
+
+            //caso haja labels iguais para o argument2
+            if (nvvArgQuadruple.getLabel() != null && nvvArgQuadruple.getLabel().equals(nvvExQuadruple.getLabel()))
+                return true;
+
+        }
+
+        return false;
+    }
 
 }

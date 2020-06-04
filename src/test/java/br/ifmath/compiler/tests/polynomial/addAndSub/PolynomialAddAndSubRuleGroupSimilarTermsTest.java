@@ -59,10 +59,10 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     @Test()
     public void group_simple_terms_scenery_two_with_success() {
         //Arrange
-        String expression = "(3x^2 - 2x^2) - (9x + x)";
+        String expression = "(-3x^2 - 2x^2) - (9x + x)";
 
-        String stepTwoValueExpected = "3x^2 - 2x^2 - 9x - x";
-        String lastStepValueExpected = "x^2 - 10x";
+        String stepTwoValueExpected = "-3x^2 - 2x^2 - 9x - x";
+        String lastStepValueExpected = "-5x^2 - 10x";
 
         // Act)
         IAnswer answer = null;

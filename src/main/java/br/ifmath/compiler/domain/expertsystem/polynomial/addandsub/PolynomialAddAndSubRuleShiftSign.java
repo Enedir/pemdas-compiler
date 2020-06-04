@@ -110,9 +110,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
         }
 
         //retira os parenteses
-        for (ExpandedQuadruple expandedQuadruple : this.source.getExpandedQuadruples()) {
-            expandedQuadruple.setLevel(0);
-        }
+        this.source.removeQuadruplesParentheses();
     }
 
     /**
@@ -121,29 +119,17 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
      * @param expandedQuadruple {@link ExpandedQuadruple} que contém o operador MINUS
      */
     private void handleMinusParentheses(ExpandedQuadruple expandedQuadruple) {
-        ExpandedQuadruple grandfather = this.findDirectFather(expandedQuadruple);
-        grandfather.setOperator(MathOperatorUtil.signalRule(grandfather.getOperator(), "-"));
-        this.source.replaceFatherArgumentForSons(expandedQuadruple, 1);
+        ExpandedQuadruple grandfather = this.source.findDirectFather(expandedQuadruple.getResult());
+        if (grandfather != null) {
+            grandfather.setOperator(MathOperatorUtil.signalRule(grandfather.getOperator(), "-"));
+            this.source.replaceFatherArgumentForSons(expandedQuadruple, 1);
 
-        //simboliza que estas quadruplas ja foram alteradas
-        grandfather.setLevel(-1);
+            //simboliza que estas quadruplas ja foram alteradas
+            grandfather.setLevel(-1);
+        }
         expandedQuadruple.setLevel(-1);
     }
 
-    /**
-     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}
-     *
-     * @param iterationQuadruple {@link ExpandedQuadruple} de onde sera encontrado o pai
-     * @return {@link ExpandedQuadruple} que contem o operador anterior relativo a {@code iterationQuadruple}
-     */
-    private ExpandedQuadruple findDirectFather(ExpandedQuadruple iterationQuadruple) {
-        ExpandedQuadruple father = this.source.findQuadrupleByArgument(iterationQuadruple.getResult());
-        if (father.getArgument1().equals(iterationQuadruple.getResult())) {
-            return this.findDirectFather(father);
-        }
-        return father;
-
-    }
 
     /**
      * Faz as alteracoes de sinais e de argumentos em casos de operador "-" precedido da {@code expandedQuadruple},
@@ -162,6 +148,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             son.setLevel(-1);
             expandedQuadruple.setLevel(-1);
         }
+        return father;
 
     }
 

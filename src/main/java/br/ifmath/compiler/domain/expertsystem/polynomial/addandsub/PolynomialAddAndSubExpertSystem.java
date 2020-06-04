@@ -28,18 +28,18 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
 
     @Override
-    public IAnswer findBestAnswer(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public IAnswer findBestAnswer(List<ThreeAddressCode> sources) {
         List<Step> steps = new ArrayList<>();
 
         AnswerPolynomialAddAndSub answer = new AnswerPolynomialAddAndSub(steps);
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation(), sources.get(0).toMathNotation(), "Equação inicial."));
+        sources.get(0).setUp();
+
+        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().trim(), sources.get(0).toMathNotation().trim(), "Equação inicial."));
 
         setUpQuadruples(sources);
 
         validateExpressions(sources);
-
-        this.handlePotentiation(sources.get(0));
 
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));
@@ -111,6 +111,7 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
     private void setUpQuadruples(List<ThreeAddressCode> source) {
         setUpExponent(source, source.get(0).getLeft());
+        source.get(0).handlePotentiation();
         source.get(0).clearNonUsedQuadruples();
     }
 

@@ -1,13 +1,12 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue;
+package br.ifmath.compiler.domain.expertsystem.polynomial.multiplication;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.addandsub.PolynomialAddAndSubRuleGroupSimilarTerms;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
-import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -15,63 +14,63 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PolynomialNumericValueExpertSystem implements IExpertSystem {
-    private static PolynomialRuleSubstituteVariables substituteVariable;
-    private static PolynomialRuleSumNumbers sumNumbers;
-    private static PolynomialRuleMultiplyNumbers multiplyNumbers;
-    private static PolynomialRuleNumbersPotentiation powerNumbers;
-    private static PolynomialRuleParenthesesOperations parenOperations;
+public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
-    public PolynomialNumericValueExpertSystem() {
-        substituteVariable = new PolynomialRuleSubstituteVariables();
-        sumNumbers = new PolynomialRuleSumNumbers();
-        multiplyNumbers = new PolynomialRuleMultiplyNumbers();
-        powerNumbers = new PolynomialRuleNumbersPotentiation();
-        parenOperations = new PolynomialRuleParenthesesOperations();
+
+    private static PolynomialMultiplicationRuleSortSimilarTerms sortTerms;
+
+    private static PolynomialMultiplicationRuleDistributive distributive;
+
+    private static PolynomialMultiplicationRuleMultiplication multiplication;
+
+    private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
+
+    public PolynomialMultiplicationExpertSystem() {
+        sortTerms = new PolynomialMultiplicationRuleSortSimilarTerms();
+        groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
+        distributive = new PolynomialMultiplicationRuleDistributive();
+        multiplication = new PolynomialMultiplicationRuleMultiplication();
     }
 
 
     @Override
-    public IAnswer findBestAnswer(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public IAnswer findBestAnswer(List<ThreeAddressCode> sources) {
         List<Step> steps = new ArrayList<>();
 
-        AnswerPolynomialNumericValue answer = new AnswerPolynomialNumericValue(steps);
+        AnswerPolynomialMultiplication answer = new AnswerPolynomialMultiplication(steps);
 
         sources.get(0).setUp();
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().replace("*", ".").trim(), sources.get(0).toMathNotation().replace("*", ".").trim(), "Equação inicial."));
+        steps.add(new Step(sources, sources.get(0).toFormattedLaTeXNotation(), sources.get(0).toFormattedMathNotation(), "Equação inicial."));
+
+        setUpQuadruples(sources);
 
         validateExpressions(sources);
-        if (substituteVariable.match(sources)) {
-            steps.addAll(substituteVariable.handle(sources));
+        if (distributive.match(sources)) {
+            steps.addAll(distributive.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
         validateExpressions(sources);
-        if (parenOperations.match(sources)) {
-            steps.addAll(parenOperations.handle(sources));
+        if (multiplication.match(sources)) {
+            steps.addAll(multiplication.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
         validateExpressions(sources);
-        if (powerNumbers.match(sources)) {
-            steps.addAll(powerNumbers.handle(sources));
+        if (sortTerms.match(sources)) {
+            steps.addAll(sortTerms.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
+        //Está sendo usado a regra de agrupar termos do addandsub, pois é equivalente
         validateExpressions(sources);
-        if (multiplyNumbers.match(sources)) {
-            steps.addAll(multiplyNumbers.handle(sources));
+        if (groupTerms.match(sources)) {
+            steps.addAll(groupTerms.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
-        validateExpressions(sources);
-        if (sumNumbers.match(sources)) {
-            steps.addAll(sumNumbers.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
-        }
-
-        sources = substituteNullFields(sources);
+        substituteNullFields(sources);
 
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             getFinalResult(answer, sources.get(0), sources.get(0).getRight());
@@ -80,6 +79,13 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
         }
 
         return answer;
+    }
+
+
+    private void setUpQuadruples(List<ThreeAddressCode> source) {
+        setUpExponent(source, source.get(0).getLeft());
+        source.get(0).handlePotentiation();
+        source.get(0).clearNonUsedQuadruples();
     }
 
     @Override
@@ -91,19 +97,18 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
     @Override
     public void validateExpressions(List<ThreeAddressCode> sources) {
         List<String> variables = new ArrayList<>();
-        double coeficient = 0d;
         String variable;
 
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             variable = StringUtil.getVariable(sources.get(0).getLeft());
-            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
-            if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
+            NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
+            if (StringUtil.isNotEmpty(variable))
                 variables.add(variable);
         }
 
         if (StringUtil.isVariable(sources.get(0).getRight())) {
             variable = StringUtil.getVariable(sources.get(0).getRight());
-            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getRight());
+            NumberUtil.getVariableCoeficient(sources.get(0).getRight());
             if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                 variables.add(variable);
         }
@@ -111,28 +116,59 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
             if (StringUtil.isVariable(expandedQuadruple.getArgument1())) {
                 variable = StringUtil.getVariable(expandedQuadruple.getArgument1());
-                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument1());
+                NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument1());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
 
             if (StringUtil.isVariable(expandedQuadruple.getArgument2())) {
                 variable = StringUtil.getVariable(expandedQuadruple.getArgument2());
-                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
+                NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
         }
     }
 
-    @Override
-    public void setVariables(List<NumericValueVariable> variables) {
-        for (ValueVariable variable : variables) {
-            this.substituteVariable.Add((NumericValueVariable) variable);
+    private void setUpExponent(List<ThreeAddressCode> source, String result) {
+
+        ExpandedQuadruple expandedQuadruple = source.get(0).findQuadrupleByResult(result);
+
+        if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            this.setUpExponent(source, expandedQuadruple.getArgument1());
         }
+
+        if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            this.setUpExponent(source, expandedQuadruple.getArgument2());
+        }
+
+        if (expandedQuadruple.isPotentiation()) {
+            String nvvLabel = expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
+
+            ExpandedQuadruple parent;
+            parent = source.get(0).findQuadrupleByArgument1(result);
+
+            if (parent != null) {
+                parent.setArgument1(nvvLabel);
+            } else {
+                parent = source.get(0).findQuadrupleByArgument2(result);
+                if (parent != null) {
+                    parent.setArgument2(nvvLabel);
+                }
+            }
+
+
+        }
+
     }
 
-    private void getFinalResult(AnswerPolynomialNumericValue answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
+    @Override
+    public void setVariables(List<NumericValueVariable> variables) {
+
+    }
+
+
+    private void getFinalResult(AnswerPolynomialMultiplication answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
         ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(possibleNumber);
         if (expandedQuadruple == null) {
             answer.setResult(possibleNumber.replace(",", "."));
@@ -171,9 +207,8 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
      * Substitui caso os argumentos ou o operador sejam nulos, por ""
      *
      * @param sources a {@link List} de {@link ThreeAddressCode} com o polinomio
-     * @return o proprio parametro sources, ja alterados
      */
-    private List<ThreeAddressCode> substituteNullFields(List<ThreeAddressCode> sources) {
+    private void substituteNullFields(List<ThreeAddressCode> sources) {
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
             if (expandedQuadruple.getArgument1() == null)
                 expandedQuadruple.setArgument1("");
@@ -182,6 +217,5 @@ public class PolynomialNumericValueExpertSystem implements IExpertSystem {
             if (expandedQuadruple.getOperator() == null)
                 expandedQuadruple.setOperator("");
         }
-        return sources;
     }
 }
