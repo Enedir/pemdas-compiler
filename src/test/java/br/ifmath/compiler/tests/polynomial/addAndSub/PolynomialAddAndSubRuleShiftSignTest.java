@@ -24,8 +24,9 @@ public class PolynomialAddAndSubRuleShiftSignTest {
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialAddAndSubExpertSystem();
-        stepTwoExplicationExpected = "Aplicando regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.Também, removendo parenteses dos polinômios.";
-        stepThreeExplicationExpected = "Removendo parênteses dos polinômios";
+        stepTwoExplicationExpected ="Aplicando a regra de troca de sinais em operações prioritárias, em duplas negações ou " +
+                "em somas de números negativos. E, removendo os parênteses dos polinômios.";
+        stepThreeExplicationExpected = "Removendo os parênteses dos polinômios";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
     }

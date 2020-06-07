@@ -97,14 +97,6 @@ public class ThreeAddressCode {
         }
     }
 
-
-    public String retrieveNextTemporary() {
-        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() - 1).getResult();
-        int value = Integer.parseInt(lastQuadrupleResult.replace("T", ""));
-
-        return "T" + (value + 1);
-    }
-
     public ExpandedQuadruple findQuadrupleByResult(String result) {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
             if (expandedQuadruple.getResult().equals(result)) {

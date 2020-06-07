@@ -4,7 +4,6 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
@@ -53,7 +52,7 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         }
 
 
-        sources = substituteNullFields(sources);
+        substituteNullFields(sources);
 
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             getFinalResult(answer, sources.get(0), sources.get(0).getRight());
@@ -62,51 +61,6 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         }
 
         return answer;
-    }
-
-    /**
-     * Ajusta as quadruplas que tem algum grau e estao com o formato incorreto. Necessario para os casos que ha uma
-     * quadrupla de MINUS com um grau de potenciacao (Ex.: -2x^2), essas ficam como temporarias com grau de potenciação
-     * (Ex.: T4^2, sendo T4 = MINUS 2x), o que não é desejável. Assim, o expoente é retirado do lado da variavel temporaria e adicionado a
-     * quadrupla de MINUS, no caso do exemplo, seria T4 = MINUS 2x^2,
-     *
-     * @param source {@link ThreeAddressCode} que contém todas as quadruplas a serem analisadas e formatadas
-     */
-    private void handlePotentiation(ThreeAddressCode source) {
-        for (ExpandedQuadruple expandedQuadruple : source.getExpandedQuadruples()) {
-            // Verifica se não é uma quadrupla de MINUS que contém um expoente, pois não tem o argument2 para obter depois
-            if (!expandedQuadruple.isNegative() && (expandedQuadruple.getArgument1().contains("^") || expandedQuadruple.getArgument2().contains("^"))) {
-                String argument = "";
-
-                //Variável responsável por identificar qual argumento está sendo tratado
-                boolean isArgument1 = true;
-
-                if (expandedQuadruple.getArgument1().contains("^"))
-                    argument = expandedQuadruple.getArgument1();
-                if (expandedQuadruple.getArgument2().contains("^")) {
-                    argument = expandedQuadruple.getArgument2();
-                    isArgument1 = false;
-                }
-
-                /* Nesse caso não há como fazer comparação através do {@link StringUtil.match} pois uma
-                 * variável temporaria não deveria ter um expoente, e então sempre daria um resultado false */
-                if (argument.startsWith("T")) {
-                    String potentiation = argument.substring(argument.indexOf("^"));
-                    argument = argument.replace(potentiation, "");
-
-                    //Retirado expoente da variável temporaria
-                    if (isArgument1)
-                        expandedQuadruple.setArgument1(argument);
-                    else
-                        expandedQuadruple.setArgument2(argument);
-
-                    //Adicionado o expoente ao argument1 da quadrupla MINUS.
-                    ExpandedQuadruple quadruple = source.findQuadrupleByResult(argument);
-                    quadruple.setArgument1(quadruple.getArgument1() + potentiation);
-                }
-
-            }
-        }
     }
 
     private void setUpQuadruples(List<ThreeAddressCode> source) {
@@ -124,19 +78,18 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
     @Override
     public void validateExpressions(List<ThreeAddressCode> sources) {
         List<String> variables = new ArrayList<>();
-        double coeficient = 0d;
         String variable;
 
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             variable = StringUtil.getVariable(sources.get(0).getLeft());
-            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
-            if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
+            NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
+            if (StringUtil.isNotEmpty(variable))
                 variables.add(variable);
         }
 
         if (StringUtil.isVariable(sources.get(0).getRight())) {
             variable = StringUtil.getVariable(sources.get(0).getRight());
-            coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getRight());
+            NumberUtil.getVariableCoeficient(sources.get(0).getRight());
             if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                 variables.add(variable);
         }
@@ -144,14 +97,14 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
             if (StringUtil.isVariable(expandedQuadruple.getArgument1())) {
                 variable = StringUtil.getVariable(expandedQuadruple.getArgument1());
-                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument1());
+                NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument1());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
 
             if (StringUtil.isVariable(expandedQuadruple.getArgument2())) {
                 variable = StringUtil.getVariable(expandedQuadruple.getArgument2());
-                coeficient += NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
+                NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
@@ -235,9 +188,8 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
      * Substitui caso os argumentos ou o operador sejam nulos, por ""
      *
      * @param sources a {@link List} de {@link ThreeAddressCode} com o polinomio
-     * @return o proprio parametro sources, ja alterados
      */
-    private List<ThreeAddressCode> substituteNullFields(List<ThreeAddressCode> sources) {
+    private void substituteNullFields(List<ThreeAddressCode> sources) {
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
             if (expandedQuadruple.getArgument1() == null)
                 expandedQuadruple.setArgument1("");
@@ -246,6 +198,5 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
             if (expandedQuadruple.getOperator() == null)
                 expandedQuadruple.setOperator("");
         }
-        return sources;
     }
 }

@@ -199,6 +199,41 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
     @Test()
     public void group_complex_terms_scenery_three_with_success() {
         //Arrange
+        String expression = "(x+1) * (x^2-x+1)";
+
+        String stepTwoValueExpected = "x . x^2 + x . (-x) + x . 1 + 1 . x^2 + 1 . (-x) + 1 . 1";
+        String stepThreeValueExpected = "x^3 - x^2 + x + x^2 - x + 1";
+        String stepFourValueExpected = "x^3 - x^2 + x^2 + x - x + 1";
+        String lastStepValueExpected = "x^3 + 1";
+
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFiveResultExpected, stepFour.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void group_complex_terms_scenery_four_with_success() {
+        //Arrange
         String expression = "(2a^2 - 7) * (-3a + 4a^3 - a^2)";
 
         String stepTwoValueExpected = "2a^2 . (-3a) + 2a^2 . 4a^3 + 2a^2 . (-a^2) + " +

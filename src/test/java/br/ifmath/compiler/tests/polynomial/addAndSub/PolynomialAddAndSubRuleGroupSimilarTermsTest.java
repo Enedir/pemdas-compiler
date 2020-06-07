@@ -24,8 +24,9 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new PolynomialAddAndSubExpertSystem();
-        stepTwoResultExpected = "Aplicando regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.Também, removendo parenteses dos polinômios.";
-        stepThreeResultExpected = "Removendo parênteses dos polinômios";
+        stepTwoResultExpected = "Aplicando a regra de troca de sinais em operações prioritárias, em duplas negações ou " +
+                "em somas de números negativos. E, removendo os parênteses dos polinômios.";
+        stepThreeResultExpected = "Removendo os parênteses dos polinômios";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
     }
@@ -116,6 +117,84 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
 
         String stepTwoValueExpected = "2x^2 + 5x^3 + x^3 - 3x + 3x^2";
         String lastStepValueExpected = "6x^3 + 5x^2 - 3x";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResultExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void group_terms_without_parentheses_test_scenery_one_with_success() {
+        //Arrange
+        String expression = "(a^3 + 2a^2 - 5) - (a^3 - a^2 - 5)";
+
+        String stepTwoValueExpected = "a^3 + 2a^2 - 5 - a^3 + a^2 + 5";
+        String lastStepValueExpected = "3a^2";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResultExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void group_terms_without_parentheses_test_scenery_two_with_success() {
+        //Arrange
+        String expression = "(-x^4 + 2x^3 + x + 2) + (x^4 - 2x^3 + x - 2)";
+
+        String stepTwoValueExpected = "-x^4 + 2x^3 + x + 2 + x^4 - 2x^3 + x - 2";
+        String lastStepValueExpected = "2x";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void group_terms_without_parentheses_test_scenery_three_with_success() {
+        //Arrange
+        String expression = "(-x^3 - 2x - x^2 - 1) - (-x^3 - 2x + x^2 + 1)";
+
+        String stepTwoValueExpected = "-x^3 - 2x - x^2 - 1 + x^3 + 2x - x^2 - 1";
+        String lastStepValueExpected = "-2x^2 - 2";
 
         // Act)
         IAnswer answer = null;

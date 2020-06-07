@@ -26,7 +26,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
 
     @Override
     public List<Step> handle(List<ThreeAddressCode> sources) {
-        String reason = "Removendo parênteses dos polinômios";
+        String reason = "Removendo os parênteses dos polinômios";
         // A variável source é utilizada para previnir a utilização de parâmetros desnecessários em diversos métodos
         this.source = sources.get(0);
 
@@ -38,7 +38,8 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             //Verifica se é necessario fazer alguma troca de sinais
             if (sideQuadruple != null) {
                 this.changeSign(sideQuadruple, true);
-                reason = "Aplicando regra de troca de sinais em operações prioritárias, em duplas negações ou em somas de números negativos.Também, removendo parenteses dos polinômios.";
+                reason = "Aplicando a regra de troca de sinais em operações prioritárias, em duplas negações ou " +
+                        "em somas de números negativos. E, removendo os parênteses dos polinômios.";
             }
             sideQuadruple = this.getQuadrupleWithMinus(root);
         }
@@ -77,9 +78,11 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
         if (iterationQuadruple.isPlus() && itHasToChange) {
             iterationQuadruple.setOperator("-");
         } else if (iterationQuadruple.isMinus() && itHasToChange) {
-            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-                itHasToChange = false;
-
+            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                int nextQuadrupleLevel = this.source.findQuadrupleByResult(iterationQuadruple.getArgument2()).getLevel();
+                if (nextQuadrupleLevel > iterationQuadruple.getLevel())
+                    itHasToChange = false;
+            }
             iterationQuadruple.setOperator("+");
         } else if (iterationQuadruple.isMinus() && !itHasToChange)
             itHasToChange = true;
@@ -148,7 +151,6 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             son.setLevel(-1);
             expandedQuadruple.setLevel(-1);
         }
-        return father;
 
     }
 
@@ -176,7 +178,9 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
     private ExpandedQuadruple getQuadrupleWithMinus(ExpandedQuadruple iterationQuadruple) {
 
         if (iterationQuadruple.isMinus() && StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.source.findQuadrupleByResult(iterationQuadruple.getArgument2());
+            ExpandedQuadruple son = this.source.findQuadrupleByResult(iterationQuadruple.getArgument2());
+            if (son.getLevel() > iterationQuadruple.getLevel())
+                return this.source.findQuadrupleByResult(iterationQuadruple.getArgument2());
         }
 
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {

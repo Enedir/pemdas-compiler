@@ -54,11 +54,20 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
     }
 
     /**
-     * organiza a {@code termsAndValuesList} levando em consideração os expoentes das variáveis, em ordem decrescente.
+     * organiza e remove as variaveis desnecessarias da {@code termsAndValuesList} levando em consideração os expoentes
+     * das variáveis, em ordem decrescente.
      *
      * @param termsAndValuesList {@link List} de {@link NumericValueVariable} a ser organizada
      */
     private void sortNVVList(List<NumericValueVariable> termsAndValuesList) {
+
+        //Removendo as variáveis com valor zero
+        List<NumericValueVariable> iterableNVVList = new ArrayList<>(termsAndValuesList);
+        for (NumericValueVariable numericValue : iterableNVVList) {
+            if (numericValue.getValue() == 0)
+                termsAndValuesList.remove(numericValue);
+        }
+
         //Bubble sort
         for (int i = 0; i < termsAndValuesList.size(); i++) {
             for (int j = 0; j < termsAndValuesList.size() - 1; j++) {
@@ -167,7 +176,8 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
              * a soma desses números no argument2 dessa temporária. Caso contrário somente substituirá
              * no argument2 da quadrupla atual*/
             if (iterationQuadruple != null) {
-                if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())
+                        && !hasOnlyOneItemOnList)
                     quadruple = source.findQuadrupleByResult(iterationQuadruple.getArgument2());
                 else
                     quadruple = iterationQuadruple;
