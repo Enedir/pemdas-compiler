@@ -7,6 +7,7 @@ import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleGroupSimilarTerms;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleSortSimilarTerms;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -20,10 +21,12 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
     private static PolynomialRuleGroupSimilarTerms groupTerms;
 
+    private static PolynomialRuleSortSimilarTerms sortTerms;
 
     public PolynomialAddAndSubExpertSystem() {
         shiftSign = new PolynomialAddAndSubRuleShiftSign();
         groupTerms = new PolynomialRuleGroupSimilarTerms();
+        sortTerms = new PolynomialRuleSortSimilarTerms();
     }
 
 
@@ -43,6 +46,12 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
         if (shiftSign.match(sources)) {
             steps.addAll(shiftSign.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (sortTerms.match(sources)) {
+            steps.addAll(sortTerms.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
