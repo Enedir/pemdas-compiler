@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
+public class PolynomialAddAndSubRuleSortTermsTest {
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String finalResultExplicationExpected;
@@ -31,16 +31,16 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         stepFourResultExpected = "Agrupando os termos semelhantes.";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
-
     }
 
     @Test()
-    public void group_simple_terms_scenery_one_with_success() {
+    public void sort_simple_terms_scenery_one_with_success() {
         //Arrange
-        String expression = "(x + 2x) - (7 - 2)";
+        String expression = "(7 - 2) + (x + 2x^2)";
 
-        String stepTwoValueExpected = "x + 2x - 7 + 2";
-        String lastStepValueExpected = "3x - 5";
+        String stepTwoValueExpected = "7 - 2 + x + 2x^2";
+        String stepThreeValueExpected = "2x^2 + x + 7 - 2";
+        String lastStepValueExpected = "2x^2 + x + 5";
 
         // Act)
         IAnswer answer = null;
@@ -51,22 +51,26 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         }
 
         // Assert
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResultExpected, stepTwo.getReason());
+        assertEquals(stepThreeResultExpected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepFourResultExpected, stepThree.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
     @Test()
-    public void group_simple_terms_scenery_two_with_success() {
+    public void sort_simple_terms_scenery_two_with_success() {
         //Arrange
-        String expression = "(-3x^2 - 2x^2) - (9x + x)";
+        String expression = "(2x - 7) - (3x^2 + x^2)";
 
-        String stepTwoValueExpected = "-3x^2 - 2x^2 - 9x - x";
-        String lastStepValueExpected = "-5x^2 - 10x";
+        String stepTwoValueExpected = "2x - 7 - 3x^2 - x^2";
+        String stepThreeValueExpected = "-3x^2 - x^2 + 2x - 7";
+        String lastStepValueExpected = "-4x^2 + 2x - 7";
 
         // Act)
         IAnswer answer = null;
@@ -77,23 +81,26 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         }
 
         // Assert
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResultExpected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepFourResultExpected, stepThree.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
 
     @Test()
-    public void group_only_numbers_test_scenery_one_with_success() {
+    public void sort_simple_terms_scenery_three_with_success() {
         //Arrange
-        String expression = "(2 + (7 - 5)) + (20 - 5)";
+        String expression = "(x - 4x^3) + (3x^2 - 2x^4)";
 
-        String stepTwoValueExpected = "2 + 7 - 5 + 20 - 5";
-        String lastStepValueExpected = "19";
+        String stepTwoValueExpected = "x - 4x^3 + 3x^2 - 2x^4";
+        String lastStepValueExpected = "-2x^4 - 4x^3 + 3x^2 + x";
 
         // Act)
         IAnswer answer = null;
@@ -110,17 +117,73 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepThreeResultExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFourResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void sort_simple_terms_scenery_four_with_success() {
+        //Arrange
+        String expression = "(3x) + (5x^2 + 2x)";
+
+        String stepTwoValueExpected = "3x + 5x^2 + 2x";
+        String stepThreeValueExpected = "5x^2 + 3x + 2x";
+        String lastStepValueExpected = "5x^2 + 5x";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
 
     @Test()
-    public void group_only_variables_test_scenery_one_with_success() {
+    public void sort_simple_terms_scenery_five_with_success() {
         //Arrange
-        String expression = "(2x^2 + (5x^3 + x^3)) - (3x - 3x^2)";
+        String expression = "(5x^2 - 2x) - (3x^3)";
 
-        String stepTwoValueExpected = "2x^2 + 5x^3 + x^3 - 3x + 3x^2";
-        String stepThreeValueExpected = "5x^3 + x^3 + 2x^2 + 3x^2 - 3x";
-        String lastStepValueExpected = "6x^3 + 5x^2 - 3x";
+        String stepTwoValueExpected = "5x^2 - 2x - 3x^3";
+        String lastStepValueExpected = "-3x^3 + 5x^2 - 2x";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFourResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void sort_complex_terms_scenery_one_with_success() {
+        //Arrange
+        String expression = "(2x^2 + 5x^3 + x^3) - (3x - 3x^2 + x^4)";
+
+        String stepTwoValueExpected = "2x^2 + 5x^3 + x^3 - 3x + 3x^2 - x^4";
+        String stepThreeValueExpected = "-x^4 + x^3 + 5x^3 + 3x^2 + 2x^2 - 3x";
+        String lastStepValueExpected = "-x^4 + 6x^3 + 5x^2 - 3x";
 
         // Act)
         IAnswer answer = null;
@@ -144,7 +207,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     }
 
     @Test()
-    public void group_terms_without_parentheses_test_scenery_one_with_success() {
+    public void sort_complex_terms_scenery_two_with_success() {
         //Arrange
         String expression = "(a^3 + 2a^2 - 5) - (a^3 - a^2 - 5)";
 
@@ -174,67 +237,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
     }
 
     @Test()
-    public void group_terms_without_parentheses_test_scenery_two_with_success() {
-        //Arrange
-        String expression = "(-x^4 + 2x^3 + x + 2) + (x^4 - 2x^3 + x - 2)";
-
-        String stepTwoValueExpected = "-x^4 + 2x^3 + x + 2 + x^4 - 2x^3 + x - 2";
-        String stepThreeValueExpected = "-x^4 + x^4 + 2x^3 - 2x^3 + x + x + 2 - 2";
-        String lastStepValueExpected = "2x";
-
-        // Act)
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepThreeResultExpected, stepTwo.getReason());
-        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
-        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(finalResultExplicationExpected, finalStep.getReason());
-    }
-
-    @Test()
-    public void group_terms_without_parentheses_test_scenery_three_with_success() {
-        //Arrange
-        String expression = "(-x^3 - 2x - x^2 - 1) - (-x^3 - 2x + x^2 + 1)";
-
-        String stepTwoValueExpected = "-x^3 - 2x - x^2 - 1 + x^3 + 2x - x^2 - 1";
-        String stepThreeValueExpected = "-x^3 + x^3 - x^2 - x^2 + 2x - 2x - 1 - 1";
-        String lastStepValueExpected = "-2x^2 - 2";
-
-        // Act)
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResultExpected, stepTwo.getReason());
-        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
-        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(finalResultExplicationExpected, finalStep.getReason());
-    }
-
-    @Test()
-    public void group_variables_and_numbers_test_scenery_one_with_success() {
+    public void sort_complex_terms_scenery_three_with_success() {
         //Arrange
         String expression = "(3x^3 - (2x^2 + 12x^4)) - (-3 + (2x^3 - 8))";
 
@@ -262,36 +265,5 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(finalResultExplicationExpected, finalStep.getReason());
     }
-
-    @Test()
-    public void group_variables_and_numbers_test_scenery_two_with_success() {
-        //Arrange
-        String expression = "(3x^3 - 3x + 8) - (2x^2 - 2x^3 - 5x + 9)";
-
-        String stepTwoValueExpected = "3x^3 - 3x + 8 - 2x^2 + 2x^3 + 5x - 9";
-        String stepThreeValueExpected = "3x^3 + 2x^3 - 2x^2 - 3x + 5x + 8 - 9";
-        String lastStepValueExpected = "5x^3 - 2x^2 + 2x - 1";
-
-        // Act)
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResultExpected, stepTwo.getReason());
-        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
-        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(finalResultExplicationExpected, finalStep.getReason());
-    }
-
 
 }

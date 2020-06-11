@@ -33,8 +33,15 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
         ExpandedQuadruple root = this.source.findQuadrupleByResult(this.source.getLeft());
         //sideQuadruple é a variável utilizada para identificar qual dos lados da equação (argument1 ou 2 do root)
         // está sendo processada
-        ExpandedQuadruple sideQuadruple = this.getQuadrupleWithMinus(this.source.findQuadrupleByResult(root.getArgument1()));
-        for (int i = 0; i < 2; i++) {
+        int i = 0;
+        ExpandedQuadruple sideQuadruple;
+        if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+            sideQuadruple = this.getQuadrupleWithMinus(this.source.findQuadrupleByResult(root.getArgument1()));
+        else {
+            sideQuadruple = this.getQuadrupleWithMinus(root);
+            i = 1;
+        }
+        for (; i < 2; i++) {
             //Verifica se é necessario fazer alguma troca de sinais
             if (sideQuadruple != null) {
                 this.changeSign(sideQuadruple, true);
@@ -46,7 +53,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
 
         this.handleParentheses();
 
-        this.source.clearNonUsedQuadruples();
+        this.formatQuadruples();
 
         List<Step> steps = new ArrayList<>();
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), "", "", this.source.getExpandedQuadruples());
@@ -55,6 +62,31 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), reason));
 
         return steps;
+    }
+
+    private void formatQuadruples() {
+        this.source.clearNonUsedQuadruples();
+        this.mergeSides();
+    }
+
+    private void mergeSides() {
+        ExpandedQuadruple root = this.source.findQuadrupleByResult(this.source.getLeft());
+        if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            ExpandedQuadruple newRoot = this.source.findQuadrupleByResult(root.getArgument1());
+            if (!newRoot.isNegative()) {
+                this.source.setLeft(root.getArgument1());
+                ExpandedQuadruple lastLeftQuadruple = this.getLastQuadruple(newRoot);
+                root.setArgument1(lastLeftQuadruple.getArgument2());
+                lastLeftQuadruple.setArgument2(root.getResult());
+            }
+        }
+    }
+
+    private ExpandedQuadruple getLastQuadruple(ExpandedQuadruple expandedQuadruple) {
+        if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return getLastQuadruple(this.source.findQuadrupleByResult(expandedQuadruple.getArgument2()));
+        }
+        return expandedQuadruple;
     }
 
     /**
