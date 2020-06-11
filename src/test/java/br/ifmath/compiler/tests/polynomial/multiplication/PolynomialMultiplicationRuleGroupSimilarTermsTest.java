@@ -34,7 +34,7 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
         //Arrange
         String expression = "2x * (5x^2 - 3x^2)";
 
-        String stepTwoValueExpected = "2x . 5x^2 + 2x . (-3x^2)";
+        String stepTwoValueExpected = "2x * 5x^2 + 2x * (-3x^2)";
         String stepThreeValueExpected = "10x^3 - 6x^3";
         String lastStepValueExpected = "4x^3";
 
@@ -65,7 +65,7 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
         //Arrange
         String expression = "(8x^3 - 3x + 2x^3) * -4x^2";
 
-        String stepTwoValueExpected = "(-4x^2) . 8x^3 + (-4x^2) . (-3x) + (-4x^2) . 2x^3";
+        String stepTwoValueExpected = "(-4x^2) * 8x^3 + (-4x^2) * (-3x) + (-4x^2) * 2x^3";
         String stepThreeValueExpected = "-32x^5 + 12x^3 - 8x^5";
         String stepFourValueExpected = "-32x^5 - 8x^5 + 12x^3";
         String lastStepValueExpected = "-40x^5 + 12x^3";
@@ -100,7 +100,7 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
         //Arrange
         String expression = "3x^2 * (-x^2 - 4x^2 + 2x^2)";
 
-        String stepTwoValueExpected = "3x^2 . (-x^2) + 3x^2 . (-4x^2) + 3x^2 . 2x^2";
+        String stepTwoValueExpected = "3x^2 * (-x^2) + 3x^2 * (-4x^2) + 3x^2 * 2x^2";
         String stepThreeValueExpected = "-3x^4 - 12x^4 + 6x^4";
         String lastStepValueExpected = "-9x^4";
 
@@ -131,7 +131,7 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
         //Arrange
         String expression = "(-5x^2 + 3x) * (-2x + 4x^2)";
 
-        String stepTwoValueExpected = "(-5x^2) . (-2x) + (-5x^2) . 4x^2 + 3x . (-2x) + 3x . 4x^2";
+        String stepTwoValueExpected = "(-5x^2) * (-2x) + (-5x^2) * 4x^2 + 3x * (-2x) + 3x * 4x^2";
         String stepThreeValueExpected = "10x^3 - 20x^4 - 6x^2 + 12x^3";
         String stepFourValueExpected = "-20x^4 + 10x^3 + 12x^3 - 6x^2";
         String lastStepValueExpected = "-20x^4 + 22x^3 - 6x^2";
@@ -166,7 +166,7 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
         //Arrange
         String expression = "(3y^2 + 1) * (-6 + 4y^2)";
 
-        String stepTwoValueExpected = "3y^2 . (-6) + 3y^2 . 4y^2 + 1 . (-6) + 1 . 4y^2";
+        String stepTwoValueExpected = "3y^2 * (-6) + 3y^2 * 4y^2 + 1 * (-6) + 1 * 4y^2";
         String stepThreeValueExpected = "-18y^2 + 12y^4 - 6 + 4y^2";
         String stepFourValueExpected = "12y^4 - 18y^2 + 4y^2 - 6";
         String lastStepValueExpected = "12y^4 - 14y^2 - 6";
@@ -201,7 +201,7 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
         //Arrange
         String expression = "(x+1) * (x^2-x+1)";
 
-        String stepTwoValueExpected = "x . x^2 + x . (-x) + x . 1 + 1 . x^2 + 1 . (-x) + 1 . 1";
+        String stepTwoValueExpected = "x * x^2 + x * (-x) + x * 1 + 1 * x^2 + 1 * (-x) + 1 * 1";
         String stepThreeValueExpected = "x^3 - x^2 + x + x^2 - x + 1";
         String stepFourValueExpected = "x^3 - x^2 + x^2 + x - x + 1";
         String lastStepValueExpected = "x^3 + 1";
@@ -236,8 +236,8 @@ public class PolynomialMultiplicationRuleGroupSimilarTermsTest {
         //Arrange
         String expression = "(2a^2 - 7) * (-3a + 4a^3 - a^2)";
 
-        String stepTwoValueExpected = "2a^2 . (-3a) + 2a^2 . 4a^3 + 2a^2 . (-a^2) + " +
-                "(-7) . (-3a) + (-7) . 4a^3 + (-7) . (-a^2)";
+        String stepTwoValueExpected = "2a^2 * (-3a) + 2a^2 * 4a^3 + 2a^2 * (-a^2) + " +
+                "(-7) * (-3a) + (-7) * 4a^3 + (-7) * (-a^2)";
         String stepThreeValueExpected = "-6a^3 + 8a^5 - 2a^4 + 21a - 28a^3 + 7a^2";
         String stepFourValueExpected = "8a^5 - 2a^4 - 6a^3 - 28a^3 + 7a^2 + 21a";
         String lastStepValueExpected = "8a^5 - 2a^4 - 34a^3 + 7a^2 + 21a";

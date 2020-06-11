@@ -11,7 +11,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class PolynomialRuleNumbersPotentiationTest {
@@ -30,7 +29,7 @@ public class PolynomialRuleNumbersPotentiationTest {
         compiler = new Compiler();
         expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
-        stepThreeExplicationExpected = "Resolvendo as suas  potências.";
+        stepThreeExplicationExpected = "Resolvendo as suas potências.";
         stepFourExplicationExpected = "Multiplicando os valores.";
         finalResultExplicationExpected = "Somando os valores.";
 
@@ -91,7 +90,7 @@ public class PolynomialRuleNumbersPotentiationTest {
 
         int positionTwo = 2;
 
-        String stepTwoValueExpected = "8 . 1 . 0.1111 + 5";
+        String stepTwoValueExpected = "8 * 1 * 0.1111 + 5";
         String lastStepValueExpected = "5.8888";
 
         // Act
@@ -118,8 +117,8 @@ public class PolynomialRuleNumbersPotentiationTest {
         String expression = "3 * y ^ 3 + 2 * y ^ 2 - 4 * y * z";
 
 
-        String stepTwoValueExpected = "3 . 3 ^ 3 + 2 . 3 ^ 2 - 4 . 3 . 4";
-        String stepThreeValueExpected = "3 . 27 + 2 . 9 - 4 . 3 . 4";
+        String stepTwoValueExpected = "3 * 3 ^ 3 + 2 * 3 ^ 2 - 4 * 3 * 4";
+        String stepThreeValueExpected = "3 * 27 + 2 * 9 - 4 * 3 * 4";
         String stepFourValueExpected = "81 + 18 - 48";
         String lastStepValueExpected = "51";
 

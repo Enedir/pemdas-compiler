@@ -1,4 +1,4 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial.addandsub;
+package br.ifmath.compiler.domain.expertsystem.polynomial.classes;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
+public class PolynomialRuleGroupSimilarTerms implements IRule {
 
     private final List<ExpandedQuadruple> expandedQuadruples;
 
-    public PolynomialAddAndSubRuleGroupSimilarTerms() {
+    public PolynomialRuleGroupSimilarTerms() {
         this.expandedQuadruples = new ArrayList<>();
     }
 
@@ -48,7 +48,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTerms implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toFormattedLaTeXNotation(), step.toFormattedMathNotation(), "Soma dos termos semelhantes."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Soma dos termos semelhantes."));
 
         return steps;
     }

@@ -38,7 +38,7 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
         ThreeAddressCode step = new ThreeAddressCode(sources.get(0).getLeft(), expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().replace("*", ".").trim(), step.toMathNotation().replace("*", ".").trim(), "Resolvendo as suas  potências."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Resolvendo as suas potências."));
 
         return steps;
     }

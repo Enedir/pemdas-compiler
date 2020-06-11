@@ -5,7 +5,8 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.addandsub.PolynomialAddAndSubRuleGroupSimilarTerms;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleSortSimilarTerms;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleGroupSimilarTerms;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -17,17 +18,17 @@ import java.util.List;
 public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
 
-    private static PolynomialMultiplicationRuleSortSimilarTerms sortTerms;
+    private static PolynomialRuleSortSimilarTerms sortTerms;
 
     private static PolynomialMultiplicationRuleDistributive distributive;
 
     private static PolynomialMultiplicationRuleMultiplication multiplication;
 
-    private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
+    private static PolynomialRuleGroupSimilarTerms groupTerms;
 
     public PolynomialMultiplicationExpertSystem() {
-        sortTerms = new PolynomialMultiplicationRuleSortSimilarTerms();
-        groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
+        sortTerms = new PolynomialRuleSortSimilarTerms();
+        groupTerms = new PolynomialRuleGroupSimilarTerms();
         distributive = new PolynomialMultiplicationRuleDistributive();
         multiplication = new PolynomialMultiplicationRuleMultiplication();
     }
@@ -41,7 +42,7 @@ public class PolynomialMultiplicationExpertSystem implements IExpertSystem {
 
         sources.get(0).setUp();
 
-        steps.add(new Step(sources, sources.get(0).toFormattedLaTeXNotation(), sources.get(0).toFormattedMathNotation(), "Equação inicial."));
+        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().trim(), sources.get(0).toLaTeXNotation().trim(), "Equação inicial."));
 
         setUpQuadruples(sources);
 

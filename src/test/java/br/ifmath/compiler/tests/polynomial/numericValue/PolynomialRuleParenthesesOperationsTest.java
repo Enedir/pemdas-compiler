@@ -35,13 +35,12 @@ public class PolynomialRuleParenthesesOperationsTest {
         compiler = new Compiler();
         expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
-        stepThreeExplicationExpected = "Elevando os valores a suas potências dentro dos parênteses.";
+        stepThreeExplicationExpected = "Resolvendo as suas potências dentro dos parênteses.";
         stepFourExplicationExpected = "Multiplicando os valores dentro dos parênteses.";
         stepFiveExplicationExpected = "Somando os valores dentro dos parênteses.";
         stepSixExplicationExpected = "Somando os valores.";
         stepSevenExplicationExpected = "Multiplicando os valores.";
-
-        finalResultExplicationExpected = "Resolvendo as suas  potências.";
+        finalResultExplicationExpected = "Resolvendo as suas potências.";
 
         userInput.add(new NumericValueVariable("a", 777));
         userInput.add(new NumericValueVariable("y", 3));
@@ -54,8 +53,8 @@ public class PolynomialRuleParenthesesOperationsTest {
         //Arrange
         String expression = "y * (8 - 2)";
 
-        String stepTwoValueExpected = "3 . (8 - 2)";
-        String stepThreeValueExpected = "3 . 6";
+        String stepTwoValueExpected = "3 * (8 - 2)";
+        String stepThreeValueExpected = "3 * 6";
         String lastStepValueExpected = "18";
 
         // Act
@@ -76,7 +75,7 @@ public class PolynomialRuleParenthesesOperationsTest {
         assertEquals(stepThree.getMathExpression(), stepThreeValueExpected);
         assertEquals(stepThree.getReason(), stepFiveExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
-        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+        assertEquals(finalStep.getReason(), stepSevenExplicationExpected);
     }
 
     @Test()
@@ -85,10 +84,10 @@ public class PolynomialRuleParenthesesOperationsTest {
         String expression = "y * (8 - (2 * (3 ^ 2)))";
 
 
-        String stepTwoValueExpected = "3 . (8 - (2 . (3 ^ 2)))";
-        String stepThreeValueExpected = "3 . (8 - (2 . 9))";
-        String stepFourValueExpected = "3 . (8 - 18)";
-        String stepFiveValueExpected = "3 . -10";
+        String stepTwoValueExpected = "3 * (8 - (2 * (3 ^ 2)))";
+        String stepThreeValueExpected = "3 * (8 - (2 * 9))";
+        String stepFourValueExpected = "3 * (8 - 18)";
+        String stepFiveValueExpected = "3 * -10";
         String lastStepValueExpected = "-30";
 
         // Act
@@ -115,7 +114,7 @@ public class PolynomialRuleParenthesesOperationsTest {
         assertEquals(stepFive.getMathExpression(), stepFiveValueExpected);
         assertEquals(stepFive.getReason(), stepFiveExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
-        assertEquals(finalStep.getReason(), finalResultExplicationExpected);
+        assertEquals(finalStep.getReason(), stepSevenExplicationExpected);
     }
 
     @Test()
@@ -158,13 +157,13 @@ public class PolynomialRuleParenthesesOperationsTest {
         //Arrange
         String expression = "(y + 3 * (2 - 7 + (a - 770))) + (z * (6 - (2 ^ 2)))";
 
-        String stepTwoValueExpected = "(3 + 3 . (2 - 7 + (777 - 770))) + (4 . (6 - (2 ^ 2)))";
-        String stepThreeValueExpected = "(3 + 3 . (2 - 7 + 7)) + (4 . (6 - (2 ^ 2)))";
-        String stepFourValueExpected = "(3 + 3 . 2) + (4 . (6 - (2 ^ 2)))";
-        String stepFiveValueExpected = "(3 + 6) + (4 . (6 - (2 ^ 2)))";
-        String stepSixValueExpected = "9 + (4 . (6 - (2 ^ 2)))";
-        String stepSevenValueExpected = "9 + (4 . (6 - 4))";
-        String stepEightValueExpected = "9 + (4 . 2)";
+        String stepTwoValueExpected = "(3 + 3 * (2 - 7 + (777 - 770))) + (4 * (6 - (2 ^ 2)))";
+        String stepThreeValueExpected = "(3 + 3 * (2 - 7 + 7)) + (4 * (6 - (2 ^ 2)))";
+        String stepFourValueExpected = "(3 + 3 * 2) + (4 * (6 - (2 ^ 2)))";
+        String stepFiveValueExpected = "(3 + 6) + (4 * (6 - (2 ^ 2)))";
+        String stepSixValueExpected = "9 + (4 * (6 - (2 ^ 2)))";
+        String stepSevenValueExpected = "9 + (4 * (6 - 4))";
+        String stepEightValueExpected = "9 + (4 * 2)";
         String stepNineValueExpected = "9 + 8";
         String lastStepValueExpected = "17";
 
@@ -213,8 +212,8 @@ public class PolynomialRuleParenthesesOperationsTest {
         String expression = "(2 * 7 * (y - 2))";
 
 
-        String stepTwoValueExpected = "(2 . 7 . (3 - 2))";
-        String stepThreeValueExpected = "(2 . 7 . 1)";
+        String stepTwoValueExpected = "(2 * 7 * (3 - 2))";
+        String stepThreeValueExpected = "(2 * 7 * 1)";
         String lastStepValueExpected = "14";
 
         // Act
@@ -244,10 +243,10 @@ public class PolynomialRuleParenthesesOperationsTest {
         String expression = "3 * x^8 + 2 * x + 2 * (5 + 7 * x)";
 
 
-        String stepTwoValueExpected = "3 . 2^8 + 2 . 2 + 2 . (5 + 7 . 2)";
-        String stepThreeValueExpected = "3 . 2^8 + 2 . 2 + 2 . (5 + 14)";
-        String stepFourValueExpected = "3 . 2^8 + 2 . 2 + 2 . 19";
-        String stepFiveValueExpected = "3 . 256 + 2 . 2 + 2 . 19";
+        String stepTwoValueExpected = "3 * 2 ^ 8 + 2 * 2 + 2 * (5 + 7 * 2)";
+        String stepThreeValueExpected = "3 * 2 ^ 8 + 2 * 2 + 2 * (5 + 14)";
+        String stepFourValueExpected = "3 * 2 ^ 8 + 2 * 2 + 2 * 19";
+        String stepFiveValueExpected = "3 * 256 + 2 * 2 + 2 * 19";
         String stepSixValueExpected = "768 + 4 + 38";
         String lastStepValueExpected = "810";
 
@@ -270,7 +269,7 @@ public class PolynomialRuleParenthesesOperationsTest {
         assertEquals(stepTwo.getMathExpression(), stepTwoValueExpected);
         assertEquals(stepTwo.getReason(), stepTwoExplicationExpected);
         assertEquals(stepThree.getMathExpression(), stepThreeValueExpected);
-        assertEquals(stepThree.getReason(), stepFourValueExpected);
+        assertEquals(stepThree.getReason(), stepFourExplicationExpected);
         assertEquals(stepFour.getMathExpression(), stepFourValueExpected);
         assertEquals(stepFour.getReason(), stepFiveExplicationExpected);
         assertEquals(stepFive.getMathExpression(), stepFiveValueExpected);

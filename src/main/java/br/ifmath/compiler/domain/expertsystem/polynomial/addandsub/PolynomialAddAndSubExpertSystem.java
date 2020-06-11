@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleGroupSimilarTerms;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -17,12 +18,12 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
 
     private static PolynomialAddAndSubRuleShiftSign shiftSign;
 
-    private static PolynomialAddAndSubRuleGroupSimilarTerms groupTerms;
+    private static PolynomialRuleGroupSimilarTerms groupTerms;
 
 
     public PolynomialAddAndSubExpertSystem() {
         shiftSign = new PolynomialAddAndSubRuleShiftSign();
-        groupTerms = new PolynomialAddAndSubRuleGroupSimilarTerms();
+        groupTerms = new PolynomialRuleGroupSimilarTerms();
     }
 
 

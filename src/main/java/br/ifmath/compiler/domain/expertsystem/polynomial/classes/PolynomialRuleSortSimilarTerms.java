@@ -1,4 +1,4 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial.multiplication;
+package br.ifmath.compiler.domain.expertsystem.polynomial.classes;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
@@ -10,7 +10,7 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PolynomialMultiplicationRuleSortSimilarTerms implements IRule {
+public class PolynomialRuleSortSimilarTerms implements IRule {
 
     private ThreeAddressCode source;
 
@@ -38,7 +38,7 @@ public class PolynomialMultiplicationRuleSortSimilarTerms implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         List<Step> steps = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toFormattedLaTeXNotation(), step.toFormattedMathNotation(), "Agrupando os termos semelhantes."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Agrupando os termos semelhantes."));
 
         return steps;
     }

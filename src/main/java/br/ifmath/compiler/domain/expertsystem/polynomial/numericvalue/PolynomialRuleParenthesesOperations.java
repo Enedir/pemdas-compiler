@@ -146,8 +146,8 @@ public class PolynomialRuleParenthesesOperations implements IRule {
      */
     private void addStep(Step lastStep, List<ThreeAddressCode> sources) {
         lastStep.setSource(sources);
-        lastStep.setLatexExpression(sources.get(0).toLaTeXNotation().replace("*", ".").trim());
-        lastStep.setMathExpression(sources.get(0).toMathNotation().replace("*", ".").trim());
+        lastStep.setLatexExpression(sources.get(0).toLaTeXNotation().trim());
+        lastStep.setMathExpression(sources.get(0).toMathNotation().trim());
         lastStep.setReason(lastStep.getReason().replace(".", " dentro dos parênteses."));
         steps.add(lastStep);
     }

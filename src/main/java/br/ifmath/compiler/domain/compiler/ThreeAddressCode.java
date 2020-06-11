@@ -225,10 +225,6 @@ public class ThreeAddressCode {
                 generateLaTeXNotation(right, 0, new StringBuilder()).toString()).replace("*", ".").trim();
     }
 
-    public String toFormattedLaTeXNotation(){
-        return this.toLaTeXNotation().replace("*", ".").trim();
-    }
-
     /**
      * Substitui o valor de um argumento ou operador de uma quadrupla, pelo valor de um dado argumento ou operador do seu filho. Ex.:
      * A = B + 1 e B = 2 + 3. Escolhendo B como son, 1 como o argument, entao obterá o valor do argument1 de B,
@@ -453,9 +449,6 @@ public class ThreeAddressCode {
                 generateMathNotation(right, 0, new StringBuilder()).toString());
     }
 
-    public String toFormattedMathNotation(){
-        return this.toMathNotation().replace("*", ".").trim();
-    }
 
     private StringBuilder generateMathNotation(String param, int level, StringBuilder builder) {
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
