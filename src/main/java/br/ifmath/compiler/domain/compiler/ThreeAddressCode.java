@@ -63,7 +63,6 @@ public class ThreeAddressCode {
     }
 
 
-
     /**
      * Remove todas as quadruplas que não estão sendo usadas, ou seja, remove as quadruplas que não
      * são utilizadas por outras quadruplas
@@ -222,7 +221,7 @@ public class ThreeAddressCode {
         return String.format("%s %s %s",
                 generateLaTeXNotation(left, 0, new StringBuilder()).toString(),
                 comparison,
-                generateLaTeXNotation(right, 0, new StringBuilder()).toString()).replace("*", ".").trim();
+                generateLaTeXNotation(right, 0, new StringBuilder()).toString());
     }
 
     /**
