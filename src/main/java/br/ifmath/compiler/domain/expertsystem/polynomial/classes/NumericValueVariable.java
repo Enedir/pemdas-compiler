@@ -14,13 +14,6 @@ public class NumericValueVariable extends ValueVariable {
         this.value = value;
     }
 
-    public NumericValueVariable findByLabel(String value) {
-        if (value.equals(label)) {
-            return this;
-        }
-        return null;
-    }
-
     public void setAttributesFromString(String argument) {
         if (StringUtil.match(argument, RegexPattern.VARIABLE_AND_COEFICIENT.toString())) {
             this.value = this.getValueFromString(argument.substring(0, argument.indexOf("^") - 1));

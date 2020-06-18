@@ -26,7 +26,7 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
 
     @Override
     public List<Step> handle(List<ThreeAddressCode> sources) {
-        String reason = "Removendo os parênteses dos polinômios";
+        String reason = "Removendo os parênteses dos polinômios.";
         // A variável source é utilizada para previnir a utilização de parâmetros desnecessários em diversos métodos
         this.source = sources.get(0);
 

@@ -27,7 +27,7 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         expertSystem = new PolynomialAddAndSubExpertSystem();
         stepTwoResultExpected = "Aplicando a regra de troca de sinais em operações prioritárias, em duplas negações ou " +
                 "em somas de números negativos. E, removendo os parênteses dos polinômios.";
-        stepThreeResultExpected = "Removendo os parênteses dos polinômios";
+        stepThreeResultExpected = "Removendo os parênteses dos polinômios.";
         stepFourResultExpected = "Agrupando os termos semelhantes.";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
 
