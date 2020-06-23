@@ -13,7 +13,6 @@ import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
-import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -130,7 +129,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -147,7 +146,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             variable = StringUtil.getVariable(sources.get(0).getLeft());
             coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
-            if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
+            if (StringUtil.isNotEmpty(variable))
                 variables.add(variable);
         }
 

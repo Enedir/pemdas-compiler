@@ -160,9 +160,9 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             this.source.replaceFatherArgumentForSons(expandedQuadruple, 1);
 
             //simboliza que estas quadruplas ja foram alteradas
-            grandfather.setLevel(-1);
+            grandfather.setAsAnalyzed();
         }
-        expandedQuadruple.setLevel(-1);
+        expandedQuadruple.setAsAnalyzed();
     }
 
 
@@ -180,8 +180,8 @@ public class PolynomialAddAndSubRuleShiftSign implements IRule {
             this.source.replaceFatherArgumentForSons(son, 1);
 
             //simboliza que estas quadruplas ja foram alteradas
-            son.setLevel(-1);
-            expandedQuadruple.setLevel(-1);
+            son.setAsAnalyzed();
+            expandedQuadruple.setAsAnalyzed();
         }
 
     }

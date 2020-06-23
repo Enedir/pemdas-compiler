@@ -59,10 +59,7 @@ public class PolynomialMultiplicationRuleMultiplication implements IRule {
 
                 //esse caso eh somente quando a resposta eh somente um valor EX.: T4 = 4x^3
                 if (expandedQuadruple.getResult().equals(this.source.getLeft())) {
-                    if (isMinus) {
-                        expandedQuadruple.setOperator("MINUS");
-                    } else
-                        expandedQuadruple.setOperator("");
+                    expandedQuadruple.setOperator(isMinus ? "MINUS" : "");
                     expandedQuadruple.setArgument1(result);
                     expandedQuadruple.setArgument2("");
                 } else {
