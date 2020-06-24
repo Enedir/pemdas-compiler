@@ -15,7 +15,7 @@ public class NumericValueVariable extends ValueVariable {
     }
 
     public void setAttributesFromString(String argument) {
-        if (StringUtil.match(argument, RegexPattern.VARIABLE_AND_COEFICIENT.toString())) {
+        if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
             this.value = this.getValueFromString(argument.substring(0, argument.indexOf("^") - 1));
             this.label = argument.substring(argument.indexOf("^") - 1);
         } else {
