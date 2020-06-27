@@ -1,13 +1,16 @@
-package br.ifmath.compiler.tests.polynomial;
+package br.ifmath.compiler.tests.polynomial.numericValue;
 
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
 import br.ifmath.compiler.domain.expertsystem.*;
-import br.ifmath.compiler.domain.expertsystem.polynomial.PolynomialExpertSystem;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class PolynomialRuleNumbersPotentiationTest {
@@ -18,15 +21,22 @@ public class PolynomialRuleNumbersPotentiationTest {
     private String stepThreeExplicationExpected;
     private String stepFourExplicationExpected;
     private String finalResultExplicationExpected;
+    private List<NumericValueVariable> userInput = new ArrayList<>();
+
 
     @Before
     public void setUp() {
         compiler = new Compiler();
-        expertSystem = new PolynomialExpertSystem();
+        expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
-        stepThreeExplicationExpected = "Elevando os valores a suas potências.";
+        stepThreeExplicationExpected = "Resolvendo as suas potências.";
         stepFourExplicationExpected = "Multiplicando os valores.";
         finalResultExplicationExpected = "Somando os valores.";
+
+
+        userInput.add(new NumericValueVariable("a", 777));
+        userInput.add(new NumericValueVariable("y", 3));
+        userInput.add(new NumericValueVariable("z", 4));
     }
 
     @Test()
@@ -39,7 +49,7 @@ public class PolynomialRuleNumbersPotentiationTest {
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -61,7 +71,7 @@ public class PolynomialRuleNumbersPotentiationTest {
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -86,7 +96,7 @@ public class PolynomialRuleNumbersPotentiationTest {
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -115,7 +125,7 @@ public class PolynomialRuleNumbersPotentiationTest {
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -134,19 +144,5 @@ public class PolynomialRuleNumbersPotentiationTest {
         assertEquals(stepFour.getReason(), stepFourExplicationExpected);
         assertEquals(finalStep.getMathExpression(), lastStepValueExpected);
         assertEquals(finalStep.getReason(), finalResultExplicationExpected);
-    }
-
-    @Test()
-    public void power_with_sum_in_exponentiation_scenery_one_with_fail() {
-        //Arrange
-        String expression = "2 ^ (1 + 2) * y";
-
-        // Act
-        try {
-            IAnswer answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-            fail();
-        } catch (Exception e) {
-            assertThat(e, instanceOf(NullPointerException.class));
-        }
     }
 }

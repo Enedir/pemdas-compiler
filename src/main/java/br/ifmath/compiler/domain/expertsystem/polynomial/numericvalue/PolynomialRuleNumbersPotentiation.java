@@ -1,15 +1,13 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial;
+package br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +21,7 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> sources) {
         List<Step> steps = new ArrayList<>();
         expandedQuadruples = new ArrayList<>();
 
@@ -40,7 +38,7 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
         ThreeAddressCode step = new ThreeAddressCode(sources.get(0).getLeft(), expandedQuadruples);
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Elevando os valores a suas potências."));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Resolvendo as suas potências."));
 
         return steps;
     }
@@ -67,24 +65,24 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
      * Realiza a operaçao de potencia nas quadruplas que possuem a operaçao
      *
      * @param source Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
-     * @param powers Lista de quadruplas expandidas que possuem a operacação de multiplicação gerada pelo {@link #checkPotentiationOperation}.
+     * @param powers Lista de quadruplas expandidas que possuem a operacação de exponenciacao gerada pelo {@link #checkPotentiationOperation}.
      */
     private void power(List<ThreeAddressCode> source, List<ExpandedQuadruple> powers) {
         String a, b;
 
         for (ExpandedQuadruple eq : powers) {
-            a = findPowerFactor(source,eq.getArgument1());
-            b = findPowerFactor(source,eq.getArgument2());
+            a = findPowerFactor(source, eq.getArgument1());
+            b = findPowerFactor(source, eq.getArgument2());
 
             if (!StringUtil.isEmpty(a) || !StringUtil.isEmpty(b)) {
                 expandedQuadruples.remove(eq);
 
-                /**
+                /*
                  * Mascara para limitar as casas decimais em caso de potencia negativa.
                  */
                 double result = Math.pow(Double.parseDouble(a), Double.parseDouble(b));
                 result = NumberUtil.formatDouble(result);
-                /**
+                /*
                  * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
                  */
                 if (result % 1 == 0)
@@ -101,13 +99,14 @@ public class PolynomialRuleNumbersPotentiation implements IRule {
     /**
      * Encontra os fatores a e b para a potenciacao, conforme a expressao: a ^ b, para cada uma
      * das quadruplas que tem alguma operacao de potenciacao.
+     *
      * @param source {@link ThreeAddressCode} que contem todas as quadruplas.
      * @param factor Fator a ser verificado e encontrado dentro das quadruplas(a ou b).
      * @return {@link String} que contem o valor numerico do fator.
      */
     private String findPowerFactor(List<ThreeAddressCode> source, String factor) {
-        if (StringUtil.match(factor,RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return findInnerPower(source,factor);
+        if (StringUtil.match(factor, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return findInnerPower(source, factor);
         }
         return factor;
     }

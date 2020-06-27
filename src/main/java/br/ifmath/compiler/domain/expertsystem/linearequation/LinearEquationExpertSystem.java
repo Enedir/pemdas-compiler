@@ -12,6 +12,7 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -128,7 +129,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException {
+    public IAnswer findPossibleHandles(List<ThreeAddressCode> sources) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -137,15 +138,15 @@ public class LinearEquationExpertSystem implements IExpertSystem {
         List<String> variables = new ArrayList<>();
         double coeficient = 0d;
         String variable;
- 
+
         if (StringUtil.isEmpty(sources.get(0).getComparison())) {
             throw new InvalidAlgebraicExpressionException("Equação deve possuir uma igualdade.");
         }
-        
+
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
             variable = StringUtil.getVariable(sources.get(0).getLeft());
             coeficient += NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
-            if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
+            if (StringUtil.isNotEmpty(variable))
                 variables.add(variable);
         }
 
@@ -170,7 +171,7 @@ public class LinearEquationExpertSystem implements IExpertSystem {
                 if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
                     variables.add(variable);
             }
-            
+
             if (!expandedQuadruple.isPlus()
                     && !expandedQuadruple.isFraction()
                     && !expandedQuadruple.isTimes()
@@ -184,6 +185,11 @@ public class LinearEquationExpertSystem implements IExpertSystem {
 
         if (variables.size() > 1)
             throw new InvalidAlgebraicExpressionException("A expressão possui mais que uma variável.");
+    }
+
+    @Override
+    public void setVariables(List<NumericValueVariable> variables) {
+        throw new UnsupportedOperationException();
     }
 
 

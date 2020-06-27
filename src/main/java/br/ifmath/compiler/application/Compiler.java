@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.AnswerType;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.domain.grammar.GrammarSymbol;
 import br.ifmath.compiler.domain.grammar.nonterminal.E;
 import br.ifmath.compiler.domain.grammar.nonterminal.UnrecognizedStructureException;
@@ -15,6 +16,7 @@ import br.ifmath.compiler.infrastructure.compiler.iface.IIntermediateCodeGenerat
 import br.ifmath.compiler.infrastructure.compiler.iface.ILexicalAnalyzer;
 import br.ifmath.compiler.infrastructure.compiler.iface.ISymbolTable;
 import br.ifmath.compiler.infrastructure.compiler.iface.ISyntacticAnalyzer;
+import br.ifmath.compiler.infrastructure.input.ValueVariable;
 import br.ifmath.compiler.infrastructure.stack.Stack;
 import br.ifmath.compiler.infrastructure.stack.exception.StackAddNullItemException;
 import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
@@ -24,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author alex_
  */
 public class Compiler implements ICompiler {
@@ -76,12 +77,31 @@ public class Compiler implements ICompiler {
         this.answerType = answerType;
         this.intermediateCodes = new ArrayList<>();
 
+
         for (String expression : expressions) {
             expression = MathOperatorUtil.replaceReducedDistributive(expression);
             setUp();
             frontEnd(expression);
             this.intermediateCodes.add(intermediateCodeGenerator.generateCode(e.getParameter1(), e.getComparison(), e.getParameter2()));
         }
+
+        return backEnd();
+    }
+
+    @Override
+    public IAnswer analyseNumeric(IExpertSystem expertSystem, AnswerType answerType, List<NumericValueVariable> variables, String expressions) throws UnrecognizedLexemeException, UnrecognizedStructureException, InvalidAlgebraicExpressionException {
+        this.expertSystem = expertSystem;
+        this.answerType = answerType;
+        this.intermediateCodes = new ArrayList<>();
+        this.expertSystem.setVariables(variables);
+
+
+
+            expressions = MathOperatorUtil.replaceReducedDistributive(expressions);
+            setUp();
+            frontEnd(expressions);
+            this.intermediateCodes.add(intermediateCodeGenerator.generateCode(e.getParameter1(), e.getComparison(), e.getParameter2()));
+
 
         return backEnd();
     }

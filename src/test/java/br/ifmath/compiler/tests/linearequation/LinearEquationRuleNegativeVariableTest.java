@@ -33,7 +33,7 @@ public class LinearEquationRuleNegativeVariableTest {
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = " -2x * ( -1) = 4 * ( -1)";
+        String stepTwoValueExpected = " -2x * (-1) = 4 * (-1)";
         String lastStepValueExpected = "x =  -2";
 
         // Act
@@ -61,7 +61,7 @@ public class LinearEquationRuleNegativeVariableTest {
 
         int positionTwo = 1;
 
-        String stepTwoValueExpected = " -2x * ( -1) = 4 * ( -1)";
+        String stepTwoValueExpected = " -2x * (-1) = 4 * (-1)";
         String lastStepValueExpected = "x =  -2";
 
         // Act
@@ -179,7 +179,7 @@ public class LinearEquationRuleNegativeVariableTest {
 
         int positionThree = 2;
 
-        String stepThreeValueExpected = " -x * ( -1) =  -3 * ( -1)";
+        String stepThreeValueExpected = " -x * (-1) =  -3 * (-1)";
         String lastStepValueExpected = "x = 3";
 
         // Act
@@ -207,7 +207,7 @@ public class LinearEquationRuleNegativeVariableTest {
 
         int positionThree = 2;
 
-        String stepThreeValueExpected = " -4x * ( -1) = 0 * ( -1)";
+        String stepThreeValueExpected = " -4x * (-1) = 0 * (-1)";
         String lastStepValueExpected = "x = 0";
 
         // Act
@@ -281,7 +281,7 @@ public class LinearEquationRuleNegativeVariableTest {
 
         int positionThree = 3;
 
-        String stepThreeValueExpected = " -2x * ( -1) =  -12 * ( -1)";
+        String stepThreeValueExpected = " -2x * (-1) =  -12 * (-1)";
         String lastStepValueExpected = "x = 6";
 
         // Act

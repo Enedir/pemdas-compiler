@@ -123,9 +123,13 @@ public class ExpandedQuadruple {
         return operator.equals("/");
     }
 
-    public boolean isTimes() {return operator.equals("*");}
+    public boolean isTimes() {
+        return operator.equals("*");
+    }
 
-    public boolean isPotentiation() {return operator.equals("^");}
+    public boolean isPotentiation() {
+        return operator.equals("^");
+    }
 
     public boolean isNegative() {
         return operator != null && operator.equals("MINUS");
@@ -137,6 +141,10 @@ public class ExpandedQuadruple {
 
     public boolean isArgument2(String argument) {
         return argument2 != null && argument2.equals(argument);
+    }
+
+    public void setAsAnalyzed() {
+        this.level = -1;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package br.ifmath.compiler.tests.polynomial;
+package br.ifmath.compiler.tests.polynomial.numericValue;
 
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
@@ -6,9 +6,13 @@ import br.ifmath.compiler.domain.expertsystem.AnswerType;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.PolynomialExpertSystem;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -20,14 +24,20 @@ public class PolynomialRuleMultiplyNumbersTest {
     private String stepTwoExplicationExpected;
     private String stepThreeExplicationExpected;
     private String finalResultExplicationExpected;
+    private List<NumericValueVariable> userInput = new ArrayList<>();
+
 
     @Before
     public void setUp() {
         compiler = new Compiler();
-        expertSystem = new PolynomialExpertSystem();
+        expertSystem = new PolynomialNumericValueExpertSystem();
         stepTwoExplicationExpected = "Substituindo os valores nas variáveis correspondentes.";
         stepThreeExplicationExpected = "Multiplicando os valores.";
         finalResultExplicationExpected = "Somando os valores.";
+
+        userInput.add(new NumericValueVariable("a", 777));
+        userInput.add(new NumericValueVariable("y", 3));
+        userInput.add(new NumericValueVariable("z", 4));
     }
 
     @Test()
@@ -40,7 +50,7 @@ public class PolynomialRuleMultiplyNumbersTest {
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -65,7 +75,7 @@ public class PolynomialRuleMultiplyNumbersTest {
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -95,7 +105,7 @@ public class PolynomialRuleMultiplyNumbersTest {
         // Act
         IAnswer answer = null;
         try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            answer = compiler.analyseNumeric(expertSystem, AnswerType.BEST, userInput, expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }

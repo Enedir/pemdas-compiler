@@ -1,5 +1,6 @@
 package br.ifmath.compiler.infrastructure.util;
 
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 
 /**
@@ -95,7 +96,7 @@ public class StringUtil {
         source = source.replaceAll("Ý", "Y");
         source = source.replaceAll("ñ", "n");
         source = source.replaceAll("Ñ", "N");
-        source = source.replaceAll("['<>\\|/]", "");
+        source = source.replaceAll("['<>|/]", "");
 
         return source;
     }
@@ -488,9 +489,14 @@ public class StringUtil {
         return (source != null && source.length() > 0);
     }
 
+    public static int getPowerValue(String param){
+        NumericValueVariable numericValueVariable = new NumericValueVariable();
+        numericValueVariable.setAttributesFromString(param);
+        return numericValueVariable.getLabelPower();
+    }
 
     public static boolean isVariable(String param) {
-        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())
+        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPOENT.toString())
                 && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
     }
 

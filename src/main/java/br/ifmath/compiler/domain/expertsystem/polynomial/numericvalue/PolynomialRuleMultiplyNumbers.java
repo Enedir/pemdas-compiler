@@ -1,4 +1,4 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial;
+package br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
@@ -32,6 +32,10 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
         generateParameter(expandedQuadruples, rightTimes);
 
+        /*
+         * Verifica caso a expressao tenha operacoes alem da multiplicacao, ou seja, significa que a {@link expandedQuadruples}
+         * tem algum item no minimo
+         */
         if (!expandedQuadruples.isEmpty())
             sources.get(0).setExpandedQuadruples(expandedQuadruples);
         else
@@ -49,16 +53,16 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
      * Verifica quais quadruplas possuem a operaçao de multiplicacao.
      *
      * @param expandedQuadruples lista de quadruplas expandidas que será avaliada.
-     * @return expandedQuadruples1 retorna apenas as quadruplas que possuem o operador de multiplicação.
+     * @return apenas as quadruplas que possuem o operador de multiplicação.
      */
     private List<ExpandedQuadruple> checkTimesOperation(List<ExpandedQuadruple> expandedQuadruples) {
-        List<ExpandedQuadruple> expandedQuadruples1 = new ArrayList<>();
+        List<ExpandedQuadruple> timesQuadruples = new ArrayList<>();
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
             if (expandedQuadruple.isTimes()) {
-                expandedQuadruples1.add(expandedQuadruple);
+                timesQuadruples.add(expandedQuadruple);
             }
         }
-        return expandedQuadruples1;
+        return timesQuadruples;
     }
 
 
@@ -80,7 +84,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
                     expandedQuadruples.remove(eq);
                 double result = Double.parseDouble(a) * Double.parseDouble(b);
 
-                /**
+                /*
                  * Realiza a verificação se o numero é negativo, caso seja,transforma o mesmo em positivo e atribui o operador MINUS a quadrupla do mesmo.
                  */
                 if (result < 0) {
@@ -89,7 +93,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
                 } else
                     eq.setOperator("");
 
-                /**
+                /*
                  * Verifica se o numero é um inteiro ou um double, e realiza o cast do resultado para o formato adequado.
                  */
                 if (result % 1 == 0)
@@ -100,26 +104,28 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
                 eq.setArgument2("");
             }
         }
-
     }
 
 
     /**
      * Encontra os fatores a e b para a multiplicacao, conforme a expressao: a * b, para cada uma
      * das quadruplas que tem alguma operação de multiplicacao.
+     *
      * @param source {@link ThreeAddressCode} que contem todas as quadruplas.
      * @param factor Fator a ser verificado e encontrado dentro das quadruplas(a ou b).
      * @return {@link String} que contem o valor numérico do fator.
      */
     private String findProductFactor(List<ThreeAddressCode> source, String factor) {
-        if (StringUtil.match(factor,RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return findInnerProduct(source,factor);
+        if (StringUtil.match(factor, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return findInnerProduct(source, factor);
         }
         return factor;
     }
 
     /**
-     * @param expandedQuadruples Lista de quadruplas expandidadas geradas pelas etapas anteriores do compilador.
+     * Adiciona os resultados das multiplicacoes de volta para a lista de quadruplas principal
+     *
+     * @param expandedQuadruples Lista de quadruplas expandidadas geradas pelas etapas anteriores do compilador (principal).
      * @param times              Lista de quadruplas expandidas que possuem a operacação de multiplicação gerada pelo {@link #checkTimesOperation}.
      */
     private void generateParameter(List<ExpandedQuadruple> expandedQuadruples, List<ExpandedQuadruple> times) {
@@ -129,7 +135,7 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
             for (ExpandedQuadruple remainingQuadruple : expandedQuadruples) {
 
                 if (remainingQuadruple.getArgument1() != null && remainingQuadruple.getArgument2() != null) {
-                    /**
+                    /*
                      * Verifica se algum dos argumentos da quadrupla que esta sendo processada é igual a variavel temporaria que possui o resultado.
                      * Em caso positivo atribui o valor da temporaria ao argumento da quadrupla que esta sendo analisada.
                      */
@@ -148,8 +154,8 @@ public class PolynomialRuleMultiplyNumbers implements IRule {
 
 
     /**
-     * Encontra o valor  dentro das variaveis temporarias que esta envolvida
-     * em uma operacao de multiplicaçao e verifica caso o mesmo seja negativo, caso seja, adiciona o "-".
+     * Encontra o valor dentro das variaveis temporarias que esta envolvida
+     * em uma operacao de multiplicaçao. Além disso verifica caso o mesmo seja negativo, se sim, adiciona o "-".
      *
      * @param source  Lista de codigos de tres endereços que foi gerado pelas etapaas iniciais do compilador.
      * @param tempVar Variavel provida pela quadrupla expandida que esta sendo processada no método {@link #multiply}.

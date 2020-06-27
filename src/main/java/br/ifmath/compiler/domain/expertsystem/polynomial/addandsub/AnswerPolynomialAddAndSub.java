@@ -1,16 +1,16 @@
-package br.ifmath.compiler.domain.expertsystem.polynomial;
+package br.ifmath.compiler.domain.expertsystem.polynomial.addandsub;
 
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.Step;
 
 import java.util.List;
 
-public class AnswerPolynomial implements IAnswer {
+public class AnswerPolynomialAddAndSub implements IAnswer {
 
     private String result;
     private final List<Step> steps;
 
-    public AnswerPolynomial(List<Step> steps) {
+    public AnswerPolynomialAddAndSub(List<Step> steps) {
         this.steps = steps;
     }
 
