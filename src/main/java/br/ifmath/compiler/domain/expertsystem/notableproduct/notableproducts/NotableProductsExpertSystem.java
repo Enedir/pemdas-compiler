@@ -15,9 +15,10 @@ import java.util.List;
 
 public class NotableProductsExpertSystem implements IExpertSystem {
 
-    //TODO Add Rules variables
+    private NotableProductsRuleIdentification identification;
 
     public NotableProductsExpertSystem() {
+        identification = new NotableProductsRuleIdentification();
     }
 
 
@@ -34,8 +35,11 @@ public class NotableProductsExpertSystem implements IExpertSystem {
         setUpQuadruples(sources);
 
         validateExpressions(sources);
+        if (identification.match(sources)) {
+            steps.addAll(identification.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
 
-        //TODO Add Rules
 
         substituteNullFields(sources);
 
