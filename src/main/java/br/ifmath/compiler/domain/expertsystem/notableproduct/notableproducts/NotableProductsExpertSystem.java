@@ -30,8 +30,6 @@ public class NotableProductsExpertSystem implements IExpertSystem {
 
         sources.get(0).setUp();
 
-        steps.add(new Step(sources, sources.get(0).toLaTeXNotation().trim(), sources.get(0).toMathNotation().trim(), "Equação inicial."));
-
         setUpQuadruples(sources);
 
         validateExpressions(sources);
@@ -39,7 +37,6 @@ public class NotableProductsExpertSystem implements IExpertSystem {
             steps.addAll(identification.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-
 
         substituteNullFields(sources);
 
