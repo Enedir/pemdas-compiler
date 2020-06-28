@@ -17,8 +17,11 @@ public class NotableProductsExpertSystem implements IExpertSystem {
 
     private NotableProductsRuleIdentification identification;
 
+    private NotableProductsRuleApplyCorrectFormula applyFormula;
+
     public NotableProductsExpertSystem() {
         identification = new NotableProductsRuleIdentification();
+        applyFormula = new NotableProductsRuleApplyCorrectFormula();
     }
 
 
@@ -35,6 +38,12 @@ public class NotableProductsExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (identification.match(sources)) {
             steps.addAll(identification.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (applyFormula.match(sources)) {
+            steps.addAll(applyFormula.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 

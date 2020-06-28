@@ -24,17 +24,17 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         List<Step> steps = new ArrayList<>();
         this.source = source.get(0);
 
-        String type = this.identify();
+        String explanation = this.applyFormula();
 
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), this.source.getExpandedQuadruples());
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Identificação do tipo de produto notável: " + type));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Aplicamos o produto notável fazendo o " + explanation));
 
         return steps;
     }
 
-    private String identify() {
+    private String applyFormula() {
         String rule = "";
         ExpandedQuadruple root = this.source.findQuadrupleByResult(this.source.getLeft());
         if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
@@ -70,32 +70,35 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         rootQuadruple.setArgument1(firstTerm + "^2");
         rootQuadruple.setOperator("-");
         rootQuadruple.setArgument2(secondTerm + "^2");
-        return "Produto da soma pela diferença de dois termos.";
+        return "quadrado do primeiro termo, menos o quadrado do segundo termo.";
     }
 
     private String twoTermsPower(ExpandedQuadruple root, ExpandedQuadruple innerQuadruple) {
-        String power = "";
+        String sign = innerQuadruple.isPlus() ? "mais" : "menos";
+
+        String explanation = "";
         String exponent = "";
         if (root.getArgument2().equals("2")) {
             exponent = "2";
-            power = this.twoTermsSquare(root, innerQuadruple);
+            explanation = this.twoTermsSquare(root, innerQuadruple, sign);
         } else if (root.getArgument2().equals("3")) {
             exponent = "3";
-            power = this.twoTermsCube(root, innerQuadruple);
+            explanation = this.twoTermsCube(root, innerQuadruple, sign);
         }
         root.setOperator(innerQuadruple.isPlus() ? "+" : "-");
         root.setArgument1(innerQuadruple.getArgument1() + "^" + exponent);
-        return innerQuadruple.isPlus() ? power + " da soma de dois termos." : power + " da diferença de dois termos.";
+        return explanation;
     }
 
-    private String twoTermsSquare(ExpandedQuadruple rootQuadruple, ExpandedQuadruple termsQuadruple) {
+    private String twoTermsSquare(ExpandedQuadruple rootQuadruple, ExpandedQuadruple termsQuadruple, String sign) {
         this.source.addQuadrupleToList("+", termsQuadruple.getArgument2(), termsQuadruple.getArgument2() + "^2", rootQuadruple, false);
         this.source.addQuadrupleToList("*", termsQuadruple.getArgument1(), rootQuadruple.getArgument2(), rootQuadruple, false);
         this.source.addQuadrupleToList("*", "2", rootQuadruple.getArgument2(), rootQuadruple, false);
-        return "Quadrado";
+        return "quadrado do primeiro termo, " + sign + " o dobro do produto " +
+                "do primeiro pelo segundo termo, mais o quadrado do segundo termo.";
     }
 
-    private String twoTermsCube(ExpandedQuadruple rootQuadruple, ExpandedQuadruple termsQuadruple) {
+    private String twoTermsCube(ExpandedQuadruple rootQuadruple, ExpandedQuadruple termsQuadruple, String sign) {
         String lastOperator = (termsQuadruple.isPlus()) ? "+" : "-";
         this.source.addQuadrupleToList(lastOperator, termsQuadruple.getArgument2() + "^2", termsQuadruple.getArgument2() + "^3", rootQuadruple, false);
         this.source.addQuadrupleToList("*", termsQuadruple.getArgument1(), rootQuadruple.getArgument2(), rootQuadruple, false);
@@ -103,6 +106,8 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         this.source.addQuadrupleToList("+", termsQuadruple.getArgument2(), rootQuadruple.getArgument2(), rootQuadruple, false);
         this.source.addQuadrupleToList("*", termsQuadruple.getArgument1() + "^2", rootQuadruple.getArgument2(), rootQuadruple, false);
         this.source.addQuadrupleToList("*", "3", rootQuadruple.getArgument2(), rootQuadruple, false);
-        return "Cubo";
+        return "cubo do primeiro termo, " + sign + " o triplo do produto do " +
+                "quadrado do primeiro termo pelo segundo termo, mais o triplo do produto do primeiro pelo " +
+                "quadrado do segundo termo, " + sign + " o cubo do segundo termo.";
     }
 }
