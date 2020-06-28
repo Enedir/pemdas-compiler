@@ -30,7 +30,7 @@ public class NotableProductsRuleIdentificationTest {
     public void setUp() {
         compiler = new Compiler();
         expertSystem = new NotableProductsExpertSystem();
-        String stepTwoBaseResult = "Identificação do tipo de produto notável: ";
+        String stepTwoBaseResult = "Identificação do tipo de produto notável a partir da equação inicial: ";
         stepTwoResult1Expected = stepTwoBaseResult + "Quadrado da soma de dois termos.";
         stepTwoResult2Expected = stepTwoBaseResult + "Quadrado da diferença de dois termos.";
         stepTwoResult3Expected = stepTwoBaseResult + "Produto da soma pela diferença de dois termos.";
@@ -46,9 +46,7 @@ public class NotableProductsRuleIdentificationTest {
     @Test()
     public void identify_two_terms_square_scenery_one_with_success() {
         //Arrange
-        String expression = "(x + 2)^2";
-
-        String stepTwoValueExpected = "x^2 + 2 * x * 2 + 2^2";
+        String expression = "(x + 2) ^ 2";
 
         // Act
         IAnswer answer = null;
@@ -61,16 +59,14 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult1Expected, stepTwo.getReason());
     }
 
     @Test()
     public void identify_two_terms_square_scenery_two_with_success() {
         //Arrange
-        String expression = "(6 - 2)^2";
-
-        String stepTwoValueExpected = "6^2 - 2 * 6 * 2 + 2^2";
+        String expression = "(6 - 2) ^ 2";
 
         // Act
         IAnswer answer = null;
@@ -83,16 +79,14 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult2Expected, stepTwo.getReason());
     }
 
     @Test()
     public void identify_two_terms_square_scenery_three_with_success() {
         //Arrange
-        String expression = "(x + y)^2";
-
-        String stepTwoValueExpected = "x^2 + 2 * x * y + y^2";
+        String expression = "(x + y) ^ 2";
 
         // Act
         IAnswer answer = null;
@@ -105,7 +99,7 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult1Expected, stepTwo.getReason());
     }
 
@@ -114,8 +108,6 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(2 + y) * (2 - y)";
 
-        String stepTwoValueExpected = "2^2 - y^2";
-
         // Act
         IAnswer answer = null;
         try {
@@ -127,7 +119,7 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult3Expected, stepTwo.getReason());
     }
 
@@ -136,8 +128,6 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(3 + 1) * (3 - 1)";
 
-        String stepTwoValueExpected = "3^2 - 1^2";
-
         // Act
         IAnswer answer = null;
         try {
@@ -149,7 +139,7 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult3Expected, stepTwo.getReason());
     }
 
@@ -158,8 +148,6 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(z + x) * (z - x)";
 
-        String stepTwoValueExpected = "z^2 - x^2";
-
         // Act
         IAnswer answer = null;
         try {
@@ -171,16 +159,14 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult3Expected, stepTwo.getReason());
     }
 
     @Test()
     public void identify_two_terms_cube_scenery_one_with_success() {
         //Arrange
-        String expression = "(i - 5)^3";
-
-        String stepTwoValueExpected = "i^3 - 3 * i^2 * 5 + 3 * i * 5^2 - 5^3";
+        String expression = "(i - 5) ^ 3";
 
         // Act
         IAnswer answer = null;
@@ -193,16 +179,14 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult5Expected, stepTwo.getReason());
     }
 
     @Test()
     public void identify_two_terms_cube_scenery_two_with_success() {
         //Arrange
-        String expression = "(4 - 3)^3";
-
-        String stepTwoValueExpected = "4^3 - 3 * 4^2 * 3 + 3 * 4 * 3^2 - 3^3";
+        String expression = "(4 - 3) ^ 3";
 
         // Act
         IAnswer answer = null;
@@ -215,16 +199,14 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult5Expected, stepTwo.getReason());
     }
 
     @Test()
     public void identify_two_terms_cube_scenery_three_with_success() {
         //Arrange
-        String expression = "(a + b)^3";
-
-        String stepTwoValueExpected = "a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3";
+        String expression = "(a + b) ^ 3";
 
         // Act
         IAnswer answer = null;
@@ -237,7 +219,7 @@ public class NotableProductsRuleIdentificationTest {
         // Assert
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(expression, stepTwo.getMathExpression());
         assertEquals(stepTwoResult4Expected, stepTwo.getReason());
     }
 
