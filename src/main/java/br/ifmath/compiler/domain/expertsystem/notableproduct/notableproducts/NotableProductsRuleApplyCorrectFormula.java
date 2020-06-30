@@ -26,10 +26,11 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
 
         String explanation = this.applyFormula();
 
+        this.source.clearNonUsedQuadruples();
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), this.source.getExpandedQuadruples());
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Aplicamos o produto notável fazendo o " + explanation));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Aplicando o produto notável fazendo o " + explanation));
 
         return steps;
     }

@@ -19,9 +19,12 @@ public class NotableProductsExpertSystem implements IExpertSystem {
 
     private NotableProductsRuleApplyCorrectFormula applyFormula;
 
+    private NotableProductsRulePower power;
+
     public NotableProductsExpertSystem() {
         identification = new NotableProductsRuleIdentification();
         applyFormula = new NotableProductsRuleApplyCorrectFormula();
+        power = new NotableProductsRulePower();
     }
 
 
@@ -44,6 +47,12 @@ public class NotableProductsExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (applyFormula.match(sources)) {
             steps.addAll(applyFormula.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (power.match(sources)) {
+            steps.addAll(power.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
