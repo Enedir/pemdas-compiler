@@ -42,4 +42,13 @@ public class NumericValueVariable extends ValueVariable {
         return Integer.parseInt(value);
     }
 
+    @Override
+    public String toString() {
+        if (this.label == null)
+            return String.valueOf(this.value);
+        else if (this.value == null)
+            return this.label;
+        else
+            return value + label;
+    }
 }

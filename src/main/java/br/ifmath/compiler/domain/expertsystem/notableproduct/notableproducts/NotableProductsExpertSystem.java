@@ -21,10 +21,13 @@ public class NotableProductsExpertSystem implements IExpertSystem {
 
     private NotableProductsRulePower power;
 
+    private NotableProductsRuleMultiplication multiplication;
+
     public NotableProductsExpertSystem() {
         identification = new NotableProductsRuleIdentification();
         applyFormula = new NotableProductsRuleApplyCorrectFormula();
         power = new NotableProductsRulePower();
+        multiplication = new NotableProductsRuleMultiplication();
     }
 
 
@@ -53,6 +56,12 @@ public class NotableProductsExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (power.match(sources)) {
             steps.addAll(power.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (multiplication.match(sources)) {
+            steps.addAll(multiplication.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 

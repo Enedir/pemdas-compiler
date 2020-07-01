@@ -165,7 +165,7 @@ public class PolynomialMultiplicationRuleMultiplication implements IRule {
          */
         if (product.getValue() == 1 && !product.getLabel().equals(""))
             return product.getLabel();
-        return product.getValue() + product.getLabel();
+        return product.toString();
     }
 
 }
