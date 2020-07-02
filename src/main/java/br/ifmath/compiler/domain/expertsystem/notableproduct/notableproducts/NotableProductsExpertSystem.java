@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleSortSimilarTerms;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -23,11 +24,14 @@ public class NotableProductsExpertSystem implements IExpertSystem {
 
     private NotableProductsRuleMultiplication multiplication;
 
+    private PolynomialRuleSortSimilarTerms sort;
+
     public NotableProductsExpertSystem() {
         identification = new NotableProductsRuleIdentification();
         applyFormula = new NotableProductsRuleApplyCorrectFormula();
         power = new NotableProductsRulePower();
         multiplication = new NotableProductsRuleMultiplication();
+        sort = new PolynomialRuleSortSimilarTerms();
     }
 
 
@@ -62,6 +66,12 @@ public class NotableProductsExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (multiplication.match(sources)) {
             steps.addAll(multiplication.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (sort.match(sources)) {
+            steps.addAll(sort.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
