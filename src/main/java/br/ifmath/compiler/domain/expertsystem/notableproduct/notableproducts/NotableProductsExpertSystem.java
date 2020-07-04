@@ -26,12 +26,15 @@ public class NotableProductsExpertSystem implements IExpertSystem {
 
     private PolynomialRuleSortSimilarTerms sort;
 
+    private NotableProductsRuleSum sum;
+
     public NotableProductsExpertSystem() {
         identification = new NotableProductsRuleIdentification();
         applyFormula = new NotableProductsRuleApplyCorrectFormula();
         power = new NotableProductsRulePower();
         multiplication = new NotableProductsRuleMultiplication();
         sort = new PolynomialRuleSortSimilarTerms();
+        sum = new NotableProductsRuleSum();
     }
 
 
@@ -75,6 +78,12 @@ public class NotableProductsExpertSystem implements IExpertSystem {
             sources = steps.get(steps.size() - 1).getSource();
         }
 
+        validateExpressions(sources);
+        if (sum.match(sources)) {
+            steps.addAll(sum.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+        
         substituteNullFields(sources);
 
         if (StringUtil.isVariable(sources.get(0).getLeft())) {
