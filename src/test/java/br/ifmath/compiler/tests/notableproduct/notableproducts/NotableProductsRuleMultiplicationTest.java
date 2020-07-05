@@ -18,17 +18,16 @@ public class NotableProductsRuleMultiplicationTest {
     private IExpertSystem expertSystem;
     private String stepOneResult1Expected;
     private String stepOneResult2Expected;
-    private String stepOneResult3Expected;
     private String stepOneResult4Expected;
     private String stepOneResult5Expected;
     private String stepTwoResult1Expected;
     private String stepTwoResult2Expected;
-    private String stepTwoResult3Expected;
     private String stepTwoResult4Expected;
     private String stepTwoResult5Expected;
     private String stepThreeResultExpected;
     private String stepFourResultExpected;
-//    private String finalResultExplicationExpected;
+    private String stepFiveResultExpected;
+    private String finalStepResultExpected;
 
 
     @Before
@@ -38,7 +37,6 @@ public class NotableProductsRuleMultiplicationTest {
         String stepOneBaseResult = "Identificação do tipo de produto notável a partir da equação inicial: ";
         stepOneResult1Expected = stepOneBaseResult + "Quadrado da soma de dois termos.";
         stepOneResult2Expected = stepOneBaseResult + "Quadrado da diferença de dois termos.";
-        stepOneResult3Expected = stepOneBaseResult + "Produto da soma pela diferença de dois termos.";
         stepOneResult4Expected = stepOneBaseResult + "Cubo da soma de dois termos.";
         stepOneResult5Expected = stepOneBaseResult + "Cubo da diferença de dois termos.";
 
@@ -48,8 +46,6 @@ public class NotableProductsRuleMultiplicationTest {
                 "do primeiro pelo segundo termo, mais o quadrado do segundo termo.";
         stepTwoResult2Expected = stepTwoBaseResult + "quadrado do primeiro termo, menos o dobro do " +
                 "produto do primeiro pelo segundo termo, mais o quadrado do segundo termo.";
-        stepTwoResult3Expected = stepTwoBaseResult + "quadrado do primeiro termo, menos o quadrado do " +
-                "segundo termo.";
         stepTwoResult4Expected = stepTwoBaseResult + "cubo do primeiro termo, mais o triplo do produto do " +
                 "quadrado do primeiro termo pelo segundo termo, mais o triplo do produto do primeiro pelo " +
                 "quadrado do segundo termo, mais o cubo do segundo termo.";
@@ -59,9 +55,8 @@ public class NotableProductsRuleMultiplicationTest {
 
         stepThreeResultExpected = "Resolvendo as operações de potência.";
         stepFourResultExpected = "Resolvendo as multiplicações.";
-//        finalResultExplicationExpected = "";
-
-
+        stepFiveResultExpected = "Agrupando os termos semelhantes.";
+        finalStepResultExpected = "Somando os números restantes.";
     }
 
     @Test()
@@ -71,7 +66,7 @@ public class NotableProductsRuleMultiplicationTest {
 
         String stepTwoValueExpected = "s^2 + 2 * s * 8 + 8^2";
         String stepThreeValueExpected = "s^2 + 2 * s * 8 + 64";
-        String stepFourValueExpected = "s^2 + 16s + 64";
+        String finalStepValueExpected = "s^2 + 16s + 64";
 
         // Act
         IAnswer answer = null;
@@ -85,7 +80,7 @@ public class NotableProductsRuleMultiplicationTest {
         Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
         Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 1);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult1Expected, stepOne.getReason());
@@ -93,8 +88,8 @@ public class NotableProductsRuleMultiplicationTest {
         assertEquals(stepTwoResult1Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
         assertEquals(stepThreeResultExpected, stepThree.getReason());
-        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
-        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFourResultExpected, finalStep.getReason());
     }
 
     @Test()
@@ -105,6 +100,45 @@ public class NotableProductsRuleMultiplicationTest {
         String stepTwoValueExpected = "3^2 - 2 * 3 * 2 + 2^2";
         String stepThreeValueExpected = "9 - 2 * 3 * 2 + 4";
         String stepFourValueExpected = "9 - 12 + 4";
+        String finalStepValueExpected = "1";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult2Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(finalStepResultExpected, finalStep.getReason());
+
+    }
+
+    @Test()
+    public void two_terms_square_multiplication_scenery_three_with_success() {
+        //Arrange
+        String expression = "(d - a) ^ 2";
+
+        String stepTwoValueExpected = "d^2 - 2 * d * a + a^2";
+        String stepThreeValueExpected = "d^2 - 2ad + a^2";
+        String finalStepValueExpected = "d^2 + a^2 - 2ad";
 
         // Act
         IAnswer answer = null;
@@ -118,38 +152,7 @@ public class NotableProductsRuleMultiplicationTest {
         Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
         Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult2Expected, stepOne.getReason());
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
-        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepThreeResultExpected, stepThree.getReason());
-        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
-        assertEquals(stepFourResultExpected, stepFour.getReason());
-    }
-
-    @Test()
-    public void two_terms_square_multiplication_scenery_three_with_success() {
-        //Arrange
-        String expression = "(d - a) ^ 2";
-
-        String stepTwoValueExpected = "d^2 - 2 * d * a + a^2";
-        String stepThreeValueExpected = "d^2 - 2ad + a^2";
-
-        // Act
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 1);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult2Expected, stepOne.getReason());
@@ -157,6 +160,8 @@ public class NotableProductsRuleMultiplicationTest {
         assertEquals(stepTwoResult2Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
         assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
 
     @Test()
@@ -167,6 +172,46 @@ public class NotableProductsRuleMultiplicationTest {
         String stepTwoValueExpected = "2^3 - 3 * 2^2 * 3 + 3 * 2 * 3^2 - 3^3";
         String stepThreeValueExpected = "8 - 3 * 4 * 3 + 3 * 2 * 9 - 27";
         String stepFourValueExpected = "8 - 36 + 54 - 27";
+        String finalStepValueExpected = "-1";
+
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(finalStepResultExpected, finalStep.getReason());
+
+    }
+
+    @Test()
+    public void two_terms_cube_multiplication_scenery_two_with_success() {
+        //Arrange
+        String expression = "(y - z) ^ 3";
+
+        String stepTwoValueExpected = "y^3 - 3 * y^2 * z + 3 * y * z^2 - z^3";
+        String stepThreeValueExpected = "y^3 - 3y^2z + 3yz^2 - z^3";
+        String finalStepValueExpected = "y^3 - z^3 + 3yz^2 - 3y^2z";
 
         // Act
         IAnswer answer = null;
@@ -180,38 +225,8 @@ public class NotableProductsRuleMultiplicationTest {
         Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
         Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
         Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 1);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
-        assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult5Expected, stepOne.getReason());
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult5Expected, stepTwo.getReason());
-        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepThreeResultExpected, stepThree.getReason());
-        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
-        assertEquals(stepFourResultExpected, stepFour.getReason());
-    }
-
-    @Test()
-    public void two_terms_cube_multiplication_scenery_two_with_success() {
-        //Arrange
-        String expression = "(y - z) ^ 3";
-
-        String stepTwoValueExpected = "y^3 - 3 * y^2 * z + 3 * y * z^2 - z^3";
-        String stepThreeValueExpected = "y^3 - 3y^2z + 3yz^2 - z^3";
-
-        // Act
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult5Expected, stepOne.getReason());
@@ -219,6 +234,8 @@ public class NotableProductsRuleMultiplicationTest {
         assertEquals(stepTwoResult5Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
         assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
 
     @Test()
@@ -229,6 +246,7 @@ public class NotableProductsRuleMultiplicationTest {
         String stepTwoValueExpected = "7^3 + 3 * 7^2 * w + 3 * 7 * w^2 + w^3";
         String stepThreeValueExpected = "343 + 3 * 49 * w + 3 * 7 * w^2 + w^3";
         String stepFourValueExpected = "343 + 147w + 21w^2 + w^3";
+        String finalStepValueExpected = "w^3 + 21w^2 + 147w + 343";
 
         // Act
         IAnswer answer = null;
@@ -239,10 +257,12 @@ public class NotableProductsRuleMultiplicationTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 1);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult4Expected, stepOne.getReason());
@@ -252,5 +272,7 @@ public class NotableProductsRuleMultiplicationTest {
         assertEquals(stepThreeResultExpected, stepThree.getReason());
         assertEquals(stepFourValueExpected, stepFour.getMathExpression());
         assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
 }
