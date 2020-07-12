@@ -75,7 +75,9 @@ public class NotableProductsExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (sort.match(sources)) {
             steps.addAll(sort.handle(sources));
-            sources = steps.get(steps.size() - 1).getSource();
+            Step lastStep = steps.get(steps.size() - 1);
+            lastStep.setReason("Ou ainda, colocando em ordem decrescente.");
+            sources = lastStep.getSource();
         }
 
         validateExpressions(sources);
@@ -83,7 +85,7 @@ public class NotableProductsExpertSystem implements IExpertSystem {
             steps.addAll(sum.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
-        
+
         substituteNullFields(sources);
 
         if (StringUtil.isVariable(sources.get(0).getLeft())) {

@@ -60,7 +60,7 @@ public class NotableProductsRuleIdentificationTest {
 
         stepThreeResultExpected = "Resolvendo as operações de potência.";
         stepFourResultExpected = "Resolvendo as multiplicações.";
-        stepFiveResultExpected = "Agrupando os termos semelhantes.";
+        stepFiveResultExpected = "Ou ainda, colocando em ordem decrescente.";
         finalStepResultExpected = "Somando os números restantes.";
     }
 

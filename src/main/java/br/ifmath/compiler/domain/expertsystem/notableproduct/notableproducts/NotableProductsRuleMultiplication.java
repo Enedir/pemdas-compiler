@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -64,8 +65,35 @@ public class NotableProductsRuleMultiplication implements IRule {
     private void multiplyBetweenBounds(String startBound, String endBound, List<String> values) {
         NumericValueVariable nvv = new NumericValueVariable();
         for (String value : values) {
-            if (StringUtil.match(value, RegexPattern.NATURAL_NUMBER.toString()))
+            boolean isMinus = false;
+            if (StringUtil.match(value, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(value);
+                if (innerQuadruple != null) {
+                    if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()))
+                        value = (innerQuadruple.isNegative()) ? "-" + innerQuadruple.getArgument1() : innerQuadruple.getArgument1();
+
+                    if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) &&
+                            innerQuadruple.isPotentiation()) {
+                        ExpandedQuadruple variableQuadruple = this.source.findQuadrupleByResult(innerQuadruple.getArgument1());
+                        if (StringUtil.isVariable(variableQuadruple.getArgument1())) {
+                            value = variableQuadruple.getArgument1() + "^" + innerQuadruple.getArgument2();
+                            isMinus = true;
+                        }
+                    }
+
+                    if (StringUtil.isVariable(innerQuadruple.getArgument1())) {
+                        value = innerQuadruple.getArgument1();
+                        isMinus = true;
+                    }
+                }
+            }
+
+            if (StringUtil.match(value, RegexPattern.INTEGER_NUMBER.toString()))
                 nvv.setValue((nvv.getValue() == null) ? Integer.parseInt(value) : nvv.getValue() * Integer.parseInt(value));
+
+            if (isMinus)
+                nvv.setValue(nvv.getValue() * -1);
+
 
             if (StringUtil.isVariable(value))
                 if (nvv.getLabel() == null)
@@ -73,14 +101,20 @@ public class NotableProductsRuleMultiplication implements IRule {
                 else
                     nvv.setLabel((nvv.getLabel().compareTo(value) < 0) ? nvv.getLabel() + value : value + nvv.getLabel());
         }
-        ExpandedQuadruple endBoundQuadruple = this.source.findQuadrupleByResult(endBound);
-        endBoundQuadruple.setArgument1(nvv.toString());
-
         ExpandedQuadruple startQuadrupleFather = this.source.findQuadrupleByArgument(startBound);
         if (startQuadrupleFather.getArgument1().equals(startBound))
             startQuadrupleFather.setArgument1(endBound);
         else
             startQuadrupleFather.setArgument2(endBound);
+
+
+        ExpandedQuadruple endBoundQuadruple = this.source.findQuadrupleByResult(endBound);
+        if (nvv.getValue() < 0) {
+            nvv.setValue(nvv.getValue() * -1);
+
+            startQuadrupleFather.setOperator(MathOperatorUtil.signalRule(startQuadrupleFather.getOperator(), "-"));
+        }
+        endBoundQuadruple.setArgument1(nvv.toString());
 
     }
 

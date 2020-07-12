@@ -60,7 +60,7 @@ public class NotableProductsRulePowerTest {
 
         stepThreeResultExpected = "Resolvendo as operações de potência.";
         stepFourResultExpected = "Resolvendo as multiplicações.";
-        stepFiveResultExpected = "Agrupando os termos semelhantes.";
+        stepFiveResultExpected = "Ou ainda, colocando em ordem decrescente.";
         finalStepResultExpected = "Somando os números restantes.";
     }
 
@@ -175,6 +175,45 @@ public class NotableProductsRulePowerTest {
         assertEquals(stepThreeResultExpected, stepThree.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFourResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void two_terms_square_power_scenery_four_with_success() {
+        //Arrange
+        String expression = "(-7 + x) ^ 2";
+
+        String stepTwoValueExpected = "(-7) ^ 2 + 2 * (-7) * x + x^2";
+        String stepThreeValueExpected = "49 + 2 * (-7) * x + x^2";
+        String stepFourValueExpected = "49 - 14x + x^2";
+        String finalStepValueExpected = "x^2 - 14x + 49";
+
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult1Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
 
     @Test()
@@ -346,6 +385,41 @@ public class NotableProductsRulePowerTest {
         assertEquals(stepFourResultExpected, stepThree.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
+
+    }
+
+    @Test()
+    public void two_terms_cube_power_scenery_four_with_success() {
+        //Arrange
+        String expression = "(-x + 3) ^ 3";
+
+        String stepTwoValueExpected = "(-x) ^ 3 + 3 * (-x) ^ 2 * 3 + 3 * (-x) * 3^2 + 3^3";
+        String stepThreeValueExpected = "(-x) ^ 3 + 3 * (-x) ^ 2 * 3 + 3 * (-x) * 9 + 27";
+        String finalStepValueExpected = "(-x) ^ 3 - 9x^2 - 27x + 27";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult4Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult4Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFourResultExpected, finalStep.getReason());
 
     }
 

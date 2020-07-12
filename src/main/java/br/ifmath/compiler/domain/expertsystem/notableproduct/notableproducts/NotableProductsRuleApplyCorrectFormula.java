@@ -43,8 +43,7 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
 
                 ExpandedQuadruple innerQuadruple = this.source.findQuadrupleByResult(root.getArgument1());
 
-                if (!StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) &&
-                        !StringUtil.match(innerQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                if (!StringUtil.match(innerQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
 
                     rule = this.twoTermsPower(root, innerQuadruple);
                 }
@@ -58,8 +57,7 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
                 String leftQuadrupleArgument1 = leftInnerQuadruple.getArgument1();
                 String leftQuadrupleArgument2 = leftInnerQuadruple.getArgument2();
 
-                if (leftQuadrupleArgument1.equals(rightInnerQuadruple.getArgument1()) &&
-                        leftQuadrupleArgument2.equals(rightInnerQuadruple.getArgument2()))
+                if (leftQuadrupleArgument2.equals(rightInnerQuadruple.getArgument2()))
                     rule = this.productOfSumAndDif(root, leftQuadrupleArgument1, leftQuadrupleArgument2);
             }
         }
@@ -87,7 +85,10 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
             explanation = this.twoTermsCube(root, innerQuadruple, sign);
         }
         root.setOperator(innerQuadruple.isPlus() ? "+" : "-");
-        root.setArgument1(innerQuadruple.getArgument1() + "^" + exponent);
+        if (!StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+            root.setArgument1(innerQuadruple.getArgument1() + "^" + exponent);
+        else
+            this.source.addQuadrupleToList("^", innerQuadruple.getArgument1(), exponent, root, true);
         return explanation;
     }
 
@@ -105,7 +106,9 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         this.source.addQuadrupleToList("*", termsQuadruple.getArgument1(), rootQuadruple.getArgument2(), rootQuadruple, false);
         this.source.addQuadrupleToList("*", "3", rootQuadruple.getArgument2(), rootQuadruple, false);
         this.source.addQuadrupleToList("+", termsQuadruple.getArgument2(), rootQuadruple.getArgument2(), rootQuadruple, false);
-        this.source.addQuadrupleToList("*", termsQuadruple.getArgument1() + "^2", rootQuadruple.getArgument2(), rootQuadruple, false);
+        ExpandedQuadruple powerQuadruple = this.source.addQuadrupleToList("*", termsQuadruple.getArgument1() + "^2", rootQuadruple.getArgument2(), rootQuadruple, false);
+        if (StringUtil.match(termsQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+            this.source.addQuadrupleToList("^", termsQuadruple.getArgument1(), "2", powerQuadruple, true);
         this.source.addQuadrupleToList("*", "3", rootQuadruple.getArgument2(), rootQuadruple, false);
         return "cubo do primeiro termo, " + sign + " o triplo do produto do " +
                 "quadrado do primeiro termo pelo segundo termo, mais o triplo do produto do primeiro pelo " +
