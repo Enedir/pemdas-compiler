@@ -4,6 +4,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -51,11 +52,24 @@ public class NotableProductsRulePower implements IRule {
                 if (expandedQuadruple.isPotentiation()) {
                     String base = this.getPowerBase(expandedQuadruple.getArgument1(), this.source);
                     if (!base.equals("")) {
-                        String result = String.valueOf(
-                                Math.round(
-                                        Math.pow(Double.parseDouble(base), Double.parseDouble(expandedQuadruple.getArgument2()))
-                                )
-                        );
+                        String result;
+                        if (StringUtil.match(base, RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+                            NumericValueVariable nvv = new NumericValueVariable();
+                            nvv.setAttributesFromString(base);
+                            String exponent = expandedQuadruple.getArgument2();
+                            nvv.setValue(
+                                    (int) Math.pow(nvv.getValue(), Double.parseDouble(exponent)));
+                            int power = nvv.getLabelPower();
+                            if (power != 1)
+                                exponent = String.valueOf(power + Integer.parseInt(expandedQuadruple.getArgument2()));
+                            nvv.setLabel(nvv.getLabel() + "^" + exponent);
+                            result = nvv.toString();
+                        } else
+                            result = String.valueOf(
+                                    Math.round(
+                                            Math.pow(Double.parseDouble(base), Double.parseDouble(expandedQuadruple.getArgument2()))
+                                    )
+                            );
                         ExpandedQuadruple father = this.source.findQuadrupleByArgument(expandedQuadruple.getResult());
                         if (father.getArgument1().equals(expandedQuadruple.getResult()))
                             father.setArgument1(result);
@@ -113,9 +127,15 @@ public class NotableProductsRulePower implements IRule {
             return argument;
         }
         ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(argument);
-        if (innerQuadruple != null && StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()))
-            return (innerQuadruple.isNegative()) ? "-" + innerQuadruple.getArgument1() : innerQuadruple.getArgument1();
-
+        if (innerQuadruple != null) {
+            if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) ||
+                    StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+                return (innerQuadruple.isNegative()) ? "-" + innerQuadruple.getArgument1() : innerQuadruple.getArgument1();
+            }
+            //TODO se não cair aqui nenhuma vez, tirar essa verificacao
+            if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                return this.source.findQuadrupleByResult(innerQuadruple.getArgument1()).getArgument1();
+        }
         return "";
     }
 

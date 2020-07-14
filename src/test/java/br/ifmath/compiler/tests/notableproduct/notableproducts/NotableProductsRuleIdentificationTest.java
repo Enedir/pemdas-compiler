@@ -173,6 +173,44 @@ public class NotableProductsRuleIdentificationTest {
     }
 
     @Test()
+    public void identify_two_terms_square_scenery_four_with_success() {
+        //Arrange
+        String expression = "(2x + y) ^ 2";
+
+        String stepTwoValueExpected = "( 2x ) ^ 2 + 2 * 2x * y + y^2";
+        String stepThreeValueExpected = "4x^2 + 2 * 2x * y + y^2";
+        String stepFourValueExpected = "4x^2 + 4xy + y^2";
+        String finalStepValueExpected = "4x^2 + y^2 + 4xy";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult1Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
+    }
+
+    @Test()
     public void identify_sum_and_dif_product_scenery_one_with_success() {
         //Arrange
         String expression = "(2 + y) * (2 - y)";
@@ -265,6 +303,8 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepTwoResult3Expected, finalStep.getReason());
     }
+
+    //TODO fazer um exemplo com um monomio de soma e diferença, e ao cubo
 
     @Test()
     public void identify_two_terms_cube_scenery_one_with_success() {

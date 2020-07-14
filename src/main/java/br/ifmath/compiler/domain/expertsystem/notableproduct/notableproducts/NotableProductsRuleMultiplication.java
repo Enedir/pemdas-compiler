@@ -87,6 +87,11 @@ public class NotableProductsRuleMultiplication implements IRule {
                     }
                 }
             }
+            NumericValueVariable numericVariable = new NumericValueVariable();
+            if (StringUtil.match(value, RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+                numericVariable.setAttributesFromString(value);
+                value = numericVariable.getValue().toString();
+            }
 
             if (StringUtil.match(value, RegexPattern.INTEGER_NUMBER.toString()))
                 nvv.setValue((nvv.getValue() == null) ? Integer.parseInt(value) : nvv.getValue() * Integer.parseInt(value));
@@ -94,6 +99,8 @@ public class NotableProductsRuleMultiplication implements IRule {
             if (isMinus)
                 nvv.setValue(nvv.getValue() * -1);
 
+            if (numericVariable.getLabel() != null)
+                value = numericVariable.getLabel();
 
             if (StringUtil.isVariable(value))
                 if (nvv.getLabel() == null)
