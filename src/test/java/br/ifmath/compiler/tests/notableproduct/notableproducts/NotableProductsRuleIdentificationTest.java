@@ -304,6 +304,37 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(stepTwoResult3Expected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_sum_and_dif_product_scenery_four_with_success() {
+        //Arrange
+        String expression = "(4h + 8) * (4h - 8)";
+
+        String stepTwoValueExpected = "( 4h ) ^ 2 - 8^2";
+        String finalStepValueExpected = "16h^2 - 64";
+
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResultExpected, finalStep.getReason());
+    }
+
     //TODO fazer um exemplo com um monomio de soma e diferença, e ao cubo
 
     @Test()
@@ -411,5 +442,41 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
+
+    @Test()
+    public void identify_two_terms_cube_scenery_four_with_success() {
+        //Arrange
+        String expression = "(2w + 5) ^ 3";
+
+        String stepTwoValueExpected = "( 2w ) ^ 3 + 3 * ( 2w ) ^ 2 * 5 + 3 * 2w * 5^2 + 5^3";
+        String stepThreeValueExpected = "8w^3 + 3 * 4w^2 * 5 + 3 * 2w * 25 + 125";
+        String finalStepValueExpected = "8w^3 + 60w^2 + 150w + 125";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult4Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult4Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFourResultExpected, finalStep.getReason());
+    }
+
+    //TODO Testar algo como  (4 - 3q)
 
 }
