@@ -213,8 +213,8 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(s - 3t) * (s + 3t)";
 
-        String finalStepValueExpected = "s^2 - 3t^2";
-
+        String stepTwoValueExpected = "s^2 + (-3t) ^ 2";
+        String finalStepValueExpected = "s^2 + 9t^2";
         // Act
         IAnswer answer = null;
         try {
@@ -224,22 +224,26 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepTwoResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResultExpected, finalStep.getReason());
     }
 
     @Test()
     public void apply_sum_and_dif_formula_scenery_three_with_success() {
         //Arrange
-        String expression = "(2a - 5b) * (2a + 5b)";
+        String expression = "(a - 5b) * (a + 5b)";
 
-        String finalStepValueExpected = "2a^2 - 5b^2";
+        String stepTwoValueExpected = "a^2 + (-5b) ^ 2";
+        String finalStepValueExpected = "a^2 + 25b^2";
 
         // Act
         IAnswer answer = null;
@@ -250,14 +254,17 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepTwoResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResultExpected, finalStep.getReason());
     }
 
     @Test()

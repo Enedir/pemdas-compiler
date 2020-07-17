@@ -72,13 +72,17 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
                         this.createParentheses(firstArgument, true);
                         firstArgument = this.source.findQuadrupleByResult(this.source.getLeft()).getArgument1();
                     }
-
+                    ExpandedQuadruple parenthesesQuadruple = null;
                     if (isThereAMonomy(leftInnerQuadruple, false)) {
-                        this.createParentheses(secondArgument, false);
+                        parenthesesQuadruple = this.createParentheses(secondArgument, false);
+                        parenthesesQuadruple.setArgument1(parenthesesQuadruple.getOperator());
+                        parenthesesQuadruple.setOperator("MINUS");
                         secondArgument = this.source.findQuadrupleByResult(this.source.getLeft()).getArgument2();
                     }
 
                     rule = this.productOfSumAndDif(root, firstArgument, secondArgument);
+                    if (parenthesesQuadruple != null)
+                        root.setOperator("+");
                 }
             }
         }
@@ -143,39 +147,36 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
                 "do primeiro pelo segundo termo, mais o quadrado do segundo termo.";
     }
 
-    private String createParentheses(String argument, boolean setOnArgument1) {
+    private ExpandedQuadruple createParentheses(String argument, boolean setOnArgument1) {
         this.source.addQuadrupleToList(argument, "", "", this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1), setOnArgument1);
         ExpandedQuadruple lastQuadruple = this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1);
         lastQuadruple.setLevel(1);
-        return lastQuadruple.getResult();
+        return lastQuadruple;
     }
 
 
     private String twoTermsCube(ExpandedQuadruple rootQuadruple, ExpandedQuadruple termsQuadruple, String sign) {
         String lastOperator = (termsQuadruple.isPlus()) ? "+" : "-";
-        String powerTwoQuadrupleResult = "";
         if (!this.isThereAMonomy(termsQuadruple, false)) {
             this.source.addQuadrupleToList(lastOperator, termsQuadruple.getArgument2() + "^2", termsQuadruple.getArgument2() + "^3", rootQuadruple, false);
         } else {
             this.source.addQuadrupleToList("^", termsQuadruple.getArgument2(), "3", rootQuadruple, false);
-            String parenthesesQuadrupleResult = this.createParentheses(this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getArgument1(), true);
+            String parenthesesQuadrupleResult = this.createParentheses(this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getArgument1(), true).getResult();
             String powerThreeQuadrupleResult = this.source.findQuadrupleByArgument(parenthesesQuadrupleResult).getResult();
-            powerTwoQuadrupleResult = this.source.addQuadrupleToList("^", parenthesesQuadrupleResult, "2", rootQuadruple, false).getResult();
+            String powerTwoQuadrupleResult = this.source.addQuadrupleToList("^", parenthesesQuadrupleResult, "2", rootQuadruple, false).getResult();
             this.source.addQuadrupleToList(lastOperator, powerTwoQuadrupleResult, powerThreeQuadrupleResult, rootQuadruple, false);
         }
         this.source.addQuadrupleToList("*", termsQuadruple.getArgument1(), rootQuadruple.getArgument2(), rootQuadruple, false);
         this.source.addQuadrupleToList("*", "3", rootQuadruple.getArgument2(), rootQuadruple, false);
         this.source.addQuadrupleToList("+", termsQuadruple.getArgument2(), rootQuadruple.getArgument2(), rootQuadruple, false);
         ExpandedQuadruple powerQuadruple;
-        if (!this.isThereAMonomy(termsQuadruple, false) && !this.isThereAMonomy(termsQuadruple, true))
-            powerQuadruple = this.source.addQuadrupleToList("*", termsQuadruple.getArgument1() + "^2", rootQuadruple.getArgument2(), rootQuadruple, false);
-        else if (this.isThereAMonomy(termsQuadruple, true)) {
+        if (this.isThereAMonomy(termsQuadruple, true)) {
             String argument2QuadrupleResult = this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getResult();
             String argument1QuadrupleResult = this.source.addQuadrupleToList("^", termsQuadruple.getArgument1(), "2", rootQuadruple, false).getResult();
             this.createParentheses(this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getArgument1(), true);
             powerQuadruple = this.source.addQuadrupleToList("*", argument1QuadrupleResult, argument2QuadrupleResult, rootQuadruple, false);
         } else {
-            powerQuadruple = this.source.addQuadrupleToList("*", powerTwoQuadrupleResult, rootQuadruple.getArgument2(), rootQuadruple, false);
+            powerQuadruple = this.source.addQuadrupleToList("*", termsQuadruple.getArgument1() + "^2", rootQuadruple.getArgument2(), rootQuadruple, false);
         }
         if (StringUtil.match(termsQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
             this.source.addQuadrupleToList("^", termsQuadruple.getArgument1(), "2", powerQuadruple, true);

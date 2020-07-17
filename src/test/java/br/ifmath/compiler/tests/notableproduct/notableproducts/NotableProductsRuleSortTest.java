@@ -137,6 +137,80 @@ public class NotableProductsRuleSortTest {
     }
 
     @Test()
+    public void sort_two_terms_square_scenery_three_with_success() {
+        //Arrange
+        String expression = "(3b + 8a) ^ 2";
+
+        String stepTwoValueExpected = "( 3b ) ^ 2 + 2 * 3b * 8a + ( 8a ) ^ 2";
+        String stepThreeValueExpected = "9b^2 + 2 * 3b * 8a + 64a^2";
+        String stepFourValueExpected = "9b^2 + 48ab + 64a^2";
+        String stepFiveValueExpected = "9b^2 + 64a^2 + 48ab";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepFive = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult1Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(stepFiveValueExpected, stepFive.getMathExpression());
+        assertEquals(stepFiveResultExpected, stepFive.getReason());
+    }
+
+    @Test()
+    public void sort_two_terms_square_scenery_four_with_success() {
+        //Arrange
+        String expression = "(-2g + 5a) ^ 2";
+
+        String stepTwoValueExpected = "(-2g) ^ 2 + 2 * (-2g) * 5a + ( 5a ) ^ 2";
+        String stepThreeValueExpected = "4g^2 + 2 * (-2g) * 5a + 25a^2";
+        String stepFourValueExpected = "4g^2 - 20ag + 25a^2";
+        String stepFiveValueExpected = "4g^2 + 25a^2 - 20ag";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepFive = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult1Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(stepFiveValueExpected, stepFive.getMathExpression());
+        assertEquals(stepFiveResultExpected, stepFive.getReason());
+    }
+
+    @Test()
     public void sum_and_dif_sort_scenery_one_with_success() {
         //Arrange
         String expression = "(6 - n) * (6 + n)";
@@ -200,6 +274,35 @@ public class NotableProductsRuleSortTest {
         assertEquals(stepThreeResultExpected, stepThree.getReason());
         assertEquals(stepFourValueExpected, stepFour.getMathExpression());
         assertEquals(stepFiveResultExpected, stepFour.getReason());
+    }
+
+    @Test()
+    public void sum_and_dif_sort_scenery_three_with_success() {
+        //Arrange
+        String expression = "(-4s + 2u) * (-4s - 2u)";
+
+        String stepTwoValueExpected = "(-4s) ^ 2 + (-2u) ^ 2";
+        String stepThreeValueExpected = "16s^2 + 4u^2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
     }
 
     @Test()
@@ -270,5 +373,43 @@ public class NotableProductsRuleSortTest {
         assertEquals(stepFourResultExpected, stepThree.getReason());
         assertEquals(stepFourValueExpected, stepFour.getMathExpression());
         assertEquals(stepFiveResultExpected, stepFour.getReason());
+    }
+
+    @Test()
+    public void sort_two_terms_cube_scenery_three_with_success() {
+        //Arrange
+        String expression = "(-2s - 3y) ^ 3";
+
+        //TODO ajustar para que o primeiro valor negativo fique entre parenteses
+        String stepTwoValueExpected = "(-2s) ^ 3 - 3 * (-2s) ^ 2 * 3y + 3 * (-2s) * ( 3y ) ^ 2 - ( 3y ) ^ 3";
+        String stepThreeValueExpected = "(-8s^3) - 3 * 4s^2 * 3y + 3 * (-2s) * 9y^2 - 27y^3";
+        String stepFourValueExpected = "(-8s^3) - 36s^2y - 54sy^2 - 27y^3";
+        String finalStepValueExpected = "(-8s^3) - 27y^3 - 36s^2y - 54sy^2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
 }

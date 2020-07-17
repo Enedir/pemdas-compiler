@@ -53,7 +53,7 @@ public class NotableProductsRulePower implements IRule {
                     String base = this.getPowerBase(expandedQuadruple.getArgument1(), this.source);
                     if (!base.equals("")) {
                         String result;
-                        if (StringUtil.match(base, RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+                        if (StringUtil.match(base.replace("-", ""), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
                             NumericValueVariable nvv = new NumericValueVariable();
                             nvv.setAttributesFromString(base);
                             String exponent = expandedQuadruple.getArgument2();

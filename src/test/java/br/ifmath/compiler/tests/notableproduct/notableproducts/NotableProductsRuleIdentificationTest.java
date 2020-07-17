@@ -335,8 +335,6 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(stepThreeResultExpected, finalStep.getReason());
     }
 
-    //TODO fazer um exemplo com um monomio de soma e diferença, e ao cubo
-
     @Test()
     public void identify_two_terms_cube_scenery_one_with_success() {
         //Arrange
@@ -477,6 +475,42 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(stepFourResultExpected, finalStep.getReason());
     }
 
-    //TODO Testar algo como  (4 - 3q)
+    @Test()
+    public void identify_two_terms_cube_scenery_five_with_success() {
+        //Arrange
+        String expression = "(1 + 4w) ^ 3";
+
+        String stepTwoValueExpected = "1^3 + 3 * 1^2 * 4w + 3 * 1 * ( 4w ) ^ 2 + ( 4w ) ^ 3";
+        String stepThreeValueExpected = "1 + 3 * 1 * 4w + 3 * 1 * 16w^2 + 64w^3";
+        String stepFourValueExpected = "1 + 12w + 48w^2 + 64w^3";
+        String finalStepValueExpected = "64w^3 + 48w^2 + 12w + 1";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult4Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult4Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
+    }
 
 }

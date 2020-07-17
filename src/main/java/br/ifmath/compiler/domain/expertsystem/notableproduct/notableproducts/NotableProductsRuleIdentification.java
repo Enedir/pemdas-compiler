@@ -54,12 +54,26 @@ public class NotableProductsRuleIdentification implements IRule {
                 ExpandedQuadruple leftInnerQuadruple = this.sources.findQuadrupleByResult(root.getArgument1());
                 ExpandedQuadruple rightInnerQuadruple = this.sources.findQuadrupleByResult(root.getArgument2());
 
-                if (leftInnerQuadruple.getArgument1().equals(rightInnerQuadruple.getArgument1()) &&
-                        leftInnerQuadruple.getArgument2().equals(rightInnerQuadruple.getArgument2()))
+                String leftArgument1 = getInnerArgument(leftInnerQuadruple.getArgument1(), true);
+                String leftArgument2 = getInnerArgument(leftInnerQuadruple.getArgument2(), false);
+                String rightArgument1 = getInnerArgument(rightInnerQuadruple.getArgument1(), true);
+                String rightArgument2 = getInnerArgument(rightInnerQuadruple.getArgument2(), false);
+
+
+                if (leftArgument1.equals(rightArgument1) && leftArgument2.equals(rightArgument2))
                     return "Produto da soma pela diferença de dois termos.";
             }
         }
         return "";
+    }
+
+    private String getInnerArgument(String iterationArgument, boolean isArgument1) {
+        if (!StringUtil.match(iterationArgument, RegexPattern.TEMPORARY_VARIABLE.toString()))
+            return iterationArgument;
+        else {
+            ExpandedQuadruple innerQuadruple = this.sources.findQuadrupleByResult(iterationArgument);
+            return getInnerArgument((isArgument1) ? innerQuadruple.getArgument1() : innerQuadruple.getArgument2(), isArgument1);
+        }
     }
 
 }

@@ -19,8 +19,14 @@ public class NumericValueVariable extends ValueVariable {
             this.value = this.getValueFromString(argument.substring(0, argument.indexOf("^") - 1));
             this.label = argument.substring(argument.indexOf("^") - 1);
         } else {
-            this.value = this.getValueFromString(StringUtil.removeNonNumericChars(argument));
-            this.label = StringUtil.removeNumericChars(argument);
+            String value = StringUtil.removeNonNumericChars(argument);
+            String label = StringUtil.removeNumericChars(argument);
+            if (argument.startsWith("-")) {
+                value = "-" + value;
+                label = label.replace("-", "");
+            }
+            this.value = this.getValueFromString(value);
+            this.label = label;
         }
     }
 
