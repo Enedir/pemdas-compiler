@@ -380,11 +380,10 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(-2s - 3y) ^ 3";
 
-        //TODO ajustar para que o primeiro valor negativo fique entre parenteses
         String stepTwoValueExpected = "(-2s) ^ 3 - 3 * (-2s) ^ 2 * 3y + 3 * (-2s) * ( 3y ) ^ 2 - ( 3y ) ^ 3";
-        String stepThreeValueExpected = "(-8s^3) - 3 * 4s^2 * 3y + 3 * (-2s) * 9y^2 - 27y^3";
-        String stepFourValueExpected = "(-8s^3) - 36s^2y - 54sy^2 - 27y^3";
-        String finalStepValueExpected = "(-8s^3) - 27y^3 - 36s^2y - 54sy^2";
+        String stepThreeValueExpected = "-8s^3 - 3 * 4s^2 * 3y + 3 * (-2s) * 9y^2 - 27y^3";
+        String stepFourValueExpected = "-8s^3 - 36s^2y - 54sy^2 - 27y^3";
+        String finalStepValueExpected = "-8s^3 - 27y^3 - 54sy^2 - 36s^2y";
 
         // Act
         IAnswer answer = null;

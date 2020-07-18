@@ -25,6 +25,7 @@ public class NotableProductsRulePower implements IRule {
         this.source = source.get(0);
 
         this.numbersPower();
+        this.adjustNegativeArgument();
 
         this.source.clearNonUsedQuadruples();
         this.adjustFirstArgument();
@@ -35,6 +36,14 @@ public class NotableProductsRulePower implements IRule {
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Resolvendo as operações de potência."));
 
         return steps;
+    }
+
+    private void adjustNegativeArgument() {
+        ExpandedQuadruple root = this.source.findQuadrupleByResult(this.source.getLeft());
+        if (root.getArgument1().startsWith("-")) {
+            this.source.addQuadrupleToList("MINUS", root.getArgument1().replace("-", ""), "", root, true);
+        }
+
     }
 
     private void adjustFirstArgument() {
