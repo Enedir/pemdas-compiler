@@ -170,7 +170,10 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
     private String twoTermsCube(ExpandedQuadruple rootQuadruple, ExpandedQuadruple termsQuadruple, String sign) {
         String lastOperator = (termsQuadruple.isPlus()) ? "+" : "-";
         if (!this.isThereAMonomy(termsQuadruple, false)) {
-            this.source.addQuadrupleToList(lastOperator, termsQuadruple.getArgument2() + "^2", termsQuadruple.getArgument2() + "^3", rootQuadruple, false);
+            String resultArgument1 = this.getPotentiationTerm(termsQuadruple, "2", rootQuadruple, false);
+            String resultArgument2 = this.getPotentiationTerm(termsQuadruple, "3", rootQuadruple, false);
+            this.source.addQuadrupleToList(lastOperator,
+                    (resultArgument1.isEmpty()) ? termsQuadruple.getArgument2() + "^2" : resultArgument1, (resultArgument2.isEmpty()) ? termsQuadruple.getArgument2() + "^3" : resultArgument2, rootQuadruple, false);
         } else {
             this.source.addQuadrupleToList("^", termsQuadruple.getArgument2(), "3", rootQuadruple, false);
             String parenthesesQuadrupleResult = this.createParentheses(this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getArgument1(), true).getResult();
@@ -188,7 +191,8 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
             this.createParentheses(this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getArgument1(), true);
             powerQuadruple = this.source.addQuadrupleToList("*", argument1QuadrupleResult, argument2QuadrupleResult, rootQuadruple, false);
         } else {
-            powerQuadruple = this.source.addQuadrupleToList("*", termsQuadruple.getArgument1() + "^2", rootQuadruple.getArgument2(), rootQuadruple, false);
+            String resultArgument1 = this.getPotentiationTerm(termsQuadruple, "2", rootQuadruple, true);
+            powerQuadruple = this.source.addQuadrupleToList("*", (resultArgument1.isEmpty()) ? termsQuadruple.getArgument1() + "^2" : resultArgument1, rootQuadruple.getArgument2(), rootQuadruple, false);
         }
         if (StringUtil.match(termsQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
             this.source.addQuadrupleToList("^", termsQuadruple.getArgument1(), "2", powerQuadruple, true);

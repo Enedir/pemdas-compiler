@@ -49,7 +49,8 @@ public class NumericValueVariable extends ValueVariable {
     }
 
     public void labelExponentSum(int exponent) {
-        this.label = label.substring(0, label.indexOf('^') + 1) + this.getLabelPower() * exponent;
+        int newExponent = this.getLabelPower() + exponent;
+        this.label = label.substring(0, label.indexOf('^') + 1) + newExponent;
     }
 
     @Override

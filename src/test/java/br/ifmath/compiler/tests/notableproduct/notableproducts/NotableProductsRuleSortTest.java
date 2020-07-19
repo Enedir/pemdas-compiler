@@ -469,5 +469,37 @@ public class NotableProductsRuleSortTest {
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
-    //TODO testar caso (x^2 - t^2) ^ 3
+
+    @Test()
+    public void sort_two_terms_cube_scenery_four_with_success() {
+        //Arrange
+        String expression = "(h^2 - j^2) ^ 3";
+
+        String stepTwoValueExpected = "h^5 - 3 * h^4 * j^2 + 3 * h^2 * j^4 - j^5";
+        String stepThreeValueExpected = "h^5 - 3h^4j^2 + 3h^2j^4 - j^5";
+        String finalStepValueExpected = "h^5 - j^5 + 3h^2j^4 - 3h^4j^2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
+    }
 }
