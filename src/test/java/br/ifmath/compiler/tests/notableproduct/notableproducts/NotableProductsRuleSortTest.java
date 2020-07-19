@@ -211,6 +211,39 @@ public class NotableProductsRuleSortTest {
     }
 
     @Test()
+    public void sort_two_terms_square_scenery_five_with_success() {
+        //Arrange
+        String expression = "(e^2 + f^2) ^ 2";
+
+        String stepTwoValueExpected = "e^4 + 2 * e^2 * f^2 + f^4";
+        String stepThreeValueExpected = "e^4 + 2e^2f^2 + f^4";
+        String finalStepValueExpected = "e^4 + f^4 + 2e^2f^2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult1Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
+    }
+
+    @Test()
     public void sum_and_dif_sort_scenery_one_with_success() {
         //Arrange
         String expression = "(6 - n) * (6 + n)";
@@ -303,6 +336,31 @@ public class NotableProductsRuleSortTest {
         assertEquals(stepTwoResult3Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
         assertEquals(stepThreeResultExpected, stepThree.getReason());
+    }
+
+    @Test()
+    public void sum_and_dif_sort_scenery_four_with_success() {
+        //Arrange
+        String expression = "(s^2 + u^2) * (s^2 - u^2)";
+
+        String stepTwoValueExpected = "s^4 - u^4";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
     }
 
     @Test()
@@ -411,4 +469,5 @@ public class NotableProductsRuleSortTest {
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
+    //TODO testar caso (x^2 - t^2) ^ 3
 }

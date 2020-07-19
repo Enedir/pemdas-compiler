@@ -4,6 +4,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -101,10 +102,15 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
             this.source.addQuadrupleToList("^", argument, "2", rootQuadruple, isArgument1);
         else {
+            if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+                ExpandedQuadruple argumentQuadruple = this.source.findQuadrupleByArgument(argument);
+                argument = this.getPotentiationTerm(argumentQuadruple, "2", rootQuadruple, isArgument1);
+            } else
+                argument += "^2";
             if (isArgument1) {
-                rootQuadruple.setArgument1(argument + "^2");
+                rootQuadruple.setArgument1(argument);
             } else {
-                rootQuadruple.setArgument2(argument + "^2");
+                rootQuadruple.setArgument2(argument);
             }
         }
     }
@@ -123,10 +129,15 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         }
         root.setOperator(innerQuadruple.isPlus() ? "+" : "-");
         if (!isThereAMonomy(innerQuadruple, true) &&
-                !StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                !StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) &&
+                !StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPOENT.toString()))
             root.setArgument1(innerQuadruple.getArgument1() + "^" + exponent);
         else {
-            this.source.addQuadrupleToList("^", innerQuadruple.getArgument1(), exponent, root, true);
+            String argument1 = this.getPotentiationTerm(innerQuadruple, exponent, root, true);
+            if (argument1.isEmpty())
+                this.source.addQuadrupleToList("^", innerQuadruple.getArgument1(), exponent, root, true);
+            else
+                root.setArgument1(argument1);
             if (isThereAMonomy(innerQuadruple, true))
                 this.createParentheses(this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getArgument1(), true);
         }
@@ -134,9 +145,10 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
     }
 
     private String twoTermsSquare(ExpandedQuadruple rootQuadruple, ExpandedQuadruple termsQuadruple, String sign) {
-        if (!this.isThereAMonomy(termsQuadruple, false))
-            this.source.addQuadrupleToList("+", termsQuadruple.getArgument2(), termsQuadruple.getArgument2() + "^2", rootQuadruple, false);
-        else {
+        if (!this.isThereAMonomy(termsQuadruple, false)) {
+            String potentiationResult = this.getPotentiationTerm(termsQuadruple, "2", rootQuadruple, false);
+            this.source.addQuadrupleToList("+", termsQuadruple.getArgument2(), (potentiationResult.isEmpty()) ? termsQuadruple.getArgument2() + "^2" : potentiationResult, rootQuadruple, false);
+        } else {
             this.source.addQuadrupleToList("^", termsQuadruple.getArgument2(), "2", rootQuadruple, false);
             this.createParentheses(this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getArgument1(), true);
             this.source.addQuadrupleToList("+", termsQuadruple.getArgument2(), rootQuadruple.getArgument2(), rootQuadruple, false);
@@ -192,5 +204,20 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         if (!isArgument1)
             argument = expandedQuadruple.getArgument2();
         return StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFICIENT.toString());
+    }
+
+    private String getPotentiationTerm(ExpandedQuadruple valueQuadruple, String exponent, ExpandedQuadruple quadruple, boolean isArgument1) {
+        String argument = (isArgument1) ? valueQuadruple.getArgument1() : valueQuadruple.getArgument2();
+        if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+            NumericValueVariable nvv = new NumericValueVariable();
+            nvv.setAttributesFromString(argument);
+            nvv.labelExponentSum(Integer.parseInt(exponent));
+            if (nvv.getValue() != 1) {
+                return this.source.addQuadrupleToList("^", nvv.toString().substring(0, nvv.toString().indexOf('^')),
+                        String.valueOf(nvv.getLabelPower()), quadruple, isArgument1).getResult();
+            }
+            return nvv.getLabel();
+        }
+        return "";
     }
 }
