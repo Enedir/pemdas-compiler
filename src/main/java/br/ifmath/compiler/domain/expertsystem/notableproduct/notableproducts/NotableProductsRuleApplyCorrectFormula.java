@@ -71,14 +71,20 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
                 if (secondArgument.equals(rightInnerQuadruple.getArgument2())) {
                     if (isThereAMonomy(leftInnerQuadruple, true)) {
                         this.createParentheses(firstArgument, true);
-                        firstArgument = this.source.findQuadrupleByResult(this.source.getLeft()).getArgument1();
+                        firstArgument = root.getArgument1();
                     }
                     ExpandedQuadruple parenthesesQuadruple = null;
                     if (isThereAMonomy(leftInnerQuadruple, false)) {
                         parenthesesQuadruple = this.createParentheses(secondArgument, false);
                         parenthesesQuadruple.setArgument1(parenthesesQuadruple.getOperator());
                         parenthesesQuadruple.setOperator("MINUS");
-                        secondArgument = this.source.findQuadrupleByResult(this.source.getLeft()).getArgument2();
+                        String lastQuadrupleResult = this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getResult();
+                        if (!root.getArgument2().equals(lastQuadrupleResult)) {
+                            ExpandedQuadruple incorrectQuadruple = this.source.findQuadrupleByArgument(lastQuadrupleResult);
+                            incorrectQuadruple.setArgument2("");
+                            root.setArgument2(lastQuadrupleResult);
+                        }
+                        secondArgument = root.getArgument2();
                     }
 
                     rule = this.productOfSumAndDif(root, firstArgument, secondArgument);

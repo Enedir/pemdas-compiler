@@ -364,6 +364,35 @@ public class NotableProductsRuleSortTest {
     }
 
     @Test()
+    public void sum_and_dif_sort_scenery_five_with_success() {
+        //Arrange
+        String expression = "(2x + 3y) * (2x - 3y)";
+
+        String stepTwoValueExpected = "( 2x ) ^ 2 + (-3y) ^ 2";
+        String stepThreeValueExpected = "4x^2 + 9y^2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+    }
+
+    @Test()
     public void sort_two_terms_cube_scenery_one_with_success() {
         //Arrange
         String expression = "(2 + p) ^ 3";
