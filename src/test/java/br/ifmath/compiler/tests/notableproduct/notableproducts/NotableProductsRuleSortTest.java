@@ -368,8 +368,8 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(2x + 3y) * (2x - 3y)";
 
-        String stepTwoValueExpected = "( 2x ) ^ 2 + (-3y) ^ 2";
-        String stepThreeValueExpected = "4x^2 + 9y^2";
+        String stepTwoValueExpected = "( 2x ) ^ 2 - ( 3y ) ^ 2";
+        String stepThreeValueExpected = "4x^2 - 9y^2";
 
         // Act
         IAnswer answer = null;

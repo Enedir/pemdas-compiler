@@ -75,9 +75,7 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
                     }
                     ExpandedQuadruple parenthesesQuadruple = null;
                     if (isThereAMonomy(leftInnerQuadruple, false)) {
-                        parenthesesQuadruple = this.createParentheses(secondArgument, false);
-                        parenthesesQuadruple.setArgument1(parenthesesQuadruple.getOperator());
-                        parenthesesQuadruple.setOperator("MINUS");
+                        this.createParentheses(secondArgument, false);
                         String lastQuadrupleResult = this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getResult();
                         if (!root.getArgument2().equals(lastQuadrupleResult)) {
                             ExpandedQuadruple incorrectQuadruple = this.source.findQuadrupleByArgument(lastQuadrupleResult);
@@ -88,8 +86,6 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
                     }
 
                     rule = this.productOfSumAndDif(root, firstArgument, secondArgument);
-                    if (parenthesesQuadruple != null)
-                        root.setOperator("+");
                 }
             }
         }
