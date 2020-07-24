@@ -88,7 +88,7 @@ public class NotableProductsRuleMultiplication implements IRule {
                 }
             }
             NumericValueVariable numericVariable = new NumericValueVariable();
-            if (StringUtil.match(value, RegexPattern.VARIABLE_WITH_COEFICIENT.toString()) || StringUtil.match(value, RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+            if (StringUtil.isVariable(value)) {
                 numericVariable.setAttributesFromString(value);
                 value = numericVariable.getValue().toString();
             }

@@ -73,7 +73,6 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
                         this.createParentheses(firstArgument, true);
                         firstArgument = root.getArgument1();
                     }
-                    ExpandedQuadruple parenthesesQuadruple = null;
                     if (isThereAMonomy(leftInnerQuadruple, false)) {
                         this.createParentheses(secondArgument, false);
                         String lastQuadrupleResult = this.source.getExpandedQuadruples().get(this.source.getExpandedQuadruples().size() - 1).getResult();

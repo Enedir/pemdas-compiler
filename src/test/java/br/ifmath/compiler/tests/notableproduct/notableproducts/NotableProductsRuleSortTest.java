@@ -314,8 +314,8 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(-4s + 2u) * (-4s - 2u)";
 
-        String stepTwoValueExpected = "(-4s) ^ 2 + (-2u) ^ 2";
-        String stepThreeValueExpected = "16s^2 + 4u^2";
+        String stepTwoValueExpected = "(-4s) ^ 2 - ( 2u ) ^ 2";
+        String stepThreeValueExpected = "16s^2 - 4u^2";
 
         // Act
         IAnswer answer = null;
@@ -504,9 +504,9 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(h^2 - j^2) ^ 3";
 
-        String stepTwoValueExpected = "h^5 - 3 * h^4 * j^2 + 3 * h^2 * j^4 - j^5";
-        String stepThreeValueExpected = "h^5 - 3h^4j^2 + 3h^2j^4 - j^5";
-        String finalStepValueExpected = "h^5 - j^5 + 3h^2j^4 - 3h^4j^2";
+        String stepTwoValueExpected = "h^6 - 3 * h^4 * j^2 + 3 * h^2 * j^4 - j^6";
+        String stepThreeValueExpected = "h^6 - 3h^4j^2 + 3h^2j^4 - j^6";
+        String finalStepValueExpected = "h^6 - j^6 + 3h^2j^4 - 3h^4j^2";
 
         // Act
         IAnswer answer = null;

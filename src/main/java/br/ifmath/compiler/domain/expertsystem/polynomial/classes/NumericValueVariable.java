@@ -15,7 +15,7 @@ public class NumericValueVariable extends ValueVariable {
     }
 
     public void setAttributesFromString(String argument) {
-        if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+        if (StringUtil.match(argument.replace("-", ""), RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
             this.value = this.getValueFromString(argument.substring(0, argument.indexOf("^") - 1));
             this.label = argument.substring(argument.indexOf("^") - 1);
         } else {
@@ -33,6 +33,8 @@ public class NumericValueVariable extends ValueVariable {
     private int getValueFromString(String param) {
         if (param.equals(""))
             return 1;
+        if (param.equals("-"))
+            return -1;
         return Integer.parseInt(param);
     }
 
@@ -49,7 +51,7 @@ public class NumericValueVariable extends ValueVariable {
     }
 
     public void labelExponentSum(int exponent) {
-        int newExponent = this.getLabelPower() + exponent;
+        int newExponent = this.getLabelPower() * exponent;
         this.label = label.substring(0, label.indexOf('^') + 1) + newExponent;
     }
 
@@ -59,7 +61,17 @@ public class NumericValueVariable extends ValueVariable {
             return String.valueOf(this.value);
         else if (this.value == null)
             return this.label;
-        else
+        else {
+            if (value == 1)
+                return label;
+            if (value == -1)
+                return "-" + label;
             return value + label;
+        }
+    }
+
+    public void setLabelPower(String exponent) {
+        String labelAndPower = label.substring(0, label.indexOf("^") + 1);
+        label = labelAndPower + exponent;
     }
 }

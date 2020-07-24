@@ -62,7 +62,8 @@ public class NotableProductsRulePower implements IRule {
                     String base = this.getPowerBase(expandedQuadruple.getArgument1(), this.source);
                     if (!base.equals("")) {
                         String result;
-                        if (StringUtil.match(base.replace("-", ""), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+                        if (StringUtil.matchAny(base.replace("-", ""), RegexPattern.VARIABLE_WITH_COEFICIENT.toString(),
+                                RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
                             NumericValueVariable nvv = new NumericValueVariable();
                             nvv.setAttributesFromString(base);
                             String exponent = expandedQuadruple.getArgument2();
@@ -70,8 +71,12 @@ public class NotableProductsRulePower implements IRule {
                                     (int) Math.pow(nvv.getValue(), Double.parseDouble(exponent)));
                             int power = nvv.getLabelPower();
                             if (power != 1)
-                                exponent = String.valueOf(power + Integer.parseInt(expandedQuadruple.getArgument2()));
-                            nvv.setLabel(nvv.getLabel() + "^" + exponent);
+                                exponent = String.valueOf(power * Integer.parseInt(expandedQuadruple.getArgument2()));
+                            if (nvv.getLabel().contains("^")) {
+                                nvv.setLabelPower(exponent);
+                            } else {
+                                nvv.setLabel(nvv.getLabel() + "^" + exponent);
+                            }
                             result = nvv.toString();
                         } else
                             result = String.valueOf(
@@ -137,13 +142,10 @@ public class NotableProductsRulePower implements IRule {
         }
         ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(argument);
         if (innerQuadruple != null) {
-            if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) ||
-                    StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+            if (StringUtil.matchAny(innerQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString(),
+                    RegexPattern.VARIABLE_WITH_COEFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
                 return (innerQuadruple.isNegative()) ? "-" + innerQuadruple.getArgument1() : innerQuadruple.getArgument1();
             }
-            //TODO se não cair aqui nenhuma vez, tirar essa verificacao
-            if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-                return this.source.findQuadrupleByResult(innerQuadruple.getArgument1()).getArgument1();
         }
         return "";
     }

@@ -213,8 +213,8 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(s - 3t) * (s + 3t)";
 
-        String stepTwoValueExpected = "s^2 + (-3t) ^ 2";
-        String finalStepValueExpected = "s^2 + 9t^2";
+        String stepTwoValueExpected = "s^2 - ( 3t ) ^ 2";
+        String finalStepValueExpected = "s^2 - 9t^2";
         // Act
         IAnswer answer = null;
         try {
@@ -242,8 +242,8 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(a - 5b) * (a + 5b)";
 
-        String stepTwoValueExpected = "a^2 + (-5b) ^ 2";
-        String finalStepValueExpected = "a^2 + 25b^2";
+        String stepTwoValueExpected = "a^2 - ( 5b ) ^ 2";
+        String finalStepValueExpected = "a^2 - 25b^2";
 
         // Act
         IAnswer answer = null;

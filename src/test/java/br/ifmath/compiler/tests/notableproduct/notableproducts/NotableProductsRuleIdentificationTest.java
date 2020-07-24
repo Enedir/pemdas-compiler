@@ -211,6 +211,40 @@ public class NotableProductsRuleIdentificationTest {
     }
 
     @Test()
+    public void identify_two_terms_square_scenery_five_with_success() {
+        //Arrange
+        String expression = "(-x^2 + 5) ^ 2";
+
+        String stepTwoValueExpected = "(-x^2) ^ 2 + 2 * (-x^2) * 5 + 5^2";
+        String stepThreeValueExpected = "x^4 + 2 * (-x^2) * 5 + 25";
+        String finalStepValueExpected = "x^4 - 10x^2 + 25";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult1Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFourResultExpected, finalStep.getReason());
+    }
+
+    @Test()
     public void identify_sum_and_dif_product_scenery_one_with_success() {
         //Arrange
         String expression = "(2 + y) * (2 - y)";
@@ -311,6 +345,37 @@ public class NotableProductsRuleIdentificationTest {
 
         String stepTwoValueExpected = "( 4h ) ^ 2 - 8^2";
         String finalStepValueExpected = "16h^2 - 64";
+
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_sum_and_dif_product_scenery_five_with_success() {
+        //Arrange
+        String expression = "(-h^3 + 2) * (-h^3 - 2)";
+
+        String stepTwoValueExpected = "(-h^3) ^ 2 - 2^2";
+        String finalStepValueExpected = "h^6 - 4";
 
 
         // Act
@@ -511,6 +576,40 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(stepFourResultExpected, stepFour.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_two_terms_cube_scenery_six_with_success() {
+        //Arrange
+        String expression = "(-x^2 - 5) ^ 3";
+
+        String stepTwoValueExpected = "(-x^2) ^ 3 - 3 * (-x^2) ^ 2 * 5 + 3 * (-x^2) * 5^2 - 5^3";
+        String stepThreeValueExpected = "-x^6 - 3 * x^4 * 5 + 3 * (-x^2) * 25 - 125";
+        String finalStepValueExpected = "-x^6 - 15x^4 - 75x^2 - 125";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5Expected, stepTwo.getReason());
+        assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFourResultExpected, finalStep.getReason());
     }
 
 }
