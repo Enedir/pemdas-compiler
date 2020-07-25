@@ -67,7 +67,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(5 + a) ^ 2";
 
-        String stepTwoValueExpected = "5^2 + 2 * 5 * a + a^2";
+        String stepTwoValueExpected = "( 5 ) ^ 2 + 2 * 5 * a + ( a ) ^ 2";
         String stepThreeValueExpected = "25 + 2 * 5 * a + a^2";
         String stepFourValueExpected = "25 + 10a + a^2";
         String stepFiveValueExpected = "a^2 + 10a + 25";
@@ -104,7 +104,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(2 - g) ^ 2";
 
-        String stepTwoValueExpected = "2^2 - 2 * 2 * g + g^2";
+        String stepTwoValueExpected = "( 2 ) ^ 2 - 2 * 2 * g + ( g ) ^ 2";
         String stepThreeValueExpected = "4 - 2 * 2 * g + g^2";
         String stepFourValueExpected = "4 - 4g + g^2";
         String stepFiveValueExpected = "g^2 - 4g + 4";
@@ -215,8 +215,9 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(e^2 + f^2) ^ 2";
 
-        String stepTwoValueExpected = "e^4 + 2 * e^2 * f^2 + f^4";
-        String stepThreeValueExpected = "e^4 + 2e^2f^2 + f^4";
+        String stepTwoValueExpected = "( e^2 ) ^ 2 + 2 * e^2 * f^2 + ( f^2 ) ^ 2";
+        String stepThreeValueExpected = "e^4 + 2 * e^2 * f^2 + f^4";
+        String stepFourValueExpected = "e^4 + 2e^2f^2 + f^4";
         String finalStepValueExpected = "e^4 + f^4 + 2e^2f^2";
 
         // Act
@@ -228,17 +229,21 @@ public class NotableProductsRuleSortTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult1Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult1Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
@@ -248,7 +253,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(6 - n) * (6 + n)";
 
-        String stepTwoValueExpected = "6^2 - n^2";
+        String stepTwoValueExpected = "( 6 ) ^ 2 - ( n ) ^ 2";
         String stepThreeValueExpected = "36 - n^2";
         String stepFourValueExpected = "-n^2 + 36";
 
@@ -281,7 +286,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(4 + u) * (4 - u)";
 
-        String stepTwoValueExpected = "4^2 - u^2";
+        String stepTwoValueExpected = "( 4 ) ^ 2 - ( u ) ^ 2";
         String stepThreeValueExpected = "16 - u^2";
         String stepFourValueExpected = "-u^2 + 16";
 
@@ -343,7 +348,8 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(s^2 + u^2) * (s^2 - u^2)";
 
-        String stepTwoValueExpected = "s^4 - u^4";
+        String stepTwoValueExpected = "( s^2 ) ^ 2 - ( u^2 ) ^ 2";
+        String finalStepValueExpected = "s^4 - u^4";
 
         // Act
         IAnswer answer = null;
@@ -354,13 +360,16 @@ public class NotableProductsRuleSortTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 1);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResultExpected, finalStep.getReason());
     }
 
     @Test()
@@ -397,7 +406,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(2 + p) ^ 3";
 
-        String stepTwoValueExpected = "2^3 + 3 * 2^2 * p + 3 * 2 * p^2 + p^3";
+        String stepTwoValueExpected = "( 2 ) ^ 3 + 3 * ( 2 ) ^ 2 * p + 3 * 2 * ( p ) ^ 2 + ( p ) ^ 3";
         String stepThreeValueExpected = "8 + 3 * 4 * p + 3 * 2 * p^2 + p^3";
         String stepFourValueExpected = "8 + 12p + 6p^2 + p^3";
         String stepFiveValueExpected = "p^3 + 6p^2 + 12p + 8";
@@ -434,9 +443,10 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(k - l) ^ 3";
 
-        String stepTwoValueExpected = "k^3 - 3 * k^2 * l + 3 * k * l^2 - l^3";
-        String stepThreeValueExpected = "k^3 - 3k^2l + 3kl^2 - l^3";
-        String stepFourValueExpected = "k^3 - l^3 + 3kl^2 - 3k^2l";
+        String stepTwoValueExpected = "( k ) ^ 3 - 3 * ( k ) ^ 2 * l + 3 * k * ( l ) ^ 2 - ( l ) ^ 3";
+        String stepThreeValueExpected = "k^3 - 3 * k^2 * l + 3 * k * l^2 - l^3";
+        String stepFourValueExpected = "k^3 - 3k^2l + 3kl^2 - l^3";
+        String finalStepValueExpected = "k^3 - l^3 + 3kl^2 - 3k^2l";
 
         // Act
         IAnswer answer = null;
@@ -447,19 +457,23 @@ public class NotableProductsRuleSortTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 1);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult5Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult5Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
         assertEquals(stepFourValueExpected, stepFour.getMathExpression());
-        assertEquals(stepFiveResultExpected, stepFour.getReason());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
+        assertEquals(finalStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
 
     @Test()
@@ -504,8 +518,9 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(h^2 - j^2) ^ 3";
 
-        String stepTwoValueExpected = "h^6 - 3 * h^4 * j^2 + 3 * h^2 * j^4 - j^6";
-        String stepThreeValueExpected = "h^6 - 3h^4j^2 + 3h^2j^4 - j^6";
+        String stepTwoValueExpected = "( h^2 ) ^ 3 - 3 * ( h^2 ) ^ 2 * j^2 + 3 * h^2 * ( j^2 ) ^ 2 - ( j^2 ) ^ 3";
+        String stepThreeValueExpected = "h^6 - 3 * h^4 * j^2 + 3 * h^2 * j^4 - j^6";
+        String stepFourValueExpected = "h^6 - 3h^4j^2 + 3h^2j^4 - j^6";
         String finalStepValueExpected = "h^6 - j^6 + 3h^2j^4 - 3h^4j^2";
 
         // Act
@@ -517,17 +532,21 @@ public class NotableProductsRuleSortTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult5Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult5Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }

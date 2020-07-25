@@ -67,7 +67,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(5 + 2) ^ 2";
 
-        String stepTwoValueExpected = "5^2 + 2 * 5 * 2 + 2^2";
+        String stepTwoValueExpected = "( 5 ) ^ 2 + 2 * 5 * 2 + ( 2 ) ^ 2";
         String stepThreeValueExpected = "25 + 2 * 5 * 2 + 4";
         String stepFourValueExpected = "25 + 20 + 4";
         String finalStepValueExpected = "49";
@@ -104,7 +104,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(2 - 7) ^ 2";
 
-        String stepTwoValueExpected = "2^2 - 2 * 2 * 7 + 7^2";
+        String stepTwoValueExpected = "( 2 ) ^ 2 - 2 * 2 * 7 + ( 7 ) ^ 2";
         String stepThreeValueExpected = "4 - 2 * 2 * 7 + 49";
         String stepFourValueExpected = "4 - 28 + 49";
         String finalStepValueExpected = "25";
@@ -141,7 +141,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(5 - 1) ^ 2";
 
-        String stepTwoValueExpected = "5^2 - 2 * 5 * 1 + 1^2";
+        String stepTwoValueExpected = "( 5 ) ^ 2 - 2 * 5 * 1 + ( 1 ) ^ 2";
         String stepThreeValueExpected = "25 - 2 * 5 * 1 + 1";
         String stepFourValueExpected = "25 - 10 + 1";
         String finalStepValueExpected = "16";
@@ -178,7 +178,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(8 + 3) * (8 - 3)";
 
-        String stepTwoValueExpected = "8^2 - 3^2";
+        String stepTwoValueExpected = "( 8 ) ^ 2 - ( 3 ) ^ 2";
         String stepThreeValueExpected = "64 - 9";
         String finalStepValueExpected = "55";
         // Act
@@ -210,7 +210,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(4 - 5) * (4 + 5)";
 
-        String stepTwoValueExpected = "4^2 - 5^2";
+        String stepTwoValueExpected = "( 4 ) ^ 2 - ( 5 ) ^ 2";
         String stepThreeValueExpected = "16 - 25";
         String finalStepValueExpected = "-9";
         // Act
@@ -242,7 +242,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(2 - 4) ^ 3";
 
-        String stepTwoValueExpected = "2^3 - 3 * 2^2 * 4 + 3 * 2 * 4^2 - 4^3";
+        String stepTwoValueExpected = "( 2 ) ^ 3 - 3 * ( 2 ) ^ 2 * 4 + 3 * 2 * ( 4 ) ^ 2 - ( 4 ) ^ 3";
         String stepThreeValueExpected = "8 - 3 * 4 * 4 + 3 * 2 * 16 - 64";
         String stepFourValueExpected = "8 - 48 + 96 - 64";
         String finalStepValueExpected = "-8";
@@ -279,7 +279,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(6 - 3) ^ 3";
 
-        String stepTwoValueExpected = "6^3 - 3 * 6^2 * 3 + 3 * 6 * 3^2 - 3^3";
+        String stepTwoValueExpected = "( 6 ) ^ 3 - 3 * ( 6 ) ^ 2 * 3 + 3 * 6 * ( 3 ) ^ 2 - ( 3 ) ^ 3";
         String stepThreeValueExpected = "216 - 3 * 36 * 3 + 3 * 6 * 9 - 27";
         String stepFourValueExpected = "216 - 324 + 162 - 27";
         String finalStepValueExpected = "27";
@@ -316,7 +316,7 @@ public class NotableProductsRuleSumTest {
         //Arrange
         String expression = "(2 + 8) ^ 3";
 
-        String stepTwoValueExpected = "2^3 + 3 * 2^2 * 8 + 3 * 2 * 8^2 + 8^3";
+        String stepTwoValueExpected = "( 2 ) ^ 3 + 3 * ( 2 ) ^ 2 * 8 + 3 * 2 * ( 8 ) ^ 2 + ( 8 ) ^ 3";
         String stepThreeValueExpected = "8 + 3 * 4 * 8 + 3 * 2 * 64 + 512";
         String stepFourValueExpected = "8 + 96 + 384 + 512";
         String finalStepValueExpected = "1000";

@@ -69,7 +69,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(x + 2) ^ 2";
 
-        String stepTwoValueExpected = "x^2 + 2 * x * 2 + 2^2";
+        String stepTwoValueExpected = "( x ) ^ 2 + 2 * x * 2 + ( 2 ) ^ 2";
         String stepThreeValueExpected = "x^2 + 2 * x * 2 + 4";
         String finalStepValueExpected = "x^2 + 4x + 4";
 
@@ -104,7 +104,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(6 - 2) ^ 2";
 
-        String stepTwoValueExpected = "6^2 - 2 * 6 * 2 + 2^2";
+        String stepTwoValueExpected = "( 6 ) ^ 2 - 2 * 6 * 2 + ( 2 ) ^ 2";
         String stepThreeValueExpected = "36 - 2 * 6 * 2 + 4";
         String stepFourValueExpected = "36 - 24 + 4";
         String finalStepValueExpected = "16";
@@ -143,8 +143,9 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(x + y) ^ 2";
 
-        String stepTwoValueExpected = "x^2 + 2 * x * y + y^2";
-        String stepThreeValueExpected = "x^2 + 2xy + y^2";
+        String stepTwoValueExpected = "( x ) ^ 2 + 2 * x * y + ( y ) ^ 2";
+        String stepThreeValueExpected = "x^2 + 2 * x * y + y^2";
+        String stepFourValueExpected = "x^2 + 2xy + y^2";
         String finalStepValueExpected = "x^2 + y^2 + 2xy";
 
         // Act
@@ -156,9 +157,10 @@ public class NotableProductsRuleIdentificationTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
 
@@ -167,7 +169,9 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult1Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
@@ -177,7 +181,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(2x + y) ^ 2";
 
-        String stepTwoValueExpected = "( 2x ) ^ 2 + 2 * 2x * y + y^2";
+        String stepTwoValueExpected = "( 2x ) ^ 2 + 2 * 2x * y + ( y ) ^ 2";
         String stepThreeValueExpected = "4x^2 + 2 * 2x * y + y^2";
         String stepFourValueExpected = "4x^2 + 4xy + y^2";
         String finalStepValueExpected = "4x^2 + y^2 + 4xy";
@@ -215,7 +219,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(-x^2 + 5) ^ 2";
 
-        String stepTwoValueExpected = "(-x^2) ^ 2 + 2 * (-x^2) * 5 + 5^2";
+        String stepTwoValueExpected = "(-x^2) ^ 2 + 2 * (-x^2) * 5 + ( 5 ) ^ 2";
         String stepThreeValueExpected = "x^4 + 2 * (-x^2) * 5 + 25";
         String finalStepValueExpected = "x^4 - 10x^2 + 25";
 
@@ -249,7 +253,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(2 + y) * (2 - y)";
 
-        String stepTwoValueExpected = "2^2 - y^2";
+        String stepTwoValueExpected = "( 2 ) ^ 2 - ( y ) ^ 2";
         String stepThreeValueExpected = "4 - y^2";
         String finalStepValueExpected = "-y^2 + 4";
 
@@ -283,7 +287,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(3 + 1) * (3 - 1)";
 
-        String stepTwoValueExpected = "3^2 - 1^2";
+        String stepTwoValueExpected = "( 3 ) ^ 2 - ( 1 ) ^ 2";
         String stepThreeValueExpected = "9 - 1";
         String finalStepValueExpected = "8";
 
@@ -317,6 +321,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(z + x) * (z - x)";
 
+        String stepTwoValueExpected = "( z ) ^ 2 - ( x ) ^ 2";
         String finalStepValueExpected = "z^2 - x^2";
 
         // Act
@@ -328,14 +333,17 @@ public class NotableProductsRuleIdentificationTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepTwoResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResultExpected, finalStep.getReason());
     }
 
     @Test()
@@ -343,7 +351,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(4h + 8) * (4h - 8)";
 
-        String stepTwoValueExpected = "( 4h ) ^ 2 - 8^2";
+        String stepTwoValueExpected = "( 4h ) ^ 2 - ( 8 ) ^ 2";
         String finalStepValueExpected = "16h^2 - 64";
 
 
@@ -374,7 +382,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(-h^3 + 2) * (-h^3 - 2)";
 
-        String stepTwoValueExpected = "(-h^3) ^ 2 - 2^2";
+        String stepTwoValueExpected = "(-h^3) ^ 2 - ( 2 ) ^ 2";
         String finalStepValueExpected = "h^6 - 4";
 
 
@@ -405,7 +413,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(i - 5) ^ 3";
 
-        String stepTwoValueExpected = "i^3 - 3 * i^2 * 5 + 3 * i * 5^2 - 5^3";
+        String stepTwoValueExpected = "( i ) ^ 3 - 3 * ( i ) ^ 2 * 5 + 3 * i * ( 5 ) ^ 2 - ( 5 ) ^ 3";
         String stepThreeValueExpected = "i^3 - 3 * i^2 * 5 + 3 * i * 25 - 125";
         String finalStepValueExpected = "i^3 - 15i^2 + 75i - 125";
 
@@ -439,7 +447,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(4 - 3) ^ 3";
 
-        String stepTwoValueExpected = "4^3 - 3 * 4^2 * 3 + 3 * 4 * 3^2 - 3^3";
+        String stepTwoValueExpected = "( 4 ) ^ 3 - 3 * ( 4 ) ^ 2 * 3 + 3 * 4 * ( 3 ) ^ 2 - ( 3 ) ^ 3";
         String stepThreeValueExpected = "64 - 3 * 16 * 3 + 3 * 4 * 9 - 27";
         String stepFourValueExpected = "64 - 144 + 108 - 27";
         String finalStepValueExpected = "1";
@@ -477,8 +485,9 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(a + b) ^ 3";
 
-        String stepTwoValueExpected = "a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3";
-        String stepThreeValueExpected = "a^3 + 3a^2b + 3ab^2 + b^3";
+        String stepTwoValueExpected = "( a ) ^ 3 + 3 * ( a ) ^ 2 * b + 3 * a * ( b ) ^ 2 + ( b ) ^ 3";
+        String stepThreeValueExpected = "a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3";
+        String stepFourValueExpected = "a^3 + 3a^2b + 3ab^2 + b^3";
         String finalStepValueExpected = "a^3 + b^3 + 3ab^2 + 3a^2b";
 
         // Act
@@ -490,9 +499,10 @@ public class NotableProductsRuleIdentificationTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
 
@@ -501,7 +511,9 @@ public class NotableProductsRuleIdentificationTest {
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult4Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
@@ -511,7 +523,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(2w + 5) ^ 3";
 
-        String stepTwoValueExpected = "( 2w ) ^ 3 + 3 * ( 2w ) ^ 2 * 5 + 3 * 2w * 5^2 + 5^3";
+        String stepTwoValueExpected = "( 2w ) ^ 3 + 3 * ( 2w ) ^ 2 * 5 + 3 * 2w * ( 5 ) ^ 2 + ( 5 ) ^ 3";
         String stepThreeValueExpected = "8w^3 + 3 * 4w^2 * 5 + 3 * 2w * 25 + 125";
         String finalStepValueExpected = "8w^3 + 60w^2 + 150w + 125";
 
@@ -545,7 +557,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(1 + 4w) ^ 3";
 
-        String stepTwoValueExpected = "1^3 + 3 * 1^2 * 4w + 3 * 1 * ( 4w ) ^ 2 + ( 4w ) ^ 3";
+        String stepTwoValueExpected = "( 1 ) ^ 3 + 3 * ( 1 ) ^ 2 * 4w + 3 * 1 * ( 4w ) ^ 2 + ( 4w ) ^ 3";
         String stepThreeValueExpected = "1 + 3 * 1 * 4w + 3 * 1 * 16w^2 + 64w^3";
         String stepFourValueExpected = "1 + 12w + 48w^2 + 64w^3";
         String finalStepValueExpected = "64w^3 + 48w^2 + 12w + 1";
@@ -583,7 +595,7 @@ public class NotableProductsRuleIdentificationTest {
         //Arrange
         String expression = "(-x^2 - 5) ^ 3";
 
-        String stepTwoValueExpected = "(-x^2) ^ 3 - 3 * (-x^2) ^ 2 * 5 + 3 * (-x^2) * 5^2 - 5^3";
+        String stepTwoValueExpected = "(-x^2) ^ 3 - 3 * (-x^2) ^ 2 * 5 + 3 * (-x^2) * ( 5 ) ^ 2 - ( 5 ) ^ 3";
         String stepThreeValueExpected = "-x^6 - 3 * x^4 * 5 + 3 * (-x^2) * 25 - 125";
         String finalStepValueExpected = "-x^6 - 15x^4 - 75x^2 - 125";
 

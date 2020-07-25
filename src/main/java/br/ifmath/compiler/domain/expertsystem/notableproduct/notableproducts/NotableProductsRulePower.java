@@ -17,7 +17,7 @@ public class NotableProductsRulePower implements IRule {
 
     @Override
     public boolean match(List<ThreeAddressCode> source) {
-        return isThereAPowerOperation(source);
+        return true;
     }
 
     @Override
@@ -55,7 +55,9 @@ public class NotableProductsRulePower implements IRule {
     }
 
     private void numbersPower() {
-        for (ExpandedQuadruple expandedQuadruple : this.source.getExpandedQuadruples()) {
+        for (int i = 0; i < this.source.getExpandedQuadruples().size(); i++) {
+            ExpandedQuadruple expandedQuadruple = this.source.getExpandedQuadruples().get(i);
+
             if (!expandedQuadruple.isNegative()) {
 
                 if (expandedQuadruple.isPotentiation()) {
@@ -89,51 +91,40 @@ public class NotableProductsRulePower implements IRule {
                             father.setArgument1(result);
                         else
                             father.setArgument2(result);
+                    } else {
+                        ExpandedQuadruple innerQuadruple = this.source.findQuadrupleByResult(expandedQuadruple.getArgument1());
+                        String basePower = innerQuadruple.getArgument1();
+                        if (innerQuadruple.isNegative())
+                            basePower = innerQuadruple.getResult();
+                        String argument = this.applyPower(basePower, expandedQuadruple.getArgument2());
+                        ExpandedQuadruple father = this.source.findQuadrupleByArgument(expandedQuadruple.getResult());
+                        if (father.getArgument1().equals(expandedQuadruple.getResult())) {
+                            father.setArgument1(argument);
+                        } else {
+                            father.setArgument2(argument);
+                        }
                     }
-                } else {
-                    String result = this.applyPower(expandedQuadruple.getArgument1());
-                    if (!result.isEmpty())
-                        expandedQuadruple.setArgument1(result);
-
-                    result = this.applyPower(expandedQuadruple.getArgument2());
-                    if (!result.isEmpty())
-                        expandedQuadruple.setArgument2(result);
                 }
             }
         }
     }
 
-    private String applyPower(String argument) {
-        String result = "";
-        if (!StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()) &&
-                this.isThereANumberPower(argument)) {
-            String[] splitArgument = argument.split("\\^");
-            double poweredValue = Math.pow(Integer.parseInt(splitArgument[0]), Integer.parseInt(splitArgument[1]));
-            result = String.valueOf(Math.round(poweredValue));
+    private String applyPower(String argument, String exponent) {
+        if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
+            return applyMinusPower(this.source.findQuadrupleByResult(argument).getArgument1(), exponent);
+        if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
+            return String.valueOf(Math.round(Math.pow(Double.parseDouble(argument), Double.parseDouble(exponent))));
         }
-        return result;
+        return argument + "^" + exponent;
     }
 
-    private boolean isThereAPowerOperation(List<ThreeAddressCode> source) {
-        for (ExpandedQuadruple expandedQuadruple : source.get(0).getExpandedQuadruples()) {
-            if (!expandedQuadruple.isNegative()) {
-                if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()) &&
-                        this.isThereANumberPower(expandedQuadruple.getArgument1()))
-                    return true;
-
-
-                if (!StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()) &&
-                        this.isThereANumberPower(expandedQuadruple.getArgument2()))
-                    return true;
-
-                if (expandedQuadruple.isPotentiation()) {
-                    if (!this.getPowerBase(expandedQuadruple.getArgument1(), source.get(0)).equals("")) {
-                        return true;
-                    }
-                }
-            }
+    private String applyMinusPower(String argument, String exponent) {
+        if (exponent.equals("3")) {
+            String result = this.source.retrieveNextTemporary();
+            this.source.getExpandedQuadruples().add(new ExpandedQuadruple("MINUS", argument + "^3", "", result, 0, 1));
+            return result;
         }
-        return false;
+        return argument + "^2";
     }
 
     private String getPowerBase(String argument, ThreeAddressCode source) {
@@ -142,20 +133,16 @@ public class NotableProductsRulePower implements IRule {
         }
         ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(argument);
         if (innerQuadruple != null) {
+            if (innerQuadruple.getArgument1().equals("")) {
+                innerQuadruple.setArgument1(innerQuadruple.getOperator());
+                innerQuadruple.setOperator("");
+            }
             if (StringUtil.matchAny(innerQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString(),
                     RegexPattern.VARIABLE_WITH_COEFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
                 return (innerQuadruple.isNegative()) ? "-" + innerQuadruple.getArgument1() : innerQuadruple.getArgument1();
             }
         }
         return "";
-    }
-
-    private boolean isThereANumberPower(String pattern) {
-        String[] splitPattern = pattern.split("\\^");
-        if (splitPattern.length > 1) {
-            return StringUtil.match(splitPattern[0], RegexPattern.NATURAL_NUMBER.toString());
-        }
-        return false;
     }
 
 }

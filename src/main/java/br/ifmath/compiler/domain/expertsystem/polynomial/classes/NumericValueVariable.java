@@ -57,7 +57,7 @@ public class NumericValueVariable extends ValueVariable {
 
     @Override
     public String toString() {
-        if (this.label == null)
+        if (this.label == null || this.label.equals(""))
             return String.valueOf(this.value);
         else if (this.value == null)
             return this.label;

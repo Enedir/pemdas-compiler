@@ -68,7 +68,7 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(6 + x) ^ 2";
 
-        String stepTwoValueExpected = "6^2 + 2 * 6 * x + x^2";
+        String stepTwoValueExpected = "( 6 ) ^ 2 + 2 * 6 * x + ( x ) ^ 2";
         String stepThreeValueExpected = "36 + 2 * 6 * x + x^2";
         String stepFourValueExpected = "36 + 12x + x^2";
         String finalStepValueExpected = "x^2 + 12x + 36";
@@ -107,8 +107,9 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(b - c) ^ 2";
 
-        String stepTwoValueExpected = "b^2 - 2 * b * c + c^2";
-        String stepThreeValueExpected = "b^2 - 2bc + c^2";
+        String stepTwoValueExpected = "( b ) ^ 2 - 2 * b * c + ( c ) ^ 2";
+        String stepThreeValueExpected = "b^2 - 2 * b * c + c^2";
+        String stepFourValueExpected = "b^2 - 2bc + c^2";
         String finalStepValueExpected = "b^2 + c^2 - 2bc";
 
         // Act
@@ -120,9 +121,10 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
 
@@ -131,7 +133,9 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult2Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
@@ -141,7 +145,7 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(1 - 3) ^ 2";
 
-        String stepTwoValueExpected = "1^2 - 2 * 1 * 3 + 3^2";
+        String stepTwoValueExpected = "( 1 ) ^ 2 - 2 * 1 * 3 + ( 3 ) ^ 2";
         String stepThreeValueExpected = "1 - 2 * 1 * 3 + 9";
         String stepFourValueExpected = "1 - 6 + 9";
         String finalStepValueExpected = "4";
@@ -179,7 +183,7 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(4 - 2) * (4 + 2)";
 
-        String stepTwoValueExpected = "4^2 - 2^2";
+        String stepTwoValueExpected = "( 4 ) ^ 2 - ( 2 ) ^ 2";
         String stepThreeValueExpected = "16 - 4";
         String finalStepValueExpected = "12";
 
@@ -213,7 +217,7 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(s - 3t) * (s + 3t)";
 
-        String stepTwoValueExpected = "s^2 - ( 3t ) ^ 2";
+        String stepTwoValueExpected = "( s ) ^ 2 - ( 3t ) ^ 2";
         String finalStepValueExpected = "s^2 - 9t^2";
         // Act
         IAnswer answer = null;
@@ -242,7 +246,7 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(a - 5b) * (a + 5b)";
 
-        String stepTwoValueExpected = "a^2 - ( 5b ) ^ 2";
+        String stepTwoValueExpected = "( a ) ^ 2 - ( 5b ) ^ 2";
         String finalStepValueExpected = "a^2 - 25b^2";
 
         // Act
@@ -272,7 +276,7 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(2 + x) ^ 3";
 
-        String stepTwoValueExpected = "2^3 + 3 * 2^2 * x + 3 * 2 * x^2 + x^3";
+        String stepTwoValueExpected = "( 2 ) ^ 3 + 3 * ( 2 ) ^ 2 * x + 3 * 2 * ( x ) ^ 2 + ( x ) ^ 3";
         String stepThreeValueExpected = "8 + 3 * 4 * x + 3 * 2 * x^2 + x^3";
         String stepFourValueExpected = "8 + 12x + 6x^2 + x^3";
         String finalStepValueExpected = "x^3 + 6x^2 + 12x + 8";
@@ -310,8 +314,9 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(e - g) ^ 3";
 
-        String stepTwoValueExpected = "e^3 - 3 * e^2 * g + 3 * e * g^2 - g^3";
-        String stepThreeValueExpected = "e^3 - 3e^2g + 3eg^2 - g^3";
+        String stepTwoValueExpected = "( e ) ^ 3 - 3 * ( e ) ^ 2 * g + 3 * e * ( g ) ^ 2 - ( g ) ^ 3";
+        String stepThreeValueExpected = "e^3 - 3 * e^2 * g + 3 * e * g^2 - g^3";
+        String stepFourValueExpected = "e^3 - 3e^2g + 3eg^2 - g^3";
         String finalStepValueExpected = "e^3 - g^3 + 3eg^2 - 3e^2g";
 
         // Act
@@ -323,9 +328,10 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 4);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 5);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 4);
+        Step stepThree = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepFour = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
 
@@ -334,7 +340,9 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult5Expected, stepTwo.getReason());
         assertEquals(stepThreeValueExpected, stepThree.getMathExpression());
-        assertEquals(stepFourResultExpected, stepThree.getReason());
+        assertEquals(stepThreeResultExpected, stepThree.getReason());
+        assertEquals(stepFourValueExpected, stepFour.getMathExpression());
+        assertEquals(stepFourResultExpected, stepFour.getReason());
         assertEquals(finalStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepFiveResultExpected, finalStep.getReason());
     }
@@ -344,7 +352,7 @@ public class NotableProductsRuleApplyCorrectFormulaTest {
         //Arrange
         String expression = "(2 + 1) ^ 3";
 
-        String stepTwoValueExpected = "2^3 + 3 * 2^2 * 1 + 3 * 2 * 1^2 + 1^3";
+        String stepTwoValueExpected = "( 2 ) ^ 3 + 3 * ( 2 ) ^ 2 * 1 + 3 * 2 * ( 1 ) ^ 2 + ( 1 ) ^ 3";
         String stepThreeValueExpected = "8 + 3 * 4 * 1 + 3 * 2 * 1 + 1";
         String stepFourValueExpected = "8 + 12 + 6 + 1";
         String finalStepValueExpected = "27";
