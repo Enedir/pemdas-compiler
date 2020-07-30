@@ -14,6 +14,10 @@ public class NumericValueVariable extends ValueVariable {
         this.value = value;
     }
 
+    public NumericValueVariable(String argument){
+        this.setAttributesFromString(argument);
+    }
+
     public void setAttributesFromString(String argument) {
         if (StringUtil.match(argument.replace("-", ""), RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
             this.value = this.getValueFromString(argument.substring(0, argument.indexOf("^") - 1));

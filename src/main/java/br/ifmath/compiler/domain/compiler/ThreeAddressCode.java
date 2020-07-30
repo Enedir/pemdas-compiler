@@ -62,6 +62,22 @@ public class ThreeAddressCode {
         this.expandedQuadruples = expandedQuadruples;
     }
 
+    /**
+     * Obtem a primeira quadrupla "raiz" da estrutura, nao necessariamente a primeira quadrupla da lista.
+     *
+     * @return {@link ExpandedQuadruple} raiz.
+     */
+    public ExpandedQuadruple getRootQuadruple(){
+        return this.findQuadrupleByResult(left);
+    }
+
+    /**
+     * Obtem a ultima quadrupla da lista de quadrupla
+     * @return {@link ExpandedQuadruple} na ultima posicao da {@link List}.
+     */
+    public ExpandedQuadruple getLastQuadruple(){
+        return this.getExpandedQuadruples().get(getExpandedQuadruples().size() - 1);
+    }
 
     /**
      * Remove todas as quadruplas que não estão sendo usadas, ou seja, remove as quadruplas que não

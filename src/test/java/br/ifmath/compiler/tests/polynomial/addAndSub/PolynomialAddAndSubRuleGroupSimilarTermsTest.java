@@ -30,8 +30,6 @@ public class PolynomialAddAndSubRuleGroupSimilarTermsTest {
         stepThreeResultExpected = "Removendo os parênteses dos polinômios.";
         stepFourResultExpected = "Agrupando os termos semelhantes.";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
-
-
     }
 
     @Test()

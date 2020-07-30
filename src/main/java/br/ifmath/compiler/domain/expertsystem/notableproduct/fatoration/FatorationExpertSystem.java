@@ -5,9 +5,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.notableproducts.AnswerNotableProducts;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -17,19 +15,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FatorationExpertSystem implements IExpertSystem {
+
+    private FatorationRuleIdentification identification;
+
+    public FatorationExpertSystem() {
+        this.identification = new FatorationRuleIdentification();
+    }
+
     @Override
     public IAnswer findBestAnswer(List<ThreeAddressCode> sources) {
         List<Step> steps = new ArrayList<>();
 
-        AnswerNotableProducts answer = new AnswerNotableProducts(steps);
+        AnswerFatoration answer = new AnswerFatoration(steps);
 
         sources.get(0).setUp();
 
         setUpQuadruples(sources);
 
         validateExpressions(sources);
-
-        //TODO inserir regras
+        if (identification.match(sources)) {
+            steps.addAll(identification.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
 
         substituteNullFields(sources);
 
@@ -128,7 +135,7 @@ public class FatorationExpertSystem implements IExpertSystem {
     }
 
 
-    private void getFinalResult(AnswerNotableProducts answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
+    private void getFinalResult(AnswerFatoration answer, ThreeAddressCode threeAddressCode, String possibleNumber) {
         ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(possibleNumber);
         if (expandedQuadruple == null) {
             answer.setResult(possibleNumber.replace(",", "."));
