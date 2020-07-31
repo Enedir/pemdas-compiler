@@ -47,9 +47,9 @@ public class FatorationRuleIdentificationTest {
     @Test()
     public void identify_common_factor_scenery_one_with_success() {
         //Arrange
-        String expression = "2x + xy";
+        String expression = "2x + 5x";
 
-        String lastStepValueExpected = "x * (2 + y)";
+        String lastStepValueExpected = "x * (2 + 5)";
 
         // Act)
         IAnswer answer = null;
@@ -66,7 +66,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult1Expected, stepOne.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(finalResultExplicationExpected, finalStep.getReason());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
+
+    //TODO fazer testes para mais de dois numeros, e para variáveis. Também fazer agrupamento
 
 }

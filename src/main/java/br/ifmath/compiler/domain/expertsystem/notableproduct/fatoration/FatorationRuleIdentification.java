@@ -32,25 +32,25 @@ public class FatorationRuleIdentification implements IRule {
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), this.source.getExpandedQuadruples());
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
-        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Identificação do tipo de produto notável a partir da equação inicial: "));
+        steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Identificação do tipo de fatoração a partir da equação inicial: " + correctExplanation));
         return steps;
     }
 
     private String identify() {
-        if (this.isCommonFactor(this.source.getRootQuadruple())) {
+        if (isCommonFactor(this.source.getRootQuadruple(), this.source)) {
             return "Fator comum em evidência.";
         }
         return "";
     }
 
-    private boolean isCommonFactor(ExpandedQuadruple iterationQuadruple) {
+    public static boolean isCommonFactor(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source) {
         NumericValueVariable patternNVV = new NumericValueVariable(iterationQuadruple.getArgument1());
-        return this.isThereAEqualPattern(iterationQuadruple, patternNVV.getLabel());
+        return isThereAEqualPattern(iterationQuadruple, patternNVV.getLabel(), source);
     }
 
-    private boolean isThereAEqualPattern(ExpandedQuadruple iterationQuadruple, String pattern) {
+    private static boolean isThereAEqualPattern(ExpandedQuadruple iterationQuadruple, String pattern, ThreeAddressCode source) {
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.isThereAEqualPattern(this.source.findQuadrupleByResult(iterationQuadruple.getArgument1()), pattern);
+            return isThereAEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), pattern, source);
         }
 
         NumericValueVariable iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument1());
@@ -58,7 +58,7 @@ public class FatorationRuleIdentification implements IRule {
             return true;
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.isThereAEqualPattern(this.source.findQuadrupleByResult(iterationQuadruple.getArgument2()), pattern);
+            return isThereAEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), pattern, source);
         }
 
         iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument2());

@@ -18,8 +18,11 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRuleIdentification identification;
 
+    private FatorationRuleCommonFactorAndGroup commonFactor;
+
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
+        this.commonFactor = new FatorationRuleCommonFactorAndGroup();
     }
 
     @Override
@@ -35,6 +38,12 @@ public class FatorationExpertSystem implements IExpertSystem {
         validateExpressions(sources);
         if (identification.match(sources)) {
             steps.addAll(identification.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+        }
+
+        validateExpressions(sources);
+        if (commonFactor.match(sources)) {
+            steps.addAll(commonFactor.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
 
