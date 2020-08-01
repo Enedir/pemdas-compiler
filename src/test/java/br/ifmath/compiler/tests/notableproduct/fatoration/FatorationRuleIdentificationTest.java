@@ -45,7 +45,7 @@ public class FatorationRuleIdentificationTest {
     }
 
     @Test()
-    public void identify_common_factor_scenery_one_with_success() {
+    public void identify_simple_terms_common_factor_scenery_one_with_success() {
         //Arrange
         String expression = "2x + 5x";
 
@@ -69,6 +69,81 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
-    //TODO fazer testes para mais de dois numeros, e para variáveis. Também fazer agrupamento
+    @Test()
+    public void identify_simple_terms_common_factor_scenery_two_with_success() {
+        //Arrange
+        String expression = "2a + 5a - 9a - 3a";
+
+        String lastStepValueExpected = "a * (2 + 5 - 9 - 3)";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_single_variable_common_factor_scenery_two_with_success() {
+        //Arrange
+        String expression = "2a + 5a - 9a - a";
+
+        String lastStepValueExpected = "a * (2 + 5 - 9 - 1)";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_number_common_factor_scenery_two_with_success() {
+        //Arrange
+        String expression = "2 + 4 - 8 - 12";
+
+        String lastStepValueExpected = "2 * (1 + 2 - 3 - 4)";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+    //TODO fazer mais testes para números. Também fazer para número com label, e agrupamento
 
 }
