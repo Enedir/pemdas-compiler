@@ -8,6 +8,7 @@ import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVar
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,46 +39,71 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
     }
 
     private String getCommonFactor() {
-        NumericValueVariable patternNVV = new NumericValueVariable(this.source.getRootQuadruple().getArgument1());
-        return this.getEqualPattern(this.source.getRootQuadruple(), patternNVV.toString());
+        NumericValueVariable initialValue = new NumericValueVariable(this.source.getRootQuadruple().getArgument1());
+        NumericValueVariable patternNVV = new NumericValueVariable(this.getLowestValue(this.source.getRootQuadruple(), initialValue));
+
+        if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
+            return patternNVV.toString();
+
+        Integer patternNVVValue = patternNVV.getValue();
+        patternNVV.setValue(null);
+        if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
+            return patternNVV.getLabel();
+
+        patternNVV.setLabel("");
+        patternNVV.setValue(patternNVVValue);
+        if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
+            return patternNVV.getValue().toString();
+        return "";
     }
 
-    private String getEqualPattern(ExpandedQuadruple iterationQuadruple, String pattern) {
+    private String getLowestValue(ExpandedQuadruple iterationQuadruple, NumericValueVariable lowestValue) {
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.getEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), pattern);
+            return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), lowestValue);
         }
 
-        NumericValueVariable iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument1());
-        if (StringUtil.match(pattern, RegexPattern.NATURAL_NUMBER.toString())) {
-            int numberPattern = Integer.parseInt(pattern);
-            //FIXME a lógica é quase isso
-            if (numberPattern % iterationArgumentNVV.getValue() != 0) {
-                //ja identifica que não é o mesmo padrão. Vai ter um else
-            }
-        } else if (StringUtil.match(pattern, RegexPattern.VARIABLE.toString())) {
-            if (!iterationArgumentNVV.getLabel().contains(pattern))
-                //FIXME não retorna.
-
-                // só identifica que não é o mesmo padrão, não retorna. Vai ter um else
-                return iterationArgumentNVV.getLabel();
-
-        } else {
-            //TODO se for uma variavel com expoente
-        }
-
+        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument1(), lowestValue);
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.getEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), pattern);
+            return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), lowestValue);
         }
 
-        iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument2());
-        if (iterationArgumentNVV.getLabel().contains(pattern)) {
-            return iterationArgumentNVV.getLabel();
+        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument2(), lowestValue);
+        return lowestValue != null ? lowestValue.toString() : null;
+    }
+
+    private NumericValueVariable getLowerTerm(String argument, NumericValueVariable lowestValue) {
+        //TODO verificar se o argument é menor que o lowest value
+        return null;
+    }
+
+    private boolean isEqualPattern(ExpandedQuadruple iterationQuadruple, NumericValueVariable pattern) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.isEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), pattern);
         }
+
+        if (this.isDifferentPattern(iterationQuadruple.getArgument1(), pattern))
+            return false;
+
+        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.isEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), pattern);
+        }
+
+        return !this.isDifferentPattern(iterationQuadruple.getArgument2(), pattern);
 
         //aqui que deve fazer o return de verdade, ou seja, só depois de passar por todos os valores das quadruplas e
         //estarem iguais pra ele retornar o result do primeiro pattern
-        return "";
+    }
+
+    private boolean isDifferentPattern(String argument, NumericValueVariable pattern) {
+        NumericValueVariable nvv = new NumericValueVariable(argument);
+        if (pattern.getLabel().isEmpty()) {
+            return nvv.getValue() % pattern.getValue() != 0;
+
+        } else if (pattern.getValue() == null) {
+            return !nvv.getLabel().contains(pattern.getLabel());
+        }
+        return !(pattern.getValue() % nvv.getValue() == 0 && nvv.getLabel().contains(pattern.getLabel()));
     }
 
     private void groupCommonFactor(String commonFactor) {
@@ -94,29 +120,49 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
             this.surroundQuadruplesWithParentheses(source.findQuadrupleByResult(iterationQuadruple.getArgument1()).getResult());
         }
 
+        iterationQuadruple.setLevel(1);
+
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             this.surroundQuadruplesWithParentheses(source.findQuadrupleByResult(iterationQuadruple.getArgument2()).getResult());
         }
-        iterationQuadruple.setLevel(1);
     }
 
     private void removeCommonFactor(ExpandedQuadruple iterationQuadruple, String commonFactor) {
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             this.removeCommonFactor(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), commonFactor);
+            return;
         }
 
-        if (iterationQuadruple.getArgument1().contains(commonFactor)) {
-            iterationQuadruple.setArgument1(
-                    (iterationQuadruple.getArgument1().equals(commonFactor)) ? "1" : iterationQuadruple.getArgument1().replace(commonFactor, ""));
-        }
+        this.adjustTermsByFactor(iterationQuadruple, commonFactor, true);
 
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             this.removeCommonFactor(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), commonFactor);
+            return;
         }
 
-        if (iterationQuadruple.getArgument2().contains(commonFactor))
-            iterationQuadruple.setArgument2(
-                    (iterationQuadruple.getArgument2().equals(commonFactor)) ? "1" : iterationQuadruple.getArgument2().replace(commonFactor, ""));
+        this.adjustTermsByFactor(iterationQuadruple, commonFactor, false);
+    }
+
+    private void adjustTermsByFactor(ExpandedQuadruple argumentQuadruple, String commonFactor, boolean isArgument1) {
+        String argument = (isArgument1) ? argumentQuadruple.getArgument1() : argumentQuadruple.getArgument2();
+        if (StringUtil.match(argument, RegexPattern.VARIABLE.toString()) && argument.contains(commonFactor)) {
+            String newArgument = (argument.equals(commonFactor)) ? "1" : argument.replace(commonFactor, "");
+            if (isArgument1)
+                argumentQuadruple.setArgument1(newArgument);
+            else
+                argumentQuadruple.setArgument2(newArgument);
+
+        } else if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
+            int commonFactorValue = Integer.parseInt(commonFactor);
+            int iterationValue = Integer.parseInt(argument);
+            if (iterationValue % commonFactorValue == 0) {
+                String newArgument = String.valueOf(iterationValue / commonFactorValue);
+                if (isArgument1)
+                    argumentQuadruple.setArgument1(newArgument);
+                else
+                    argumentQuadruple.setArgument2(newArgument);
+            }
+        }
     }
 }
