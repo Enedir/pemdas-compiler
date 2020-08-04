@@ -433,7 +433,7 @@ public enum LanguageToken implements ILanguageToken {
 
         @Override
         public boolean matchPattern(String pattern) {
-            return StringUtil.match(pattern, RegexPattern.VARIABLE_WITH_COEFICIENT.toString());
+            return StringUtil.match(pattern, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString());
         }
 
     },

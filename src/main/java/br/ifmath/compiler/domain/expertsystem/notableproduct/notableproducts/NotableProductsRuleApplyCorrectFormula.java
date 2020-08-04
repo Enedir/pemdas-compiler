@@ -37,7 +37,7 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
 
     private void adjustParenthesesValue() {
         for (ExpandedQuadruple expandedQuadruple : this.source.getExpandedQuadruples()) {
-            if (StringUtil.match(expandedQuadruple.getOperator(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+            if (StringUtil.match(expandedQuadruple.getOperator(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
                 expandedQuadruple.setArgument1(expandedQuadruple.getOperator());
                 expandedQuadruple.setOperator("");
             }
@@ -184,6 +184,6 @@ public class NotableProductsRuleApplyCorrectFormula implements IRule {
         String argument = expandedQuadruple.getArgument1();
         if (!isArgument1)
             argument = expandedQuadruple.getArgument2();
-        return StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFICIENT.toString());
+        return StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString());
     }
 }

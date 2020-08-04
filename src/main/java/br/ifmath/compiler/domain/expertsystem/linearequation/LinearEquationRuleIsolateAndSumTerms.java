@@ -123,7 +123,7 @@ public class LinearEquationRuleIsolateAndSumTerms implements IRule {
 
             isolateTerms(source, current.getArgument1(), current, parent, left);
             isolateTerms(source, current.getArgument2(), current, parent, left);
-        } else if (StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+        } else if (StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
             isolateVariable(param, parent, grandparent, left);
         } else if (StringUtil.matchAny(param, RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.DECIMAL_NUMBER.toString())) {
             isolateNumber(param, parent, grandparent, left);

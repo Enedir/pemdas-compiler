@@ -64,7 +64,7 @@ public class StringUtil {
         source = source.replaceAll("Ý", "Y");
         source = source.replaceAll("ñ", "n");
         source = source.replaceAll("Ñ", "N");
-        source = source.replaceAll("['<>\\|/]", "");
+        source = source.replaceAll("['<>|/]", "");
         source = source.replaceAll(" ", "_");
 
         return source;
@@ -496,7 +496,7 @@ public class StringUtil {
     }
 
     public static boolean isVariable(String param) {
-        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPOENT.toString())
+        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())
                 && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
     }
 

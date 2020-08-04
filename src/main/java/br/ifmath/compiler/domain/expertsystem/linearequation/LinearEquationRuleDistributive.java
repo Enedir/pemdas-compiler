@@ -406,20 +406,20 @@ public class LinearEquationRuleDistributive implements IRule {
             }
 
             if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                if (StringUtil.matchAny(expandedQuadruple.getArgument2(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString()))
+                if (StringUtil.matchAny(expandedQuadruple.getArgument2(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
                     countVariableInnerOperation++;
 
                 expandedQuadruple = threeAddressCode.findQuadrupleByResult(expandedQuadruple.getArgument1());
             } else if (StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                if (StringUtil.matchAny(expandedQuadruple.getArgument1(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString()))
+                if (StringUtil.matchAny(expandedQuadruple.getArgument1(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
                     countVariableInnerOperation++;
 
                 expandedQuadruple = threeAddressCode.findQuadrupleByResult(expandedQuadruple.getArgument2());
             } else {
-                if (StringUtil.matchAny(expandedQuadruple.getArgument1(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString()))
+                if (StringUtil.matchAny(expandedQuadruple.getArgument1(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
                     countVariableInnerOperation++;
 
-                if (StringUtil.matchAny(expandedQuadruple.getArgument2(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString()))
+                if (StringUtil.matchAny(expandedQuadruple.getArgument2(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
                     countVariableInnerOperation++;
 
                 expandedQuadruple = null;
@@ -427,7 +427,7 @@ public class LinearEquationRuleDistributive implements IRule {
 
         } while (expandedQuadruple != null);
 
-        return !(StringUtil.matchAny(multiplier, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString()) && countVariableInnerOperation > 0);
+        return !(StringUtil.matchAny(multiplier, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) && countVariableInnerOperation > 0);
     }
 
 }

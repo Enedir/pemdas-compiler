@@ -64,8 +64,8 @@ public class NotableProductsRulePower implements IRule {
                     String base = this.getPowerBase(expandedQuadruple.getArgument1(), this.source);
                     if (!base.equals("")) {
                         String result;
-                        if (StringUtil.matchAny(base.replace("-", ""), RegexPattern.VARIABLE_WITH_COEFICIENT.toString(),
-                                RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+                        if (StringUtil.matchAny(base.replace("-", ""), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(),
+                                RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
                             NumericValueVariable nvv = new NumericValueVariable();
                             nvv.setAttributesFromString(base);
                             String exponent = expandedQuadruple.getArgument2();
@@ -138,7 +138,7 @@ public class NotableProductsRulePower implements IRule {
                 innerQuadruple.setOperator("");
             }
             if (StringUtil.matchAny(innerQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString(),
-                    RegexPattern.VARIABLE_WITH_COEFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+                    RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
                 return (innerQuadruple.isNegative()) ? "-" + innerQuadruple.getArgument1() : innerQuadruple.getArgument1();
             }
         }

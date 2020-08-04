@@ -227,7 +227,7 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
             if (StringUtil.isVariable(param)) {
                 String paramValue, paramVariable;
 
-                if (StringUtil.match(param, RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+                if (StringUtil.match(param, RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
                     paramValue = param.substring(0, param.indexOf("^") - 1);
                     paramVariable = param.substring(param.indexOf("^") - 1);
                 } else {

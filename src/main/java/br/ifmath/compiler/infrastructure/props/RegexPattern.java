@@ -65,14 +65,14 @@ public enum RegexPattern {
         }
     },
 
-    VARIABLE_WITH_COEFICIENT {
+    VARIABLE_WITH_COEFFICIENT {
         @Override
         public String toString() {
             return "[0-9]+(\\,[0-9]+)?[a-zA-Z]([0-9]+)?$";
         }
     },
 
-    VARIABLE_WITH_EXPOENT {
+    VARIABLE_WITH_EXPONENT {
         @Override
         public String toString() {
             return "([0-9]+(\\,[0-9]+)?)?[a-zA-Z][\\^][0-9]+$";
@@ -98,6 +98,6 @@ public enum RegexPattern {
         public String toString() {
             return "(?<![a-zA-Z0-9])([0-9]+[a-zA-Z]|[a-zA-Z]|[0-9]+)\\(";
         }
-    };
+    }
 
 }

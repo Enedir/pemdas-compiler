@@ -19,7 +19,7 @@ public class NumericValueVariable extends ValueVariable {
     }
 
     public void setAttributesFromString(String argument) {
-        if (StringUtil.match(argument.replace("-", ""), RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+        if (StringUtil.match(argument.replace("-", ""), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
             this.value = this.getValueFromString(argument.substring(0, argument.indexOf("^") - 1));
             this.label = argument.substring(argument.indexOf("^") - 1);
         } else {

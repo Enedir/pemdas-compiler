@@ -8,7 +8,6 @@ import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVar
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,12 +68,53 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         }
 
         lowestValue = this.getLowerTerm(iterationQuadruple.getArgument2(), lowestValue);
-        return lowestValue != null ? lowestValue.toString() : null;
+        return lowestValue.toString();
     }
 
     private NumericValueVariable getLowerTerm(String argument, NumericValueVariable lowestValue) {
-        //TODO verificar se o argument é menor que o lowest value
-        return null;
+        //TODO testar se esse método funciona mesmo
+        if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
+            if (StringUtil.match(lowestValue.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
+                if (Integer.parseInt(argument) < lowestValue.getValue())
+                    return new NumericValueVariable(argument);
+                return lowestValue;
+            } else if (StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE.toString())) {
+                return lowestValue;
+            } else {
+                return new NumericValueVariable(argument);
+            }
+        }
+        if (StringUtil.match(argument, RegexPattern.VARIABLE.toString())) {
+            if (StringUtil.match(lowestValue.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
+                return new NumericValueVariable(argument);
+            } else if (StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE.toString())) {
+                return lowestValue;
+            } else {
+                return new NumericValueVariable(argument);
+            }
+        }
+
+        if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+            if (StringUtil.match(lowestValue.toString(), RegexPattern.NATURAL_NUMBER.toString()) ||
+                    StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE.toString())) {
+                return lowestValue;
+            } else if (StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+                NumericValueVariable argumentNVV = new NumericValueVariable(argument);
+                if (argumentNVV.getValue() < lowestValue.getValue())
+                    return argumentNVV;
+                return lowestValue;
+            } else {
+                return new NumericValueVariable(argument);
+            }
+        }
+
+        NumericValueVariable argumentNVV = new NumericValueVariable(argument);
+        if (!StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()))
+            return lowestValue;
+
+        if (argumentNVV.getLabelPower() < lowestValue.getLabelPower())
+            return argumentNVV;
+        return (argumentNVV.getValue() < lowestValue.getValue()) ? argumentNVV : lowestValue;
     }
 
     private boolean isEqualPattern(ExpandedQuadruple iterationQuadruple, NumericValueVariable pattern) {
@@ -91,8 +131,6 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
         return !this.isDifferentPattern(iterationQuadruple.getArgument2(), pattern);
 
-        //aqui que deve fazer o return de verdade, ou seja, só depois de passar por todos os valores das quadruplas e
-        //estarem iguais pra ele retornar o result do primeiro pattern
     }
 
     private boolean isDifferentPattern(String argument, NumericValueVariable pattern) {
