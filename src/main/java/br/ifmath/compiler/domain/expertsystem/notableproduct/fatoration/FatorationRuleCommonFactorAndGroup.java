@@ -24,7 +24,6 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
     public List<Step> handle(List<ThreeAddressCode> source) {
         List<Step> steps = new ArrayList<>();
         this.source = source.get(0);
-
         String commonFactor = this.getCommonFactor();
         if (!commonFactor.isEmpty())
             this.groupCommonFactor(commonFactor);
@@ -61,23 +60,28 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
             return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), lowestValue);
         }
 
-        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument1(), lowestValue);
+        lowestValue = this.getLowerTerm(iterationQuadruple, lowestValue, true);
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), lowestValue);
         }
 
-        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument2(), lowestValue);
+        lowestValue = this.getLowerTerm(iterationQuadruple, lowestValue, false);
         return lowestValue.toString();
     }
 
-    private NumericValueVariable getLowerTerm(String argument, NumericValueVariable lowestValue) {
-        //TODO testar se esse método funciona mesmo
+    private NumericValueVariable getLowerTerm(ExpandedQuadruple quadruple, NumericValueVariable lowestValue, boolean isArgument1) {
+
+        String argument = (isArgument1) ? quadruple.getArgument1() : quadruple.getArgument2();
         if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
             if (StringUtil.match(lowestValue.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
-                if (Integer.parseInt(argument) < lowestValue.getValue())
-                    return new NumericValueVariable(argument);
-                return lowestValue;
+                int numberArgument = Integer.parseInt(argument);
+                if (numberArgument % lowestValue.getValue() == 0 || lowestValue.getValue() % numberArgument == 0) {
+                    if (numberArgument < lowestValue.getValue())
+                        return new NumericValueVariable(argument);
+                    return lowestValue;
+                }
+                return new NumericValueVariable();
             } else if (StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE.toString())) {
                 return lowestValue;
             } else {
@@ -88,7 +92,7 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
             if (StringUtil.match(lowestValue.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
                 return new NumericValueVariable(argument);
             } else if (StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE.toString())) {
-                return lowestValue;
+                return (lowestValue.toString().equals(argument)) ? lowestValue : new NumericValueVariable();
             } else {
                 return new NumericValueVariable(argument);
             }
@@ -100,8 +104,19 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
                 return lowestValue;
             } else if (StringUtil.match(lowestValue.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
                 NumericValueVariable argumentNVV = new NumericValueVariable(argument);
-                if (argumentNVV.getValue() < lowestValue.getValue())
+                if (argumentNVV.getValue() <= lowestValue.getValue()) {
+                    //TODO verificar porque está retornando o valor ao inves de vazio
+                    String argumentValue = this.getLowestValue(
+                            this.source.getRootQuadruple(), new NumericValueVariable(String.valueOf(argumentNVV.getValue())));
+                    if (!argumentValue.isEmpty())
+                        return new NumericValueVariable(argumentValue);
+
+                    String argumentLabel = this.getLowestValue(
+                            this.source.getRootQuadruple(), new NumericValueVariable(argumentNVV.getLabel()));
+                    if (!argumentLabel.isEmpty())
+                        return new NumericValueVariable(argumentLabel);
                     return argumentNVV;
+                }
                 return lowestValue;
             } else {
                 return new NumericValueVariable(argument);
