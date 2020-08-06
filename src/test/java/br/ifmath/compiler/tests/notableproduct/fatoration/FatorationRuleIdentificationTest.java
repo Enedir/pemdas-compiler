@@ -72,31 +72,6 @@ public class FatorationRuleIdentificationTest {
     @Test()
     public void identify_simple_terms_common_factor_scenery_two_with_success() {
         //Arrange
-        String expression = "2a + 5a - 9a - 3a";
-
-        String lastStepValueExpected = "a * (2 + 5 - 9 - 3)";
-
-        // Act)
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult1Expected, stepOne.getReason());
-        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepTwoResultExpected, finalStep.getReason());
-    }
-
-    @Test()
-    public void identify_single_variable_common_factor_scenery_two_with_success() {
-        //Arrange
         String expression = "2a + 5a - 9a - a";
 
         String lastStepValueExpected = "a * (2 + 5 - 9 - 1)";
@@ -147,9 +122,9 @@ public class FatorationRuleIdentificationTest {
     @Test()
     public void identify_number_common_factor_scenery_two_with_success() {
         //Arrange
-        String expression = "3 + 27 - 9 - 15";
+        String expression = "27 + 12 - 3 - 9";
 
-        String lastStepValueExpected = "3 * (1 + 9 - 3 - 5)";
+        String lastStepValueExpected = "3 * (9 + 4 - 1 - 3)";
 
         // Act)
         IAnswer answer = null;
@@ -169,6 +144,31 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
-    //TODO fazer mais testes para números. Também fazer para número com label, e agrupamento
+    @Test()
+    public void identify_monomial_common_factor_scenery_two_with_success() {
+        //Arrange
+        String expression = "4x^2 + 2x - 12x^3 - 8x^4";
+
+        String lastStepValueExpected = "2x * (2x + 1 - 6x^2 - 4x^3)";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+    //TODO fazer mais testes para monomios. Também fazer para combinações de numeros e variaveis alternados e agrupamento
 
 }

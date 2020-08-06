@@ -14,7 +14,7 @@ public class NumericValueVariable extends ValueVariable {
         this.value = value;
     }
 
-    public NumericValueVariable(String argument){
+    public NumericValueVariable(String argument) {
         this.setAttributesFromString(argument);
     }
 
@@ -61,7 +61,9 @@ public class NumericValueVariable extends ValueVariable {
 
     @Override
     public String toString() {
-        if (this.label == null || this.label.equals(""))
+        if ((this.label == null || this.label.equals("")) && this.value == null)
+            return "";
+        else if (this.label == null || this.label.equals(""))
             return String.valueOf(this.value);
         else if (this.value == null)
             return this.label;
