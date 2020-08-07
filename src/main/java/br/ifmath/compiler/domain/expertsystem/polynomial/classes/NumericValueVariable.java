@@ -42,6 +42,17 @@ public class NumericValueVariable extends ValueVariable {
         return Integer.parseInt(param);
     }
 
+    public void setLabelPower(int newPower) {
+        String alphabeticLabel = (this.getLabelPower() == 1) ? label : this.label.substring(0, this.label.indexOf('^'));
+        if (newPower == 0) {
+            this.label = "";
+        } else if (newPower == 1) {
+            this.label = alphabeticLabel;
+        } else {
+            this.label = alphabeticLabel + "^" + newPower;
+        }
+    }
+
     public int getLabelPower() {
         if (this.label == null || this.label.equals("")) {
             return 0;
@@ -74,10 +85,5 @@ public class NumericValueVariable extends ValueVariable {
                 return "-" + label;
             return value + label;
         }
-    }
-
-    public void setLabelPower(String exponent) {
-        String labelAndPower = label.substring(0, label.indexOf("^") + 1);
-        label = labelAndPower + exponent;
     }
 }

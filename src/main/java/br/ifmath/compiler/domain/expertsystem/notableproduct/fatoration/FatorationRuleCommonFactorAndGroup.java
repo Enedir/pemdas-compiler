@@ -141,7 +141,8 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         } else if (pattern.getValue() == null) {
             return !nvv.getLabel().contains(pattern.getLabel());
         }
-        return !(pattern.getValue() % nvv.getValue() == 0 && nvv.getLabel().contains(pattern.getLabel()));
+        return !((pattern.getValue() % nvv.getValue() == 0 || nvv.getValue() % pattern.getValue() == 0)
+                && nvv.getLabel().contains(pattern.getLabel()));
     }
     //</editor-fold>>
 
@@ -173,24 +174,30 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
     private void adjustTermsByFactor(ExpandedQuadruple argumentQuadruple, String commonFactor, boolean isArgument1) {
         String argument = (isArgument1) ? argumentQuadruple.getArgument1() : argumentQuadruple.getArgument2();
-        if (StringUtil.match(commonFactor, RegexPattern.VARIABLE.toString()) && argument.contains(commonFactor)) {
-            String newArgument = (argument.equals(commonFactor)) ? "1" : argument.replace(commonFactor, "");
-            if (isArgument1)
-                argumentQuadruple.setArgument1(newArgument);
-            else
-                argumentQuadruple.setArgument2(newArgument);
+        String newArgument = "";
+        if (StringUtil.match(commonFactor, RegexPattern.VARIABLE.toString()) && argument.contains(commonFactor))
+            newArgument = (argument.equals(commonFactor)) ? "1" : argument.replace(commonFactor, "");
 
-        } else if (StringUtil.match(commonFactor, RegexPattern.NATURAL_NUMBER.toString())) {
+        else if (StringUtil.match(commonFactor, RegexPattern.NATURAL_NUMBER.toString())) {
             int commonFactorValue = Integer.parseInt(commonFactor);
             int iterationValue = Integer.parseInt(argument);
-            if (iterationValue % commonFactorValue == 0) {
-                String newArgument = String.valueOf(iterationValue / commonFactorValue);
-                if (isArgument1)
-                    argumentQuadruple.setArgument1(newArgument);
-                else
-                    argumentQuadruple.setArgument2(newArgument);
-            }
+            if (iterationValue % commonFactorValue == 0)
+                newArgument = String.valueOf(iterationValue / commonFactorValue);
+        } else if (StringUtil.match(commonFactor, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+            NumericValueVariable argumentNVV = new NumericValueVariable(argument);
+            NumericValueVariable factorNVV = new NumericValueVariable(commonFactor);
+            argumentNVV.setValue(argumentNVV.getValue() / factorNVV.getValue());
+            if (StringUtil.match(argumentNVV.getLabel(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
+                argumentNVV.setLabel("");
+            else
+                argumentNVV.setLabelPower(argumentNVV.getLabelPower() - 1);
+            newArgument = argumentNVV.toString();
         }
+
+        if (isArgument1)
+            argumentQuadruple.setArgument1(newArgument);
+        else
+            argumentQuadruple.setArgument2(newArgument);
     }
 
     private void surroundQuadruplesWithParentheses(String companionResult) {

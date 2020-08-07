@@ -75,7 +75,7 @@ public class NotableProductsRulePower implements IRule {
                             if (power != 1)
                                 exponent = String.valueOf(power * Integer.parseInt(expandedQuadruple.getArgument2()));
                             if (nvv.getLabel().contains("^")) {
-                                nvv.setLabelPower(exponent);
+                                nvv.setLabelPower(Integer.parseInt(exponent));
                             } else {
                                 nvv.setLabel(nvv.getLabel() + "^" + exponent);
                             }

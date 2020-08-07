@@ -145,7 +145,7 @@ public class FatorationRuleIdentificationTest {
     }
 
     @Test()
-    public void identify_monomial_common_factor_scenery_two_with_success() {
+    public void identify_monomial_common_factor_scenery_one_with_success() {
         //Arrange
         String expression = "4x^2 + 2x - 12x^3 - 8x^4";
 
@@ -169,6 +169,35 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
-    //TODO fazer mais testes para monomios. Também fazer para combinações de numeros e variaveis alternados e agrupamento
+    @Test()
+    public void identify_monomial_common_factor_scenery_two_with_success() {
+        //Arrange
+        String expression = "3x - 9x - 24x^4 + 18x^2";
+
+        String lastStepValueExpected = "3x * (1 - 3 - 8x^3 + 6x)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+    /*TODO fazer mais testes para monomios com expoente. Também fazer para:
+        - primeiro termo negativo;
+        - combinações de numeros e variaveis alternados;
+        - agrupamento.
+     */
 
 }
