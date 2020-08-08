@@ -194,8 +194,32 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_monomial_common_factor_scenery_three_with_success() {
+        //Arrange
+        String expression = "-4x + 16x^6 - 28x^2 + 48x^3";
+
+        String lastStepValueExpected = "4x * (-1 + 4x^5 - 7x + 12x^2)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
     /*TODO fazer mais testes para monomios com expoente. Também fazer para:
-        - primeiro termo negativo;
         - combinações de numeros e variaveis alternados;
         - agrupamento.
      */

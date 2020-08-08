@@ -44,7 +44,9 @@ public class FatorationRuleIdentification implements IRule {
     }
 
     public static boolean isCommonFactor(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source) {
-        NumericValueVariable patternNVV = new NumericValueVariable(iterationQuadruple.getArgument1());
+        String argument = (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+                ? source.findQuadrupleByResult(iterationQuadruple.getArgument1()).getArgument1() : iterationQuadruple.getArgument1();
+        NumericValueVariable patternNVV = new NumericValueVariable(argument);
         return isThereAEqualPattern(iterationQuadruple, patternNVV.getLabel(), source);
     }
 
@@ -56,6 +58,9 @@ public class FatorationRuleIdentification implements IRule {
         NumericValueVariable iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument1());
         if (iterationArgumentNVV.getLabel().contains(pattern))
             return true;
+
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             return isThereAEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), pattern, source);

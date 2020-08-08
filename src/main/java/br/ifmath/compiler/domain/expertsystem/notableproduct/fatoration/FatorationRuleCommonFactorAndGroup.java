@@ -38,7 +38,6 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
     //<editor-fold desc="getCommonFactor">
     private String getCommonFactor() {
-        //TODO Verificar porque aqui encontrou o commonFactor, mas depois se perdeu para casos de monomios
         NumericValueVariable patternNVV = new NumericValueVariable(this.getSmallestUnit());
 
         if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
@@ -125,6 +124,9 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         if (this.isDifferentPattern(iterationQuadruple.getArgument1(), pattern))
             return false;
 
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
+
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             return this.isEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), pattern);
         }
@@ -134,6 +136,8 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
     }
 
     private boolean isDifferentPattern(String argument, NumericValueVariable pattern) {
+        if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
+            argument = this.source.findQuadrupleByResult(argument).getArgument1();
         NumericValueVariable nvv = new NumericValueVariable(argument);
         if (pattern.getLabel().isEmpty()) {
             return nvv.getValue() % pattern.getValue() != 0;
@@ -163,6 +167,9 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
         this.adjustTermsByFactor(iterationQuadruple, commonFactor, true);
 
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
+
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             this.removeCommonFactor(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), commonFactor);
@@ -174,6 +181,8 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
     private void adjustTermsByFactor(ExpandedQuadruple argumentQuadruple, String commonFactor, boolean isArgument1) {
         String argument = (isArgument1) ? argumentQuadruple.getArgument1() : argumentQuadruple.getArgument2();
+        if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
+            argument = this.source.findQuadrupleByResult(argument).getArgument1();
         String newArgument = "";
         if (StringUtil.match(commonFactor, RegexPattern.VARIABLE.toString()) && argument.contains(commonFactor))
             newArgument = (argument.equals(commonFactor)) ? "1" : argument.replace(commonFactor, "");
