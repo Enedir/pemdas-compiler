@@ -3,6 +3,7 @@ package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration;
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
+import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
@@ -21,7 +22,7 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> source) {
+    public List<Step> handle(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
         List<Step> steps = new ArrayList<>();
         this.source = source.get(0);
         String commonFactor = this.getCommonFactor();
@@ -37,7 +38,7 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
     }
 
     //<editor-fold desc="getCommonFactor">
-    private String getCommonFactor() {
+    private String getCommonFactor() throws InvalidAlgebraicExpressionException {
         NumericValueVariable patternNVV = new NumericValueVariable(this.getSmallestUnit());
 
         if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
@@ -52,11 +53,14 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         patternNVV.setValue(patternNVVValue);
         if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
             return patternNVV.getValue().toString();
-        return "";
+        throw new InvalidAlgebraicExpressionException("Padrão não encontrado");
     }
 
     private String getSmallestUnit() {
-        return getLowestValue(this.source.getRootQuadruple(), this.source.getRootQuadruple().getArgument1());
+        String firstArgument = this.source.getRootQuadruple().getArgument1();
+        if (StringUtil.match(firstArgument, RegexPattern.TEMPORARY_VARIABLE.toString()))
+            firstArgument = this.source.findQuadrupleByResult(firstArgument).getArgument1();
+        return getLowestValue(this.source.getRootQuadruple(), firstArgument);
     }
 
     private String getLowestValue(ExpandedQuadruple iterationQuadruple, String lowestValue) {
@@ -65,6 +69,8 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         }
 
         lowestValue = this.getLowerTerm(iterationQuadruple, lowestValue, true);
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), lowestValue);
@@ -189,9 +195,12 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
         else if (StringUtil.match(commonFactor, RegexPattern.NATURAL_NUMBER.toString())) {
             int commonFactorValue = Integer.parseInt(commonFactor);
-            int iterationValue = Integer.parseInt(argument);
+            NumericValueVariable nvv = new NumericValueVariable(argument);
+            int iterationValue = nvv.getValue();
             if (iterationValue % commonFactorValue == 0)
-                newArgument = String.valueOf(iterationValue / commonFactorValue);
+                nvv.setValue(iterationValue / commonFactorValue);
+            newArgument = nvv.toString();
+
         } else if (StringUtil.match(commonFactor, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
             NumericValueVariable argumentNVV = new NumericValueVariable(argument);
             NumericValueVariable factorNVV = new NumericValueVariable(commonFactor);

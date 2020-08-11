@@ -2,16 +2,13 @@ package br.ifmath.compiler.tests.notableproduct.fatoration;
 
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
-import br.ifmath.compiler.domain.expertsystem.AnswerType;
-import br.ifmath.compiler.domain.expertsystem.IAnswer;
-import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
-import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.*;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationExpertSystem;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.*;
 
 public class FatorationRuleIdentificationTest {
     private ICompiler compiler;
@@ -219,8 +216,47 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_numbers_and_variables_common_factor_scenery_one_with_success() {
+        //Arrange
+        String expression = "2x + 8x - 4";
+
+        String lastStepValueExpected = "2 * (x + 4x - 2)";
+
+        // Act)
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_numbers_and_variables_common_factor_scenery_one_with_failure() {
+        //Arrange
+        String expression = "2x + 5x - 7";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
     /*TODO fazer mais testes para monomios com expoente. Também fazer para:
-        - combinações de numeros e variaveis alternados;
         - agrupamento.
      */
 
