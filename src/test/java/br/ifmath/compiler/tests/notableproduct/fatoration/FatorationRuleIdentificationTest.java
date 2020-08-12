@@ -116,12 +116,13 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
+    //TODO validar esse caso
     @Test()
     public void identify_number_common_factor_scenery_two_with_success() {
         //Arrange
-        String expression = "27 + 12 - 3 - 9";
+        String expression = "3x^3 + 3 - 6x - 27x^9";
 
-        String lastStepValueExpected = "3 * (9 + 4 - 1 - 3)";
+        String lastStepValueExpected = "3 * (x^3 + 1 - 2x - 9x^9)";
 
         // Act)
         IAnswer answer = null;
@@ -256,7 +257,36 @@ public class FatorationRuleIdentificationTest {
         }
     }
 
+    @Test()
+    public void identify_monomial_with_exponent_common_factor_scenery_one_with_success() {
+        //Arrange
+        String expression = "-30z^4 + 16z^2 - 4z^8 + 10z^6";
+
+        String lastStepValueExpected = "z^2 * (-30z^2 + 16 - 4z^6 + 10z^4)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+
     /*TODO fazer mais testes para monomios com expoente. Também fazer para:
+        - casos de erro com todas os tipos de termos;
+        - termo do tipo 2x^4;
+        - caso que pode cair em mais de uma regra ao mesmo tempo, ex 2x^2 + 4x^4;
         - agrupamento.
      */
 

@@ -116,6 +116,9 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         if (argumentNVV.getLabelPower() < lowestValueNVV.getLabelPower())
             return argument;
 
+        if (lowestValueNVV.getLabelPower() < argumentNVV.getLabelPower())
+            return lowestValue;
+
         return (argumentNVV.getValue() < lowestValueNVV.getValue()) ? argument : lowestValue;
     }
 
@@ -149,10 +152,16 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
             return nvv.getValue() % pattern.getValue() != 0;
 
         } else if (pattern.getValue() == null) {
-            return !nvv.getLabel().contains(pattern.getLabel());
+            if (!StringUtil.match(nvv.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()))
+                return !nvv.getLabel().contains(pattern.getLabel());
+            return itDoesntMatchMonomy(pattern.getLabelPower(), nvv.getLabelPower(), nvv.getLabelVariable(), pattern.getLabelVariable());
         }
-        return !((pattern.getValue() % nvv.getValue() == 0 || nvv.getValue() % pattern.getValue() == 0)
-                && nvv.getLabel().contains(pattern.getLabel()));
+        return itDoesntMatchMonomy(pattern.getValue(), nvv.getValue(), nvv.getLabelVariable(), pattern.getLabelVariable());
+    }
+
+    private boolean itDoesntMatchMonomy(int numeralPart1, int numeralPart2, String literalPart1, String literalPart2) {
+        return !((numeralPart1 % numeralPart2 == 0 || numeralPart2 % numeralPart1 == 0)
+                && literalPart1.contains(literalPart2));
     }
     //</editor-fold>>
 
@@ -201,14 +210,18 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
                 nvv.setValue(iterationValue / commonFactorValue);
             newArgument = nvv.toString();
 
-        } else if (StringUtil.match(commonFactor, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+        } else {
             NumericValueVariable argumentNVV = new NumericValueVariable(argument);
             NumericValueVariable factorNVV = new NumericValueVariable(commonFactor);
-            argumentNVV.setValue(argumentNVV.getValue() / factorNVV.getValue());
-            if (StringUtil.match(argumentNVV.getLabel(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
+
+            if (argumentNVV.getLabel().equals(factorNVV.getLabel()))
                 argumentNVV.setLabel("");
             else
-                argumentNVV.setLabelPower(argumentNVV.getLabelPower() - 1);
+                argumentNVV.setLabelPower(argumentNVV.getLabelPower() - factorNVV.getLabelPower());
+
+            if (StringUtil.match(commonFactor, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
+                argumentNVV.setValue(argumentNVV.getValue() / factorNVV.getValue());
+
             newArgument = argumentNVV.toString();
         }
 
