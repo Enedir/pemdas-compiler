@@ -84,26 +84,24 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         String argument = (isArgument1) ? quadruple.getArgument1() : quadruple.getArgument2();
 
         if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
-            if (StringUtil.match(lowestValue, RegexPattern.NATURAL_NUMBER.toString())) {
-                if (Integer.parseInt(argument) < Integer.parseInt(lowestValue))
-                    return argument;
-            }
-            return lowestValue;
+            int lowestValueNumber = (StringUtil.match(lowestValue, RegexPattern.NATURAL_NUMBER.toString())) ?
+                    Integer.parseInt(lowestValue) : new NumericValueVariable(lowestValue).getValue();
+            if (Integer.parseInt(argument) < lowestValueNumber)
+                return argument;
+            return String.valueOf(lowestValueNumber);
         }
 
         if (StringUtil.match(argument, RegexPattern.VARIABLE.toString())) {
             return argument;
         }
 
-        if (StringUtil.match(lowestValue, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-            if (StringUtil.matchAny(argument, RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.VARIABLE.toString()))
+        if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+            if (StringUtil.matchAny(lowestValue, RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.VARIABLE.toString()))
+                return lowestValue;
+            int argumentNVVValue = new NumericValueVariable(argument).getValue();
+            int lowestValueNVVValue = new NumericValueVariable(lowestValue).getValue();
+            if (argumentNVVValue < lowestValueNVVValue)
                 return argument;
-            else if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-                int argumentNVVValue = new NumericValueVariable(argument).getValue();
-                int lowestValueNVVValue = new NumericValueVariable(lowestValue).getValue();
-                if (argumentNVVValue < lowestValueNVVValue)
-                    return argument;
-            }
             return lowestValue;
         }
 
@@ -113,8 +111,10 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         }
         NumericValueVariable lowestValueNVV = new NumericValueVariable(lowestValue);
         NumericValueVariable argumentNVV = new NumericValueVariable(argument);
-        if (argumentNVV.getLabelPower() < lowestValueNVV.getLabelPower())
+        //TODO Ajustar dentro do if o caso para pegar só a parte literal, pois o Value não é divisivel. Também fazer isso para o VARIABLE_WITH_COEFFICIENT
+        if (argumentNVV.getLabelPower() < lowestValueNVV.getLabelPower()) {
             return argument;
+        }
 
         if (lowestValueNVV.getLabelPower() < argumentNVV.getLabelPower())
             return lowestValue;
