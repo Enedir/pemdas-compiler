@@ -216,7 +216,6 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
-    //TODO arrumar parte de ajustar termos a partir do fator em comum
     @Test()
     public void identify_monomial_common_factor_scenery_three_with_success() {
         //Arrange
@@ -242,7 +241,6 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
-    //TODO fazer mais casos de falha
     @Test()
     public void identify_numbers_and_variables_common_factor_scenery_one_with_failure() {
         //Arrange
@@ -258,6 +256,20 @@ public class FatorationRuleIdentificationTest {
         }
     }
 
+    @Test()
+    public void identify_numbers_and_variables_common_factor_scenery_two_with_failure() {
+        //Arrange
+        String expression = "2x^2 + 4x^4 - 7x + 8z";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
 
     @Test()
     public void identify_monomial_with_exponent_common_factor_scenery_one_with_success() {
@@ -284,7 +296,6 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
-    //TODO Validar esse caso
     @Test()
     public void identify_monomial_with_exponent_common_factor_scenery_two_with_success() {
         //Arrange
@@ -310,8 +321,56 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_multiple_patterns_common_factor_scenery_one_with_success() {
+        //Arrange
+        String expression = "3x^3 + 6x^6 - 3x - 27x^9";
 
-    //TODO fazer caso que pode cair em mais de uma regra ao mesmo tempo, ex 2x^2 + 4x^4;
+        String lastStepValueExpected = "3x * (x^2 + 2x^5 - 1 - 9x^8)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
+
+
+    @Test()
+    public void identify_multiple_patterns_common_factor_scenery_two_with_success() {
+        //Arrange
+        String expression = "8x^8 - 2x^2 - 4x^4 + 6x^6";
+
+        String lastStepValueExpected = "2x^2 * (4x^6 - 1 - 2x^2 + 3x^4)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
 
     //TODO fazer agrupamento
 

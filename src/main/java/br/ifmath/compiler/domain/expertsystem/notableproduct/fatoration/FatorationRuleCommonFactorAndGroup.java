@@ -98,11 +98,12 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
             if (StringUtil.matchAny(lowestValue, RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.VARIABLE.toString()))
                 return lowestValue;
-            int argumentNVVValue = new NumericValueVariable(argument).getValue();
-            int lowestValueNVVValue = new NumericValueVariable(lowestValue).getValue();
-            if (argumentNVVValue < lowestValueNVVValue)
+            int argumentNVV = new NumericValueVariable(argument).getValue();
+            int lowestValueNVV = new NumericValueVariable(lowestValue).getValue();
+            if (argumentNVV < lowestValueNVV || StringUtil.match(lowestValue, RegexPattern.VARIABLE_WITH_EXPONENT.toString()))
                 return argument;
             return lowestValue;
+
         }
 
         if (StringUtil.matchAny(argument,
@@ -111,13 +112,12 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         }
         NumericValueVariable lowestValueNVV = new NumericValueVariable(lowestValue);
         NumericValueVariable argumentNVV = new NumericValueVariable(argument);
-        //TODO Ajustar dentro do if o caso para pegar só a parte literal, pois o Value não é divisivel. Também fazer isso para o VARIABLE_WITH_COEFFICIENT
-        if (argumentNVV.getLabelPower() < lowestValueNVV.getLabelPower()) {
-            return argument;
-        }
+        if (argumentNVV.getLabelPower() < lowestValueNVV.getLabelPower())
+            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue())) ? argument : argumentNVV.getLabel();
+
 
         if (lowestValueNVV.getLabelPower() < argumentNVV.getLabelPower())
-            return lowestValue;
+            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue())) ? lowestValue : lowestValueNVV.getLabel();
 
         return (argumentNVV.getValue() < lowestValueNVV.getValue()) ? argument : lowestValue;
     }
@@ -156,12 +156,18 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
                 return !nvv.getLabel().contains(pattern.getLabel());
             return itDoesntMatchMonomy(pattern.getLabelPower(), nvv.getLabelPower(), nvv.getLabelVariable(), pattern.getLabelVariable());
         }
+        if (pattern.getValue() == 1)
+            return !nvv.getLabel().contains(pattern.getLabelVariable());
         return itDoesntMatchMonomy(pattern.getValue(), nvv.getValue(), nvv.getLabelVariable(), pattern.getLabelVariable());
     }
 
     private boolean itDoesntMatchMonomy(int numeralPart1, int numeralPart2, String literalPart1, String literalPart2) {
-        return !((numeralPart1 % numeralPart2 == 0 || numeralPart2 % numeralPart1 == 0)
+        return !((this.isMultiple(numeralPart1, numeralPart2))
                 && literalPart1.contains(literalPart2));
+    }
+
+    private boolean isMultiple(int n1, int n2) {
+        return (n1 % n2 == 0 || n2 % n1 == 0) && !(n1 == 1 || n2 == 1);
     }
     //</editor-fold>>
 
@@ -199,10 +205,17 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
             argument = this.source.findQuadrupleByResult(argument).getArgument1();
         String newArgument = "";
-        if (StringUtil.match(commonFactor, RegexPattern.VARIABLE.toString()) && argument.contains(commonFactor))
-            newArgument = (argument.equals(commonFactor)) ? "1" : argument.replace(commonFactor, "");
-
-        else if (StringUtil.match(commonFactor, RegexPattern.NATURAL_NUMBER.toString())) {
+        if (StringUtil.match(commonFactor, RegexPattern.VARIABLE.toString()) && argument.contains(commonFactor)) {
+            if (argument.equals(commonFactor))
+                newArgument = "1";
+            else if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
+                newArgument = argument.replace(commonFactor, "");
+            else {
+                NumericValueVariable nvv = new NumericValueVariable(argument);
+                nvv.setLabelPower(nvv.getLabelPower() - 1);
+                newArgument = nvv.toString();
+            }
+        } else if (StringUtil.match(commonFactor, RegexPattern.NATURAL_NUMBER.toString())) {
             int commonFactorValue = Integer.parseInt(commonFactor);
             NumericValueVariable nvv = new NumericValueVariable(argument);
             int iterationValue = nvv.getValue();
@@ -219,8 +232,7 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
             else
                 argumentNVV.setLabelPower(argumentNVV.getLabelPower() - factorNVV.getLabelPower());
 
-            if (StringUtil.match(commonFactor, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
-                argumentNVV.setValue(argumentNVV.getValue() / factorNVV.getValue());
+            argumentNVV.setValue(argumentNVV.getValue() / factorNVV.getValue());
 
             newArgument = argumentNVV.toString();
         }
