@@ -48,7 +48,7 @@ public class FatorationRuleIdentificationTest {
 
         String lastStepValueExpected = "x * (2 + 5)";
 
-        // Act)
+        // Act
         IAnswer answer = null;
         try {
             answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
@@ -73,7 +73,7 @@ public class FatorationRuleIdentificationTest {
 
         String lastStepValueExpected = "a * (2 + 5 - 9 - 1)";
 
-        // Act)
+        // Act
         IAnswer answer = null;
         try {
             answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
@@ -98,7 +98,7 @@ public class FatorationRuleIdentificationTest {
 
         String lastStepValueExpected = "2 * (1 + 2 - 4 - 6)";
 
-        // Act)
+        // Act
         IAnswer answer = null;
         try {
             answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
@@ -123,7 +123,7 @@ public class FatorationRuleIdentificationTest {
 
         String lastStepValueExpected = "3 * (x^3 + 1 - 2x - 9x^9)";
 
-        // Act)
+        // Act
         IAnswer answer = null;
         try {
             answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
@@ -148,7 +148,7 @@ public class FatorationRuleIdentificationTest {
 
         String lastStepValueExpected = "2 * (x + 4x - 2)";
 
-        // Act)
+        // Act
         IAnswer answer = null;
         try {
             answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
@@ -173,7 +173,7 @@ public class FatorationRuleIdentificationTest {
 
         String lastStepValueExpected = "2x * (2x + 1 - 6x^2 - 4x^3)";
 
-        // Act)
+        // Act
         IAnswer answer = null;
         try {
             answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
