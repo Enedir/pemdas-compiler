@@ -8,6 +8,7 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,15 @@ public class FatorationRuleIdentification implements IRule {
         if (isCommonFactor(this.source.getRootQuadruple(), this.source)) {
             return "Fator comum em evidência.";
         }
+
+        if (isPerfectSquareTrinomial()) {
+
+        }
         return "";
     }
+
+
+    //<editor-fold desc="CommonFactor">
 
     public static boolean isCommonFactor(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source) {
         String argument = (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
@@ -69,4 +77,76 @@ public class FatorationRuleIdentification implements IRule {
         iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument2());
         return iterationArgumentNVV.getLabel().contains(pattern);
     }
+    //</editor-fold>>
+
+    //<editor-fold desc="PerfectSquareTrinomial">
+    //TODO testar
+    private boolean isPerfectSquareTrinomial() {
+        ExpandedQuadruple root = this.source.getRootQuadruple();
+        if (root.isPlus()) {
+            if (isValidTrinomialTerm(root.getArgument1())) {
+                if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                    ExpandedQuadruple middleTermQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
+                    if (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+                        NumericValueVariable middleTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
+                        if (isValidTrinomialTerm(middleTermQuadruple.getArgument2())) {
+
+                            NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
+                            NumericValueVariable secondTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
+                            //Variável com variável
+                            if (StringUtil.match(root.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
+                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+                                if (firstTerm.getLabelVariable().equals(secondTerm.getLabelVariable())) {
+                                    if ((firstTerm.getLabelPower() + secondTerm.getLabelPower()) / 2 == middleTerm.getLabelPower()) {
+                                        if (firstTerm.getValue() == 1 && secondTerm.getValue() == 1 && middleTerm.getValue() == 2)
+                                            return true;
+                                        else if (firstTerm.getValue() != 1 && secondTerm.getValue() != 1) {
+                                            return (int) Math.sqrt(firstTerm.getValue()) + (int) Math.sqrt(secondTerm.getValue()) == middleTerm.getValue();
+                                        } else {
+                                            int value = (firstTerm.getValue() != 1) ? (int) Math.sqrt(firstTerm.getValue()) : (int) Math.sqrt(secondTerm.getValue());
+                                            return value == middleTerm.getValue();
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            //Número com número
+                            if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
+                                return Math.round(Math.sqrt(firstTerm.getValue()) + Math.sqrt(secondTerm.getValue())) == middleTerm.getValue();
+                            }
+
+                            //Variável com número
+                            if (StringUtil.match(root.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
+                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
+                                int variableValue = (firstTerm.getValue() == 1) ? 0 : (int) Math.sqrt(firstTerm.getValue());
+                                if (variableValue + (int) Math.sqrt(secondTerm.getValue()) == middleTerm.getValue()) {
+                                    return middleTerm.getLabelPower() == firstTerm.getLabelPower() / 2;
+                                }
+                            }
+
+                            //Número com variável
+                            if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+                                int variableValue = (secondTerm.getValue() == 1) ? 0 : (int) Math.sqrt(secondTerm.getValue());
+                                if (variableValue + (int) Math.sqrt(firstTerm.getValue()) == middleTerm.getValue()) {
+                                    return middleTerm.getLabelPower() == secondTerm.getLabelPower() / 2;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isValidTrinomialTerm(String argument) {
+        return StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()) &&
+                (Math.sqrt(Integer.parseInt(argument)) % 1 == 0) ||
+                (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
+                        new NumericValueVariable(argument).getLabelPower() % 2 == 0);
+    }
+    //</editor-fold>>
 }

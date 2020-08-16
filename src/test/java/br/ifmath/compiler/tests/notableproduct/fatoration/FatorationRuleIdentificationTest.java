@@ -372,7 +372,30 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }
 
-    //TODO fazer agrupamento
+    //TODO Criar a classe da regra para testar o metodo do Identification, e ai rodar o teste abaixo
+    @Test()
+    public void identify_simple_perfect_square_trinomial_scenery_one_with_success() {
+        //Arrange
+        String expression = "x^2 + 6x + 9";
 
+        String lastStepValueExpected = "x^2 + 2 * x * 3 + 3^2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResultExpected, finalStep.getReason());
+    }
 
 }
