@@ -31,7 +31,7 @@ public class FatorationRuleIdentificationTest {
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
         stepOneResult1Expected = stepOneBaseResult + "Fator comum em evidência.";
         stepOneResult2Expected = stepOneBaseResult + "Quadrado da diferença de dois termos.";
-        stepOneResult3Expected = stepOneBaseResult + "Produto da soma pela diferença de dois termos.";
+        stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito.";
         stepOneResult4Expected = stepOneBaseResult + "Cubo da soma de dois termos.";
         stepOneResult5Expected = stepOneBaseResult + "Cubo da diferença de dois termos.";
 
@@ -393,7 +393,7 @@ public class FatorationRuleIdentificationTest {
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepTwoResultExpected, finalStep.getReason());
     }

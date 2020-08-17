@@ -21,9 +21,12 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRuleCommonFactorAndGroup commonFactor;
 
+    private FatorationRulePerfectSquareTrinomialExpandedFormulaConversion trinomial;
+
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
         this.commonFactor = new FatorationRuleCommonFactorAndGroup();
+        this.trinomial = new FatorationRulePerfectSquareTrinomialExpandedFormulaConversion();
     }
 
     @Override
@@ -36,6 +39,10 @@ public class FatorationExpertSystem implements IExpertSystem {
 
         setUpQuadruples(sources);
 
+        /*TODO Pensar no caso de colocar uma variável como uma flag, que no identification vai identificar qual regra vai
+           entrar. Isso para não precisar ficar verificando a mesma coisa antes de entrar em toda regra.
+         */
+
         validateExpressions(sources);
         if (identification.match(sources)) {
             steps.addAll(identification.handle(sources));
@@ -43,7 +50,12 @@ public class FatorationExpertSystem implements IExpertSystem {
         }
 
         validateExpressions(sources);
-        if (commonFactor.match(sources)) {
+        if (trinomial.match(sources)) {
+            steps.addAll(trinomial.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+            //Inserir outras regras asociadas ao trinomio
+
+        } else if (commonFactor.match(sources)) {
             steps.addAll(commonFactor.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }

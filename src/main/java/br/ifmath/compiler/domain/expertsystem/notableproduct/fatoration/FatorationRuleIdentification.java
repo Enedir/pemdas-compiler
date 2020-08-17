@@ -3,12 +3,10 @@ package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration;
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +40,8 @@ public class FatorationRuleIdentification implements IRule {
             return "Fator comum em evidência.";
         }
 
-        if (isPerfectSquareTrinomial()) {
-
+        if (isPerfectSquareTrinomial(this.source)) {
+            return "Trinômio quadrado perfeito.";
         }
         return "";
     }
@@ -80,31 +78,30 @@ public class FatorationRuleIdentification implements IRule {
     //</editor-fold>>
 
     //<editor-fold desc="PerfectSquareTrinomial">
-    //TODO testar
-    private boolean isPerfectSquareTrinomial() {
-        ExpandedQuadruple root = this.source.getRootQuadruple();
+    public static boolean isPerfectSquareTrinomial(ThreeAddressCode source) {
+        ExpandedQuadruple root = source.getRootQuadruple();
         if (root.isPlus()) {
             if (isValidTrinomialTerm(root.getArgument1())) {
                 if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                    ExpandedQuadruple middleTermQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
+                    ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
                     if (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
                         NumericValueVariable middleTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
                         if (isValidTrinomialTerm(middleTermQuadruple.getArgument2())) {
 
                             NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
-                            NumericValueVariable secondTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
+                            NumericValueVariable secondTerm = new NumericValueVariable(middleTermQuadruple.getArgument2());
                             //Variável com variável
-                            if (StringUtil.match(root.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
-                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+                            if (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
+                                    (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()))) {
                                 if (firstTerm.getLabelVariable().equals(secondTerm.getLabelVariable())) {
                                     if ((firstTerm.getLabelPower() + secondTerm.getLabelPower()) / 2 == middleTerm.getLabelPower()) {
                                         if (firstTerm.getValue() == 1 && secondTerm.getValue() == 1 && middleTerm.getValue() == 2)
                                             return true;
                                         else if (firstTerm.getValue() != 1 && secondTerm.getValue() != 1) {
-                                            return (int) Math.sqrt(firstTerm.getValue()) + (int) Math.sqrt(secondTerm.getValue()) == middleTerm.getValue();
+                                            return (((int) Math.sqrt(firstTerm.getValue()) + (int) Math.sqrt(secondTerm.getValue())) * 2) == middleTerm.getValue();
                                         } else {
                                             int value = (firstTerm.getValue() != 1) ? (int) Math.sqrt(firstTerm.getValue()) : (int) Math.sqrt(secondTerm.getValue());
-                                            return value == middleTerm.getValue();
+                                            return (value * 2) == middleTerm.getValue();
                                         }
                                     }
 
@@ -114,23 +111,23 @@ public class FatorationRuleIdentification implements IRule {
                             //Número com número
                             if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
                                     StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                return Math.round(Math.sqrt(firstTerm.getValue()) + Math.sqrt(secondTerm.getValue())) == middleTerm.getValue();
+                                return ((Math.round(Math.sqrt(firstTerm.getValue()) + Math.sqrt(secondTerm.getValue()))) * 2) == middleTerm.getValue();
                             }
 
                             //Variável com número
-                            if (StringUtil.match(root.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
+                            if (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
                                     StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
                                 int variableValue = (firstTerm.getValue() == 1) ? 0 : (int) Math.sqrt(firstTerm.getValue());
-                                if (variableValue + (int) Math.sqrt(secondTerm.getValue()) == middleTerm.getValue()) {
+                                if (((variableValue + (int) Math.sqrt(secondTerm.getValue())) * 2) == middleTerm.getValue()) {
                                     return middleTerm.getLabelPower() == firstTerm.getLabelPower() / 2;
                                 }
                             }
 
                             //Número com variável
                             if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
-                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+                                    StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
                                 int variableValue = (secondTerm.getValue() == 1) ? 0 : (int) Math.sqrt(secondTerm.getValue());
-                                if (variableValue + (int) Math.sqrt(firstTerm.getValue()) == middleTerm.getValue()) {
+                                if (((variableValue + (int) Math.sqrt(firstTerm.getValue())) * 2) == middleTerm.getValue()) {
                                     return middleTerm.getLabelPower() == secondTerm.getLabelPower() / 2;
                                 }
                             }
@@ -142,11 +139,12 @@ public class FatorationRuleIdentification implements IRule {
         return false;
     }
 
-    public boolean isValidTrinomialTerm(String argument) {
+    private static boolean isValidTrinomialTerm(String argument) {
         return StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()) &&
                 (Math.sqrt(Integer.parseInt(argument)) % 1 == 0) ||
                 (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
-                        new NumericValueVariable(argument).getLabelPower() % 2 == 0);
+                        (new NumericValueVariable(argument).getLabelPower() % 2 == 0 &&
+                                (Math.sqrt(new NumericValueVariable(argument).getValue()) % 1 == 0)));
     }
     //</editor-fold>>
 }
