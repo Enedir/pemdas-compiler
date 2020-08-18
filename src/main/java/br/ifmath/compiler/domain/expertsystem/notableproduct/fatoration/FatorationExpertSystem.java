@@ -7,6 +7,9 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialExpandedFormulaConversion;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialSumSquare;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -21,12 +24,15 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRuleCommonFactorAndGroup commonFactor;
 
-    private FatorationRulePerfectSquareTrinomialExpandedFormulaConversion trinomial;
+    private FatorationRulePerfectSquareTrinomialExpandedFormulaConversion trinomialFormula;
+
+    private FatorationRulePerfectSquareTrinomialSumSquare trinomialSumSquare;
 
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
         this.commonFactor = new FatorationRuleCommonFactorAndGroup();
-        this.trinomial = new FatorationRulePerfectSquareTrinomialExpandedFormulaConversion();
+        this.trinomialFormula = new FatorationRulePerfectSquareTrinomialExpandedFormulaConversion();
+        this.trinomialSumSquare = new FatorationRulePerfectSquareTrinomialSumSquare();
     }
 
     @Override
@@ -50,10 +56,15 @@ public class FatorationExpertSystem implements IExpertSystem {
         }
 
         validateExpressions(sources);
-        if (trinomial.match(sources)) {
-            steps.addAll(trinomial.handle(sources));
+        if (trinomialFormula.match(sources)) {
+            steps.addAll(trinomialFormula.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
-            //Inserir outras regras asociadas ao trinomio
+
+            validateExpressions(sources);
+            if (trinomialSumSquare.match(sources)) {
+                steps.addAll(trinomialSumSquare.handle(sources));
+                sources = steps.get(steps.size() - 1).getSource();
+            }
 
         } else if (commonFactor.match(sources)) {
             steps.addAll(commonFactor.handle(sources));
@@ -153,7 +164,6 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     @Override
     public void setVariables(List<NumericValueVariable> variables) {
-
     }
 
 

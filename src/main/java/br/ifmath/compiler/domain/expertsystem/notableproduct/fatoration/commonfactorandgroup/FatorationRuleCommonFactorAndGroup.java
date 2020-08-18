@@ -1,10 +1,11 @@
-package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration;
+package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -209,7 +210,7 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         String argument = (isArgument1) ? argumentQuadruple.getArgument1() : argumentQuadruple.getArgument2();
         if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
             argument = this.source.findQuadrupleByResult(argument).getArgument1();
-        String newArgument = "";
+        String newArgument;
         if (StringUtil.match(commonFactor, RegexPattern.VARIABLE.toString()) && argument.contains(commonFactor)) {
             if (argument.equals(commonFactor))
                 newArgument = "1";

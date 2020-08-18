@@ -36,13 +36,17 @@ public class FatorationRuleIdentification implements IRule {
     }
 
     private String identify() {
+        if (isPerfectSquareTrinomial(this.source)) {
+            return "Trinômio quadrado perfeito.\n\nNote que a expressão é formada " +
+                    "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
+                    "produto entre o priemiro termo e o segundo termo.";
+        }
+
         if (isCommonFactor(this.source.getRootQuadruple(), this.source)) {
             return "Fator comum em evidência.";
         }
 
-        if (isPerfectSquareTrinomial(this.source)) {
-            return "Trinômio quadrado perfeito.";
-        }
+
         return "";
     }
 
@@ -84,15 +88,18 @@ public class FatorationRuleIdentification implements IRule {
             if (isValidTrinomialTerm(root.getArgument1())) {
                 if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                     ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
-                    if (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+                    if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
                         NumericValueVariable middleTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
                         if (isValidTrinomialTerm(middleTermQuadruple.getArgument2())) {
 
                             NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
                             NumericValueVariable secondTerm = new NumericValueVariable(middleTermQuadruple.getArgument2());
                             //Variável com variável
-                            if (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
-                                    (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()))) {
+                            if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                    RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
+                                    (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))) {
                                 if (firstTerm.getLabelVariable().equals(secondTerm.getLabelVariable())) {
                                     if ((firstTerm.getLabelPower() + secondTerm.getLabelPower()) / 2 == middleTerm.getLabelPower()) {
                                         if (firstTerm.getValue() == 1 && secondTerm.getValue() == 1 && middleTerm.getValue() == 2)
@@ -115,7 +122,8 @@ public class FatorationRuleIdentification implements IRule {
                             }
 
                             //Variável com número
-                            if (StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
+                            if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                    RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
                                     StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
                                 int variableValue = (firstTerm.getValue() == 1) ? 0 : (int) Math.sqrt(firstTerm.getValue());
                                 if (((variableValue + (int) Math.sqrt(secondTerm.getValue())) * 2) == middleTerm.getValue()) {
@@ -125,7 +133,8 @@ public class FatorationRuleIdentification implements IRule {
 
                             //Número com variável
                             if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
-                                    StringUtil.match(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+                                    StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
                                 int variableValue = (secondTerm.getValue() == 1) ? 0 : (int) Math.sqrt(secondTerm.getValue());
                                 if (((variableValue + (int) Math.sqrt(firstTerm.getValue())) * 2) == middleTerm.getValue()) {
                                     return middleTerm.getLabelPower() == secondTerm.getLabelPower() / 2;
