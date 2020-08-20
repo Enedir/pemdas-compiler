@@ -42,9 +42,9 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
         if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
             root = this.source.findQuadrupleByResult(root.getArgument1());
         ExpandedQuadruple middleQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
-        root.setArgument1(this.convertToRaisedByTwo(this.source.getRootQuadruple().getArgument1()));
-        middleQuadruple.setArgument2(this.convertToRaisedByTwo(middleQuadruple.getArgument2()));
         this.convertMiddleTerm(middleQuadruple, root);
+        middleQuadruple.setArgument2(this.convertToRaisedByTwo(middleQuadruple.getArgument2()));
+        root.setArgument1(this.convertToRaisedByTwo(this.source.getRootQuadruple().getArgument1()));
     }
 
     private String convertToRaisedByTwo(String argument) {
@@ -56,25 +56,32 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
         if (nvv.getValue() > 1)
             nvv.setValue((int) Math.sqrt(nvv.getValue()));
 
-        if (nvv.getLabelPower() >= 4)
-            nvv.setLabelPower(nvv.getLabelPower() / 2);
+        if (nvv.getLabelPower() < 4)
+            return nvv.toString();
 
-        return nvv.toString();
+        nvv.setLabelPower(nvv.getLabelPower() / 2);
+        ExpandedQuadruple parenthesesQuadruple = new ExpandedQuadruple("", nvv.toString(), "", this.source.retrieveNextTemporary(), 0, 1);
+        this.source.getExpandedQuadruples().add(parenthesesQuadruple);
+        ExpandedQuadruple exponentQuadruple = new ExpandedQuadruple("^", parenthesesQuadruple.getResult(), "2", this.source.retrieveNextTemporary(), 0, 0);
+        this.source.getExpandedQuadruples().add(exponentQuadruple);
+        return exponentQuadruple.getResult();
     }
 
     private void convertMiddleTerm(ExpandedQuadruple middleQuadruple, ExpandedQuadruple firstArgument) {
-        middleQuadruple.setArgument1(getConvertedTerm(middleQuadruple.getArgument2()));
-        this.source.addQuadrupleToList("*",this.getConvertedTerm(firstArgument.getArgument1()),middleQuadruple.getResult(),firstArgument,false);
-        this.source.addQuadrupleToList("*","2", firstArgument.getArgument2(), firstArgument,false);
+        middleQuadruple.setArgument1(getConvertedTerm(this.source.findDirectSonArgument(middleQuadruple.getArgument2(), true)));
+        this.source.addQuadrupleToList("*", this.getConvertedTerm(this.source.findDirectSonArgument(firstArgument.getArgument1(), true)), middleQuadruple.getResult(), firstArgument, false);
+        this.source.addQuadrupleToList("*", "2", firstArgument.getArgument2(), firstArgument, false);
     }
 
     private String getConvertedTerm(String argument) {
+        if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()))
+            return String.valueOf((int) Math.sqrt(Integer.parseInt(argument)));
+
         String argumentNumber = argument.substring(0, argument.indexOf('^'));
         if (StringUtil.match(argumentNumber, RegexPattern.NATURAL_NUMBER.toString()))
             return argumentNumber;
         NumericValueVariable nvv = new NumericValueVariable(argument);
-        if (nvv.getLabelPower() == 2)
-            nvv.setLabelPower(nvv.getLabelPower() - 1);
+        nvv.setLabelPower(nvv.getLabelPower() / 2);
         return nvv.toString();
     }
 }

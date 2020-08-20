@@ -89,7 +89,7 @@ public class FatorationRuleIdentification implements IRule {
                 if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                     ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
                     if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
-                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
                         NumericValueVariable middleTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
                         if (isValidTrinomialTerm(middleTermQuadruple.getArgument2())) {
 
@@ -118,7 +118,7 @@ public class FatorationRuleIdentification implements IRule {
                             //Número com número
                             if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
                                     StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                return ((Math.round(Math.sqrt(firstTerm.getValue()) + Math.sqrt(secondTerm.getValue()))) * 2) == middleTerm.getValue();
+                                return ((Math.round(Math.sqrt(firstTerm.getValue()) * Math.sqrt(secondTerm.getValue()))) * 2) == middleTerm.getValue();
                             }
 
                             //Variável com número

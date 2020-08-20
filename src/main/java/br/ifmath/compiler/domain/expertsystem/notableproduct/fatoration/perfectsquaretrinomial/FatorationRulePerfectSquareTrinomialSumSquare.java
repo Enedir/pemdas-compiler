@@ -35,10 +35,12 @@ public class FatorationRulePerfectSquareTrinomialSumSquare implements IRule {
     }
 
     private ThreeAddressCode generateSumSquare() {
-        ExpandedQuadruple lastQuadruple = this.getLastQuadruple(this.source.getRootQuadruple());
-        String argument1 = this.source.findQuadrupleByArgument(lastQuadruple.getResult()).getArgument1();
-        String argument2 = lastQuadruple.getArgument1();
-        ExpandedQuadruple coreQuadruple = new ExpandedQuadruple(lastQuadruple.getOperator(), argument1, argument2, "T1", 0, 1);
+        ExpandedQuadruple middleQuadruple = this.source.findQuadrupleByResult(this.source.getRootQuadruple().getArgument2());
+        middleQuadruple = this.source.findQuadrupleByResult(middleQuadruple.getArgument2());
+        String argument1 = middleQuadruple.getArgument1();
+        middleQuadruple = this.source.findQuadrupleByResult(middleQuadruple.getArgument2());
+        String argument2 = middleQuadruple.getArgument1();
+        ExpandedQuadruple coreQuadruple = new ExpandedQuadruple(middleQuadruple.getOperator(), argument1, argument2, "T1", 0, 1);
 
         List<ExpandedQuadruple> newQuadruples = new ArrayList<>();
         newQuadruples.add(coreQuadruple);

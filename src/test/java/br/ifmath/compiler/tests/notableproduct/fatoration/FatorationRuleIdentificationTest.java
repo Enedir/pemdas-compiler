@@ -406,6 +406,122 @@ public class FatorationRuleIdentificationTest {
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepThreeResult3Expected, finalStep.getReason());
     }
-    //TODO fazer mais testes do trinomio
+
+    @Test()
+    public void identify_only_numbers_perfect_square_trinomial_scenery_one_with_success() {
+        //Arrange
+        String expression = "25 + 40 + 16";
+
+        String stepTwoValueExpected = "5^2 + 2 * 5 * 4 + 4^2";
+        String lastStepValueExpected = "(5 + 4) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_only_numbers_perfect_square_trinomial_scenery_two_with_success() {
+        //Arrange
+        String expression = "36 + 84 - 49";
+
+        String stepTwoValueExpected = "6^2 + 2 * 6 * 7 - 7^2";
+        String lastStepValueExpected = "(6 - 7) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_only_variables_perfect_square_trinomial_scenery_one_with_success() {
+        //Arrange
+        String expression = "a^4 + 2a^3 - a^2";
+
+        String stepTwoValueExpected = "(a^2  ) ^ 2 + 2 * a^2 * a - a^2";
+        String lastStepValueExpected = "(a^2 - a) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_only_variables_perfect_square_trinomial_scenery_two_with_success() {
+        //Arrange
+        String expression = "a^8 + 2a^10 - a^12";
+
+        String stepTwoValueExpected = "(a^4  ) ^ 2 + 2 * a^4 * a^6 - (a^6  ) ^ 2";
+        String lastStepValueExpected = "(a^4 - a^6) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+    //TODO fazer mais testes do trinomio com variavel e número junto
 
 }

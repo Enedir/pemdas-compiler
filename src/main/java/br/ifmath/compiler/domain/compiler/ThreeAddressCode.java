@@ -67,15 +67,16 @@ public class ThreeAddressCode {
      *
      * @return {@link ExpandedQuadruple} raiz.
      */
-    public ExpandedQuadruple getRootQuadruple(){
+    public ExpandedQuadruple getRootQuadruple() {
         return this.findQuadrupleByResult(left);
     }
 
     /**
      * Obtem a ultima quadrupla da lista de quadrupla
+     *
      * @return {@link ExpandedQuadruple} na ultima posicao da {@link List}.
      */
-    public ExpandedQuadruple getLastQuadruple(){
+    public ExpandedQuadruple getLastQuadruple() {
         return this.getExpandedQuadruples().get(getExpandedQuadruples().size() - 1);
     }
 
@@ -347,7 +348,7 @@ public class ThreeAddressCode {
     }
 
     /**
-     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}
+     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}.
      *
      * @param quadrupleResult {@link String} que eh o {@code result} da {@link ExpandedQuadruple}
      *                        de onde sera encontrado o pai
@@ -362,6 +363,25 @@ public class ThreeAddressCode {
         }
         return father;
 
+    }
+
+    /**
+     * Encontra o próximo argumento válido do filho.
+     * @param quadrupleResult {@link String} representando uma variável temporária que será analisada
+     * @param isArgument1 {@link Boolean} que indica se o argument 1 ou 2 será analisado e obtido
+     * @return {@link String} do argumento correspondente do filho
+     */
+    public String findDirectSonArgument(String quadrupleResult, boolean isArgument1) {
+        if (this.getLeft().equals(quadrupleResult))
+            return null;
+        if(!StringUtil.match(quadrupleResult,RegexPattern.TEMPORARY_VARIABLE.toString()))
+            return quadrupleResult;
+        ExpandedQuadruple son = this.findQuadrupleByResult(quadrupleResult);
+        String argument = (isArgument1) ? son.getArgument1() : son.getArgument2();
+        if (StringUtil.match(argument,RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.findDirectSonArgument(argument,isArgument1);
+        }
+        return argument;
     }
 
     /**
