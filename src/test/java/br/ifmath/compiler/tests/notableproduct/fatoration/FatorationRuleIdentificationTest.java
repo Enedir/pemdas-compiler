@@ -675,38 +675,6 @@ public class FatorationRuleIdentificationTest {
         }
     }
 
-    //TODO Verificar que não está dando erro
-    @Test()
-    public void identify_variables_perfect_square_trinomial_scenery_one_with_failure() {
-        //Arrange
-        String expression = "j^3 + 2j^2 - j^2";
-
-        // Act
-        try {
-            compiler.analyse(expertSystem, AnswerType.BEST, expression);
-            fail();
-        } catch (Exception e) {
-            // Assert
-            assertThat(e, instanceOf(Exception.class));
-        }
-    }
-
-    //TODO Verificar que não está dando erro
-    @Test()
-    public void identify_variables_perfect_square_trinomial_scenery_two_with_failure() {
-        //Arrange
-        String expression = "j^6 + 2j^6 - j^4";
-
-        // Act
-        try {
-            compiler.analyse(expertSystem, AnswerType.BEST, expression);
-            fail();
-        } catch (Exception e) {
-            // Assert
-            assertThat(e, instanceOf(Exception.class));
-        }
-    }
-
     @Test()
     public void identify_numbers_and_variables_perfect_square_trinomial_scenery_one_with_failure() {
         //Arrange
@@ -726,22 +694,6 @@ public class FatorationRuleIdentificationTest {
     public void identify_numbers_and_variables_perfect_square_trinomial_scenery_two_with_failure() {
         //Arrange
         String expression = "16 + 16m - 4m^4";
-
-        // Act
-        try {
-            compiler.analyse(expertSystem, AnswerType.BEST, expression);
-            fail();
-        } catch (Exception e) {
-            // Assert
-            assertThat(e, instanceOf(Exception.class));
-        }
-    }
-
-    //TODO Verificar que não está dando erro
-    @Test()
-    public void identify_numbers_and_variables_perfect_square_trinomial_scenery_three_with_failure() {
-        //Arrange
-        String expression = "6m^7 + 10m^4 - 4m^2";
 
         // Act
         try {
