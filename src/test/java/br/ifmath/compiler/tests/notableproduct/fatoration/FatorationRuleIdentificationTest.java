@@ -40,12 +40,14 @@ public class FatorationRuleIdentificationTest {
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
         stepTwoResult2Expected = "Removendo os parênteses dos polinômios.";
-        stepTwoResult3Expected = "Escrevemos a expressão no formato a^2 + 2 * a * b \\pm b^2, identificando os " +
+        stepTwoResult3Expected = "Escrevemos a expressão no formato a^2 + 2 * a * b &#177; b^2, identificando os " +
                 "elementos que estão elevados ao quadrado e os respectivos produtos.";
         stepThreeResult3Expected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "diferença, no formato (a \\pm b)^2";
+                "diferença, no formato (a &#177; b)^2";
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
     }
+
+    //<editor-fold desc="Common Factor">
 
     @Test()
     public void identify_simple_terms_common_factor_scenery_one_with_success() {
@@ -378,13 +380,46 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResult1Expected, finalStep.getReason());
     }
 
+    //</editor-fold>
+
+
+    //<editor-fold desc="Perfect Square Trinomial">
     @Test()
     public void identify_simple_perfect_square_trinomial_scenery_one_with_success() {
         //Arrange
         String expression = "x^2 + 6x + 9";
 
-        String stepTwoValueExpected = "x^2 + 2 * x * 3 + 3^2";
+        String stepTwoValueExpected = "(x  ) ^ 2 + 2 * x * 3 + (3  ) ^ 2";
         String lastStepValueExpected = "(x + 3) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_simple_perfect_square_trinomial_scenery_two_with_success() {
+        //Arrange
+        String expression = "36 + 12x^3 + x^6";
+
+        String stepTwoValueExpected = "(6  ) ^ 2 + 2 * 6 * x^3 + (x^3  ) ^ 2";
+        String lastStepValueExpected = "(6 + x^3) ^ 2";
 
         // Act
         IAnswer answer = null;
@@ -412,7 +447,7 @@ public class FatorationRuleIdentificationTest {
         //Arrange
         String expression = "25 + 40 + 16";
 
-        String stepTwoValueExpected = "5^2 + 2 * 5 * 4 + 4^2";
+        String stepTwoValueExpected = "(5  ) ^ 2 + 2 * 5 * 4 + (4  ) ^ 2";
         String lastStepValueExpected = "(5 + 4) ^ 2";
 
         // Act
@@ -441,7 +476,7 @@ public class FatorationRuleIdentificationTest {
         //Arrange
         String expression = "36 + 84 - 49";
 
-        String stepTwoValueExpected = "6^2 + 2 * 6 * 7 - 7^2";
+        String stepTwoValueExpected = "(6  ) ^ 2 + 2 * 6 * 7 - (7  ) ^ 2";
         String lastStepValueExpected = "(6 - 7) ^ 2";
 
         // Act
@@ -470,7 +505,7 @@ public class FatorationRuleIdentificationTest {
         //Arrange
         String expression = "a^4 + 2a^3 - a^2";
 
-        String stepTwoValueExpected = "(a^2  ) ^ 2 + 2 * a^2 * a - a^2";
+        String stepTwoValueExpected = "(a^2  ) ^ 2 + 2 * a^2 * a - (a  ) ^ 2";
         String lastStepValueExpected = "(a^2 - a) ^ 2";
 
         // Act
@@ -522,6 +557,203 @@ public class FatorationRuleIdentificationTest {
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepThreeResult3Expected, finalStep.getReason());
     }
-    //TODO fazer mais testes do trinomio com variavel e número junto
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_square_trinomial_scenery_one_with_success() {
+        //Arrange
+        String expression = "4b^2 + 20b - 25";
+
+        String stepTwoValueExpected = "(2b  ) ^ 2 + 2 * 2b * 5 - (5  ) ^ 2";
+        String lastStepValueExpected = "(2b - 5) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_square_trinomial_scenery_two_with_success() {
+        //Arrange
+        String expression = "64 + 64t^3 + 16t^6";
+
+        String stepTwoValueExpected = "(8  ) ^ 2 + 2 * 8 * 4t^3 + (4t^3  ) ^ 2";
+        String lastStepValueExpected = "(8 + 4t^3) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_square_trinomial_scenery_three_with_success() {
+        //Arrange
+        String expression = "25g^8 + 40g^5 + 16g^2";
+
+        String stepTwoValueExpected = "(5g^4  ) ^ 2 + 2 * 5g^4 * 4g + (4g  ) ^ 2";
+        String lastStepValueExpected = "(5g^4 + 4g) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_numbers_perfect_square_trinomial_scenery_one_with_failure() {
+        //Arrange
+        String expression = "4 + 7 - 3";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
+    @Test()
+    public void identify_numbers_perfect_square_trinomial_scenery_two_with_failure() {
+        //Arrange
+        String expression = "15 + 32 + 4";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
+    //TODO Verificar que não está dando erro
+    @Test()
+    public void identify_variables_perfect_square_trinomial_scenery_one_with_failure() {
+        //Arrange
+        String expression = "j^3 + 2j^2 - j^2";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
+    //TODO Verificar que não está dando erro
+    @Test()
+    public void identify_variables_perfect_square_trinomial_scenery_two_with_failure() {
+        //Arrange
+        String expression = "j^6 + 2j^6 - j^4";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
+    @Test()
+    public void identify_numbers_and_variables_perfect_square_trinomial_scenery_one_with_failure() {
+        //Arrange
+        String expression = "2m^2 + 11m - 8";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
+    @Test()
+    public void identify_numbers_and_variables_perfect_square_trinomial_scenery_two_with_failure() {
+        //Arrange
+        String expression = "16 + 16m - 4m^4";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
+    //TODO Verificar que não está dando erro
+    @Test()
+    public void identify_numbers_and_variables_perfect_square_trinomial_scenery_three_with_failure() {
+        //Arrange
+        String expression = "6m^7 + 10m^4 - 4m^2";
+
+        // Act
+        try {
+            compiler.analyse(expertSystem, AnswerType.BEST, expression);
+            fail();
+        } catch (Exception e) {
+            // Assert
+            assertThat(e, instanceOf(Exception.class));
+        }
+    }
+
+    //</editor-fold>
+    //TODO fazer proxima regra
 
 }

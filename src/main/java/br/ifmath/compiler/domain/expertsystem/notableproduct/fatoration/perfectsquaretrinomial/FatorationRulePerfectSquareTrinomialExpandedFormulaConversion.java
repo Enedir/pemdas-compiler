@@ -32,7 +32,7 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Escrevemos a " +
-                "expressão no formato a^2 + 2 * a * b \\pm b^2, identificando os elementos que estão elevados ao " +
+                "expressão no formato a^2 + 2 * a * b &#177; b^2, identificando os elementos que estão elevados ao " +
                 "quadrado e os respectivos produtos."));
         return steps;
     }
@@ -48,18 +48,11 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
     }
 
     private String convertToRaisedByTwo(String argument) {
-        if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
-            int sqrtValue = (int) Math.sqrt(Integer.parseInt(argument));
-            return sqrtValue + "^2";
-        }
         NumericValueVariable nvv = new NumericValueVariable(argument);
-        if (nvv.getValue() > 1)
+        if (nvv.getValue() != 1)
             nvv.setValue((int) Math.sqrt(nvv.getValue()));
-
-        if (nvv.getLabelPower() < 4)
-            return nvv.toString();
-
-        nvv.setLabelPower(nvv.getLabelPower() / 2);
+        if (nvv.getLabelPower() > 1)
+            nvv.setLabelPower(nvv.getLabelPower() / 2);
         ExpandedQuadruple parenthesesQuadruple = new ExpandedQuadruple("", nvv.toString(), "", this.source.retrieveNextTemporary(), 0, 1);
         this.source.getExpandedQuadruples().add(parenthesesQuadruple);
         ExpandedQuadruple exponentQuadruple = new ExpandedQuadruple("^", parenthesesQuadruple.getResult(), "2", this.source.retrieveNextTemporary(), 0, 0);
@@ -77,11 +70,10 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
         if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()))
             return String.valueOf((int) Math.sqrt(Integer.parseInt(argument)));
 
-        String argumentNumber = argument.substring(0, argument.indexOf('^'));
-        if (StringUtil.match(argumentNumber, RegexPattern.NATURAL_NUMBER.toString()))
-            return argumentNumber;
         NumericValueVariable nvv = new NumericValueVariable(argument);
         nvv.setLabelPower(nvv.getLabelPower() / 2);
+        if (nvv.getValue() != 1)
+            nvv.setValue((int) Math.sqrt(nvv.getValue()));
         return nvv.toString();
     }
 }
