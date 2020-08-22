@@ -43,6 +43,10 @@ public class FatorationRuleIdentification implements IRule {
                     "produto entre o priemiro termo e o segundo termo.";
         }
 
+        if (isDifferenceOfTwoSquares(this.source)) {
+            return "Diferença de dois quadrados.";
+        }
+
         if (isCommonFactor(this.source.getRootQuadruple(), this.source)) {
             return "Fator comum em evidência.";
         }
@@ -50,7 +54,6 @@ public class FatorationRuleIdentification implements IRule {
 
         throw new InvalidAlgebraicExpressionException("Regra não identificada");
     }
-
 
     //<editor-fold desc="CommonFactor">
 
@@ -86,13 +89,13 @@ public class FatorationRuleIdentification implements IRule {
     public static boolean isPerfectSquareTrinomial(ThreeAddressCode source) {
         ExpandedQuadruple root = source.getRootQuadruple();
         if (root.isPlus()) {
-            if (isValidTrinomialTerm(root.getArgument1())) {
+            if (isReducibleTerm(root.getArgument1())) {
                 if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                     ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
                     if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
                             RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
                         NumericValueVariable middleTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
-                        if (isValidTrinomialTerm(middleTermQuadruple.getArgument2())) {
+                        if (isReducibleTerm(middleTermQuadruple.getArgument2())) {
 
                             NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
                             NumericValueVariable secondTerm = new NumericValueVariable(middleTermQuadruple.getArgument2());
@@ -148,7 +151,7 @@ public class FatorationRuleIdentification implements IRule {
         return false;
     }
 
-    private static boolean isValidTrinomialTerm(String argument) {
+    private static boolean isReducibleTerm(String argument) {
         return StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()) &&
                 (Math.sqrt(Integer.parseInt(argument)) % 1 == 0) ||
                 (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
@@ -156,4 +159,14 @@ public class FatorationRuleIdentification implements IRule {
                                 (Math.sqrt(new NumericValueVariable(argument).getValue()) % 1 == 0)));
     }
     //</editor-fold>>
+
+    public static boolean isDifferenceOfTwoSquares(ThreeAddressCode source) {
+        if (source.getExpandedQuadruples().size() == 1) {
+            ExpandedQuadruple root = source.getRootQuadruple();
+            if (root.isMinus()) {
+                return isReducibleTerm(root.getArgument1()) && isReducibleTerm(root.getArgument2());
+            }
+        }
+        return false;
+    }
 }

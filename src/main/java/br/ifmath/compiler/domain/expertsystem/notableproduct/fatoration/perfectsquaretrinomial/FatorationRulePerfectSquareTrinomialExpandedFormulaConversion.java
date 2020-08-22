@@ -48,15 +48,19 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
     }
 
     private String convertToRaisedByTwo(String argument) {
+        return reduceToRaisedByTwo(argument, this.source);
+    }
+
+    public static String reduceToRaisedByTwo(String argument, ThreeAddressCode source) {
         NumericValueVariable nvv = new NumericValueVariable(argument);
         if (nvv.getValue() != 1)
             nvv.setValue((int) Math.sqrt(nvv.getValue()));
         if (nvv.getLabelPower() > 1)
             nvv.setLabelPower(nvv.getLabelPower() / 2);
-        ExpandedQuadruple parenthesesQuadruple = new ExpandedQuadruple("", nvv.toString(), "", this.source.retrieveNextTemporary(), 0, 1);
-        this.source.getExpandedQuadruples().add(parenthesesQuadruple);
-        ExpandedQuadruple exponentQuadruple = new ExpandedQuadruple("^", parenthesesQuadruple.getResult(), "2", this.source.retrieveNextTemporary(), 0, 0);
-        this.source.getExpandedQuadruples().add(exponentQuadruple);
+        ExpandedQuadruple parenthesesQuadruple = new ExpandedQuadruple("", nvv.toString(), "", source.retrieveNextTemporary(), 0, 1);
+        source.getExpandedQuadruples().add(parenthesesQuadruple);
+        ExpandedQuadruple exponentQuadruple = new ExpandedQuadruple("^", parenthesesQuadruple.getResult(), "2", source.retrieveNextTemporary(), 0, 0);
+        source.getExpandedQuadruples().add(exponentQuadruple);
         return exponentQuadruple.getResult();
     }
 

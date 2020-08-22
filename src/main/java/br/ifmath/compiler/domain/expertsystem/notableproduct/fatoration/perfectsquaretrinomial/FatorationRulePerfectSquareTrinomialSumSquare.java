@@ -30,7 +30,7 @@ public class FatorationRulePerfectSquareTrinomialSumSquare implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Identificamos os " +
-                "elementos a e b e escrevemos o resultado como o quadrado da diferença, no formato (a &#177; b)^2"));
+                "elementos a e b e escrevemos o resultado como o quadrado da diferença, no formato (a &#177; b)^2."));
         return steps;
     }
 

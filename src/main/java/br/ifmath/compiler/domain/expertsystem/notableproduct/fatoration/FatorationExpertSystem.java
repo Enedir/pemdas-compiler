@@ -8,6 +8,8 @@ import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSExpandedFormula;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSSumDifferenceProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialExpandedFormulaConversion;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialSumSquare;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
@@ -28,11 +30,17 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRulePerfectSquareTrinomialSumSquare trinomialSumSquare;
 
+    private FatorationRuleDOTSExpandedFormula diffSquaresFormula;
+
+    private FatorationRuleDOTSSumDifferenceProduct diffSquaresProduct;
+
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
         this.commonFactor = new FatorationRuleCommonFactorAndGroup();
         this.trinomialFormula = new FatorationRulePerfectSquareTrinomialExpandedFormulaConversion();
         this.trinomialSumSquare = new FatorationRulePerfectSquareTrinomialSumSquare();
+        this.diffSquaresFormula = new FatorationRuleDOTSExpandedFormula();
+        this.diffSquaresProduct = new FatorationRuleDOTSSumDifferenceProduct();
     }
 
     @Override
@@ -65,6 +73,16 @@ public class FatorationExpertSystem implements IExpertSystem {
                 steps.addAll(trinomialSumSquare.handle(sources));
                 sources = steps.get(steps.size() - 1).getSource();
             }
+
+        } else if (diffSquaresFormula.match(sources)) {
+            steps.addAll(diffSquaresFormula.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+
+            if (diffSquaresProduct.match(sources)) {
+                steps.addAll(diffSquaresProduct.handle(sources));
+                sources = steps.get(steps.size() - 1).getSource();
+            }
+
 
         } else if (commonFactor.match(sources)) {
             steps.addAll(commonFactor.handle(sources));
