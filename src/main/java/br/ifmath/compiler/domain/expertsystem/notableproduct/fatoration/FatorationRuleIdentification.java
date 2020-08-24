@@ -43,6 +43,14 @@ public class FatorationRuleIdentification implements IRule {
                     "produto entre o priemiro termo e o segundo termo.";
         }
 
+        if (isPerfectCube(this.source)) {
+//            String result = "Cubo perfeito ";
+            //TODO implementar o isSumCube
+//            if (isSumCube())
+//                return "(cubo da soma)";
+//            return "(cubo da diferença)";
+        }
+
         if (isDifferenceOfTwoSquares(this.source)) {
             return "Diferença de dois quadrados.";
         }
@@ -54,6 +62,7 @@ public class FatorationRuleIdentification implements IRule {
 
         throw new InvalidAlgebraicExpressionException("Regra não identificada");
     }
+
 
     //<editor-fold desc="CommonFactor">
 
@@ -89,13 +98,13 @@ public class FatorationRuleIdentification implements IRule {
     public static boolean isPerfectSquareTrinomial(ThreeAddressCode source) {
         ExpandedQuadruple root = source.getRootQuadruple();
         if (root.isPlus()) {
-            if (isReducibleTerm(root.getArgument1())) {
+            if (isSquareReducibleTerm(root.getArgument1())) {
                 if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                     ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
                     if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
                             RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
                         NumericValueVariable middleTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
-                        if (isReducibleTerm(middleTermQuadruple.getArgument2())) {
+                        if (isSquareReducibleTerm(middleTermQuadruple.getArgument2())) {
 
                             NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
                             NumericValueVariable secondTerm = new NumericValueVariable(middleTermQuadruple.getArgument2());
@@ -151,7 +160,7 @@ public class FatorationRuleIdentification implements IRule {
         return false;
     }
 
-    private static boolean isReducibleTerm(String argument) {
+    private static boolean isSquareReducibleTerm(String argument) {
         return StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()) &&
                 (Math.sqrt(Integer.parseInt(argument)) % 1 == 0) ||
                 (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
@@ -160,13 +169,61 @@ public class FatorationRuleIdentification implements IRule {
     }
     //</editor-fold>>
 
+    //<editor-fold desc="DifferenceOfTwoSquares">
     public static boolean isDifferenceOfTwoSquares(ThreeAddressCode source) {
         if (source.getExpandedQuadruples().size() == 1) {
             ExpandedQuadruple root = source.getRootQuadruple();
             if (root.isMinus()) {
-                return isReducibleTerm(root.getArgument1()) && isReducibleTerm(root.getArgument2());
+                return isSquareReducibleTerm(root.getArgument1()) && isSquareReducibleTerm(root.getArgument2());
             }
         }
         return false;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="PerfectCube">
+
+    public static boolean isPerfectCube(ThreeAddressCode source) {
+        ExpandedQuadruple root = source.getRootQuadruple();
+        ExpandedQuadruple last = source.getLastQuadruple();
+
+        //TODO fazer ifs apropriados
+
+        //Variável com variável
+        if (isCubeReducibleVariableTerm(root.getArgument1()) && isCubeReducibleVariableTerm(last.getArgument2())) {
+
+        }
+
+        //Número com número
+        if (isCubeReducibleNumericTerm(root.getArgument1()) && isCubeReducibleNumericTerm(last.getArgument2())) {
+
+        }
+
+        //Variável com número
+        if (isCubeReducibleVariableTerm(root.getArgument1()) && isCubeReducibleNumericTerm(last.getArgument2())) {
+
+        }
+
+        //Número com variável
+        if (isCubeReducibleNumericTerm(root.getArgument1()) && isCubeReducibleVariableTerm(last.getArgument2())) {
+
+        }
+        return false;
+    }
+
+    private static boolean isCubeReducibleNumericTerm(String argument) {
+        return StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()) &&
+                (Math.cbrt(Integer.parseInt(argument)) % 1 == 0);
+
+    }
+
+    private static boolean isCubeReducibleVariableTerm(String argument) {
+        return StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
+                (new NumericValueVariable(argument).getLabelPower() % 3 == 0 &&
+                        (Math.cbrt(new NumericValueVariable(argument).getValue()) % 1 == 0));
+
+    }
+
+    //</editor-fold>
+
 }

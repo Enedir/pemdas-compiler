@@ -888,6 +888,34 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepThreeResult4Expected, finalStep.getReason());
     }
     //</editor-fold>
-    //TODO fazer proxima regra
+
+    @Test()
+    public void identify_simple_terms_perfect_sum_cube_scenery_one_with_success() {
+        //Arrange
+        String expression = "x^3 + 6x^2 + 12x + 8";
+
+        String stepTwoValueExpected = "(x  ) ^ 3 + 3 * ( x ) ^ 2 * 2 + 3 * x * ( 2 ) ^ 2 + ( 2 ) ^ 3";
+        String lastStepValueExpected = "(x + 2)^3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult4Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult4Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult4Expected, finalStep.getReason());
+    }
 
 }
