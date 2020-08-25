@@ -50,18 +50,4 @@ public class FatorationRulePerfectSquareTrinomialSumSquare implements IRule {
 
         return new ThreeAddressCode("T2",newQuadruples);
     }
-
-    private ExpandedQuadruple getLastQuadruple(ExpandedQuadruple iterationQuadruple) {
-        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.getLastQuadruple(source.findQuadrupleByResult(iterationQuadruple.getArgument1()));
-        }
-
-        if (iterationQuadruple.isNegative())
-            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
-
-        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.getLastQuadruple(source.findQuadrupleByResult(iterationQuadruple.getArgument2()));
-        }
-        return iterationQuadruple;
-    }
 }
