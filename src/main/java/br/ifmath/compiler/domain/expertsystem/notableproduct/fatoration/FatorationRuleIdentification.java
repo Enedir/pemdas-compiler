@@ -44,11 +44,7 @@ public class FatorationRuleIdentification implements IRule {
         }
 
         if (isPerfectCube(this.source)) {
-//            String result = "Cubo perfeito ";
-            //TODO implementar o isSumCube
-//            if (isSumCube())
-//                return "(cubo da soma)";
-//            return "(cubo da diferença)";
+            return (isCubeDifference(this.source)) ? "Cubo perfeito (cubo da diferença)" : "Cubo perfeito (cubo da soma)";
         }
 
         if (isDifferenceOfTwoSquares(this.source)) {
@@ -62,7 +58,6 @@ public class FatorationRuleIdentification implements IRule {
 
         throw new InvalidAlgebraicExpressionException("Regra não identificada");
     }
-
 
     //<editor-fold desc="CommonFactor">
 
@@ -189,7 +184,6 @@ public class FatorationRuleIdentification implements IRule {
         ExpandedQuadruple middleQuadruple = source.findQuadrupleByResult(root.getArgument2());
 
 
-        //TODO Testar ifs
         //Variável com variável
         if (isCubeReducibleVariableTerm(root.getArgument1()) && isCubeReducibleVariableTerm(last.getArgument2())) {
             NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
@@ -299,10 +293,21 @@ public class FatorationRuleIdentification implements IRule {
             middleTermNVV.setAttributesFromString(nextQuadruple.getArgument1());
 
             return middleTermNVV.getLabel().equals(variableTerm.getLabelVariable()) &&
-                    middleTermNVV.getValue() == (3 * (variableTermValue * (Math.pow(numberValue, 2) * numberValue)));
+                    middleTermNVV.getValue() == (3 * (variableTermValue * (Math.pow(numberValue, 2))));
         }
         return false;
     }
+
+
+    private static boolean isCubeDifference(ThreeAddressCode source) {
+        ExpandedQuadruple root = source.getRootQuadruple();
+        if (root.isMinus()) {
+            ExpandedQuadruple lastQuadruple = getLastQuadruple(root, source);
+            return lastQuadruple.isMinus();
+        }
+        return false;
+    }
+
     //</editor-fold>
 
 }

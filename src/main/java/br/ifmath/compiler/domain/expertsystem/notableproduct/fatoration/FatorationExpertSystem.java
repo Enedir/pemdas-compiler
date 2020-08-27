@@ -10,6 +10,7 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSExpandedFormula;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSSumDifferenceProduct;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectcube.FatorationRulePerfectCubeExpandedFormula;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialExpandedFormulaConversion;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialSumSquare;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
@@ -34,6 +35,8 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRuleDOTSSumDifferenceProduct diffSquaresProduct;
 
+    private FatorationRulePerfectCubeExpandedFormula cubeFormula;
+
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
         this.commonFactor = new FatorationRuleCommonFactorAndGroup();
@@ -41,6 +44,7 @@ public class FatorationExpertSystem implements IExpertSystem {
         this.trinomialSumSquare = new FatorationRulePerfectSquareTrinomialSumSquare();
         this.diffSquaresFormula = new FatorationRuleDOTSExpandedFormula();
         this.diffSquaresProduct = new FatorationRuleDOTSSumDifferenceProduct();
+        this.cubeFormula = new FatorationRulePerfectCubeExpandedFormula();
     }
 
     @Override
@@ -82,6 +86,9 @@ public class FatorationExpertSystem implements IExpertSystem {
                 steps.addAll(diffSquaresProduct.handle(sources));
                 sources = steps.get(steps.size() - 1).getSource();
             }
+        } else if (cubeFormula.match(sources)) {
+            steps.addAll(cubeFormula.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
 
 
         } else if (commonFactor.match(sources)) {
