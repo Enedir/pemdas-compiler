@@ -197,7 +197,7 @@ public class FatorationRuleIdentification implements IRule {
         //Número com número
         if (isCubeReducibleNumericTerm(root.getArgument1()) && isCubeReducibleNumericTerm(last.getArgument2())) {
             int firstValue = (int) Math.cbrt(Integer.parseInt(root.getArgument1()));
-            int lastValue = (int) Math.cbrt(Integer.parseInt(root.getArgument1()));
+            int lastValue = (int) Math.cbrt(Integer.parseInt(last.getArgument2()));
             if (Integer.parseInt(middleQuadruple.getArgument1()) == 3 * (Math.pow(firstValue, 2) * lastValue)) {
                 middleQuadruple = source.findQuadrupleByResult(middleQuadruple.getArgument2());
                 return Integer.parseInt(middleQuadruple.getArgument1()) == 3 * (Math.pow(lastValue, 2) * firstValue);
@@ -208,14 +208,20 @@ public class FatorationRuleIdentification implements IRule {
         if (isCubeReducibleVariableTerm(root.getArgument1()) && isCubeReducibleNumericTerm(last.getArgument2())) {
             NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
             int lastValue = (int) Math.cbrt(Integer.parseInt(last.getArgument2()));
-            return isVariableAndNumberValid(firstTerm, lastValue, middleQuadruple, source, true);
+            if (isVariableAndNumberValid(firstTerm, lastValue, middleQuadruple, true, true)) {
+                middleQuadruple = source.findQuadrupleByResult(middleQuadruple.getArgument2());
+                return isVariableAndNumberValid(firstTerm, lastValue, middleQuadruple, true, false);
+            }
         }
 
         //Número com variável
         if (isCubeReducibleNumericTerm(root.getArgument1()) && isCubeReducibleVariableTerm(last.getArgument2())) {
             NumericValueVariable lastTerm = new NumericValueVariable(last.getArgument2());
             int firstValue = (int) Math.cbrt(Integer.parseInt(root.getArgument1()));
-            return isVariableAndNumberValid(lastTerm, firstValue, middleQuadruple, source, false);
+            if (isVariableAndNumberValid(lastTerm, firstValue, middleQuadruple, false, true)) {
+                middleQuadruple = source.findQuadrupleByResult(middleQuadruple.getArgument2());
+                return isVariableAndNumberValid(lastTerm, firstValue, middleQuadruple, false, false);
+            }
         }
         return false;
     }
@@ -235,54 +241,55 @@ public class FatorationRuleIdentification implements IRule {
 
 
     private static boolean isMiddleTermValid(NumericValueVariable firstTerm, NumericValueVariable lastTerm, String middleValue, boolean isMiddleTerm1) {
-        String firstTermVariable = (isMiddleTerm1) ? firstTerm.getLabelVariable() : lastTerm.getLabelVariable();
-        String lastTermVariable = (isMiddleTerm1) ? lastTerm.getLabelVariable() : firstTerm.getLabelVariable();
+        if (!isMiddleTerm1) {
+            NumericValueVariable aux = firstTerm;
+            firstTerm = lastTerm;
+            lastTerm = aux;
+        }
+
+        String firstTermVariable = firstTerm.getLabelVariable();
+        String lastTermVariable = lastTerm.getLabelVariable();
 
         if (middleValue.contains(firstTermVariable) && middleValue.contains(lastTermVariable)) {
-            if (middleValue.charAt(middleValue.indexOf(firstTermVariable) + 1) == '^' &&
-                    middleValue.charAt(middleValue.indexOf(firstTermVariable) + 2) == '2') {
+            if (middleValue.charAt(middleValue.indexOf(firstTermVariable) + 1) == '^') {
+                if (firstTerm.getLabelPower() % 3 == 0 && lastTerm.getLabelPower() % 3 == 0) {
+                    int firstPower = firstTerm.getLabelPower() / 3;
+                    int lastPower = lastTerm.getLabelPower() / 3;
+                    if ((firstPower * 2) + lastPower == new NumericValueVariable(middleValue).getLabelPower()) {
+                        if (firstTerm.getValue() == 1 && lastTerm.getValue() == 1 && middleValue.startsWith("3"))
+                            return true;
+                        else if (firstTerm.getValue() != 1 && lastTerm.getValue() != 1) {
+                            int firstTermCbrt = (int) Math.cbrt(firstTerm.getValue());
+                            int lastTermCbrt = (int) Math.cbrt(lastTerm.getValue());
+                            return ((firstTermCbrt * lastTermCbrt) * 3) == middleValue.charAt(0);
+                        } else {
+                            int value = (firstTerm.getValue() != 1) ?
+                                    (int) Math.cbrt(firstTerm.getValue()) :
+                                    (int) Math.cbrt(lastTerm.getValue());
 
-                if (middleValue.endsWith(lastTermVariable) ||
-                        middleValue.indexOf(lastTermVariable) == middleValue.indexOf(firstTermVariable) - 1) {
-
-                    if (firstTerm.getValue() == 1 && lastTerm.getValue() == 1 && middleValue.startsWith("3"))
-                        return true;
-                    else if (firstTerm.getValue() != 1 && lastTerm.getValue() != 1) {
-                        return (((int) Math.cbrt(firstTerm.getValue()) * (int) Math.cbrt(lastTerm.getValue())) * 3) ==
-                                middleValue.charAt(0);
-                    } else {
-                        int value = (firstTerm.getValue() != 1) ?
-                                (int) Math.cbrt(firstTerm.getValue()) :
-                                (int) Math.cbrt(lastTerm.getValue());
-
-                        return (value * 3) == middleValue.charAt(0);
+                            return (value * 3) == middleValue.charAt(0);
+                        }
                     }
                 }
             }
         }
+
         return false;
     }
 
     private static boolean isVariableAndNumberValid(NumericValueVariable variableTerm, int numberValue,
-                                                    ExpandedQuadruple middleQuadruple, ThreeAddressCode source,
-                                                    boolean isFirstTermVariable) {
+                                                    ExpandedQuadruple middleQuadruple, boolean isFirstTermAVariable,
+                                                    boolean isMiddleTerm1) {
         int variableTermValue = (variableTerm.getValue() == 1) ?
                 variableTerm.getValue() : (int) Math.cbrt(variableTerm.getValue());
 
+        if ((isMiddleTerm1 && !isFirstTermAVariable) || (!isMiddleTerm1 && isFirstTermAVariable))
+            numberValue = (int) Math.pow(numberValue, 2);
+        else
+            variableTermValue = (int) Math.pow(variableTermValue, 2);
+
         NumericValueVariable middleTermNVV = new NumericValueVariable(middleQuadruple.getArgument1());
-        if (middleTermNVV.getLabel().equals(variableTerm.getLabelVariable() + "^2") &&
-                middleTermNVV.getValue() == (3 * (variableTermValue * numberValue))) {
-
-            ExpandedQuadruple nextQuadruple = (isFirstTermVariable) ?
-                    source.findQuadrupleByResult(middleQuadruple.getArgument2()) :
-                    source.findQuadrupleByArgument(middleQuadruple.getResult());
-
-            middleTermNVV.setAttributesFromString(nextQuadruple.getArgument1());
-
-            return middleTermNVV.getLabel().equals(variableTerm.getLabelVariable()) &&
-                    middleTermNVV.getValue() == (3 * (variableTermValue * (Math.pow(numberValue, 2))));
-        }
-        return false;
+        return middleTermNVV.getValue() == (3 * (variableTermValue * numberValue));
     }
 
 

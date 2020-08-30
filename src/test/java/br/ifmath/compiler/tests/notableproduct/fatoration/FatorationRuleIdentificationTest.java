@@ -25,7 +25,8 @@ public class FatorationRuleIdentificationTest {
     private String stepTwoResult3PlusExpected;
     private String stepTwoResult3MinusExpected;
     private String stepTwoResult4Expected;
-    private String stepTwoResult5SumExpected;
+    private String stepTwoResult5PlusExpected;
+    private String stepTwoResult5MinusExpected;
     private String stepThreeResult3PlusExpected;
     private String stepThreeResult3MinusExpected;
     private String stepThreeResult4Expected;
@@ -66,7 +67,9 @@ public class FatorationRuleIdentificationTest {
                 "elevados ao quadrado.";
         stepThreeResult4Expected = "Escrevemos a expressão como o produto da soma pela diferença de dois termos.";
 
-        stepTwoResult5SumExpected = "Escrevemos a expressão no formato a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3, " +
+        stepTwoResult5PlusExpected = "Escrevemos a expressão no formato a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3, " +
+                "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
+        stepTwoResult5MinusExpected = "Escrevemos a expressão no formato a^3 - 3 * a^2 * b + 3 * a * b^2 - b^3, " +
                 "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
         stepThreeResult5PlusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
                 "soma, no formato (a + b)^3.";
@@ -911,8 +914,9 @@ public class FatorationRuleIdentificationTest {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Perfect Cube">
     @Test()
-    public void identify_simple_terms_perfect_sum_cube_scenery_one_with_success() {
+    public void identify_simple_terms_perfect_cube_scenery_one_with_success() {
         //Arrange
         String expression = "x^3 + 6x^2 + 12x + 8";
 
@@ -935,9 +939,213 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult5SumExpected, stepTwo.getReason());
+        assertEquals(stepTwoResult5PlusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
     }
+
+    @Test()
+    public void identify_only_numbers_perfect_cube_scenery_one_with_success() {
+        //Arrange
+        String expression = "27 - 54 + 36 - 8";
+
+        String stepTwoValueExpected = "(3  ) ^ 3 - 3 * (3)^2 * 2 + 3 * 3 * (2)^2 - (2  ) ^ 3";
+        String lastStepValueExpected = "(3 - 2) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5MinusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5MinusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5MinusExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_only_numbers_perfect_cube_scenery_two_with_success() {
+        //Arrange
+        String expression = "125 + 75 + 15 + 1";
+
+        String stepTwoValueExpected = "(5  ) ^ 3 + 3 * (5)^2 * 1 + 3 * 5 * (1)^2 + (1  ) ^ 3";
+        String lastStepValueExpected = "(5 + 1) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5PlusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_only_variables_perfect_cube_scenery_one_with_success() {
+        //Arrange
+        String expression = "y^6 - 3y^8 + 3y^10 - y^12";
+
+        String stepTwoValueExpected = "(y^2  ) ^ 3 - 3 * (y^2)^2 * y^4 + 3 * y^2 * (y^4)^2 - (y^4  ) ^ 3";
+        String lastStepValueExpected = "(y^2 - y^4) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5MinusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5MinusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5MinusExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_only_variables_perfect_cube_scenery_two_with_success() {
+        //Arrange
+        String expression = "y^9 + 3y^7 + 3y^5 + y^3";
+
+        String stepTwoValueExpected = "(y^3  ) ^ 3 + 3 * (y^3)^2 * y + 3 * y^3 * (y)^2 + (y  ) ^ 3";
+        String lastStepValueExpected = "(y^3 + y) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5PlusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_cube_scenery_one_with_success() {
+        //Arrange
+        String expression = "27x^3 - 54x^2 + 36x - 8";
+
+        String stepTwoValueExpected = "(3x  ) ^ 3 - 3 * (3x)^2 * 2 + 3 * 3x * (2)^2 - (2  ) ^ 3";
+        String lastStepValueExpected = "(3x - 2) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5MinusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5MinusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5MinusExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_cube_scenery_two_with_success() {
+        //Arrange
+        String expression = "64 + 48x^3 + 12x^6 + x^9";
+
+        String stepTwoValueExpected = "(4  ) ^ 3 + 3 * (4)^2 * x^3 + 3 * 4 * (x^3)^2 + (x^3  ) ^ 3";
+        String lastStepValueExpected = "(4 + x^3) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5PlusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_cube_scenery_three_with_success() {
+        //Arrange
+        String expression = "8 + 36x^3 + 54x^6 + 27x^12";
+
+        String stepTwoValueExpected = "(2  ) ^ 3 + 3 * (2)^2 * 3x^4 + 3 * 2 * (3x^4)^2 + (3x^4  ) ^ 3";
+        String lastStepValueExpected = "(2 + 3x^4) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5PlusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
+    }
+    //</editor-fold>
 
 }
