@@ -18,12 +18,16 @@ public class FatorationRuleIdentificationTest {
     private String stepOneResult3Expected;
     private String stepOneResult4Expected;
     private String stepOneResult5Expected;
+    private String stepOneResult5SumExpected;
+    private String stepOneResult5DiffExpected;
     private String stepTwoResult1Expected;
     private String stepTwoResult2Expected;
     private String stepTwoResult3Expected;
     private String stepTwoResult4Expected;
+    private String stepTwoResult5SumExpected;
     private String stepThreeResult3Expected;
     private String stepThreeResult4Expected;
+    private String stepThreeResult5Expected;
     private String finalResultExplicationExpected;
 
 
@@ -38,17 +42,27 @@ public class FatorationRuleIdentificationTest {
                 "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
                 "produto entre o priemiro termo e o segundo termo.";
         stepOneResult4Expected = stepOneBaseResult + "Diferença de dois quadrados.";
-        stepOneResult5Expected = stepOneBaseResult + "Cubo da diferença de dois termos.";
+        stepOneResult5Expected = stepOneBaseResult + "Cubo perfeito ";
+        stepOneResult5SumExpected = stepOneResult5Expected + "(cubo da soma).";
+        stepOneResult5DiffExpected = stepOneResult5Expected + "(cubo da diferença).";
+
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
         stepTwoResult2Expected = "Removendo os parênteses dos polinômios.";
+
         stepTwoResult3Expected = "Escrevemos a expressão no formato a^2 + 2 * a * b &#177; b^2, identificando os " +
                 "elementos que estão elevados ao quadrado e os respectivos produtos.";
         stepThreeResult3Expected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "diferença, no formato (a &#177; b)^2.";
+                "soma/diferença, no formato (a &#177; b)^2.";
+
         stepTwoResult4Expected = "Escrevemos a expressão no formato a^2 - b^2, identificando os elementos que estão " +
                 "elevados ao quadrado.";
         stepThreeResult4Expected = "Escrevemos a expressão como o produto da soma pela diferença de dois termos.";
+
+        stepTwoResult5SumExpected = "Escrevemos a expressão no formato a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3, " +
+                "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
+        stepThreeResult5Expected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
+                "soma/diferença, no formato (a &#177; b)^3.";
 
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
     }
@@ -387,7 +401,6 @@ public class FatorationRuleIdentificationTest {
     }
 
     //</editor-fold>
-
 
     //<editor-fold desc="Perfect Square Trinomial">
     @Test()
@@ -894,8 +907,8 @@ public class FatorationRuleIdentificationTest {
         //Arrange
         String expression = "x^3 + 6x^2 + 12x + 8";
 
-        String stepTwoValueExpected = "(x  ) ^ 3 + 3 * ( x ) ^ 2 * 2 + 3 * x * ( 2 ) ^ 2 + ( 2 ) ^ 3";
-        String lastStepValueExpected = "(x + 2)^3";
+        String stepTwoValueExpected = "(x  ) ^ 3 + 3 * (x)^2 * 2 + 3 * x * (2)^2 + (2  ) ^ 3";
+        String lastStepValueExpected = "(x + 2) ^ 3";
 
         // Act
         IAnswer answer = null;
@@ -911,11 +924,11 @@ public class FatorationRuleIdentificationTest {
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult4Expected, stepOne.getReason());
+        assertEquals(stepOneResult5SumExpected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult4Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult5SumExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult4Expected, finalStep.getReason());
+        assertEquals(stepThreeResult5Expected, finalStep.getReason());
     }
 
 }

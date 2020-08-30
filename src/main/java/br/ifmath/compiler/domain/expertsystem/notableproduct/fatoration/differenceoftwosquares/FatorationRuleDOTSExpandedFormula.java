@@ -41,6 +41,6 @@ public class FatorationRuleDOTSExpandedFormula implements IRule {
     }
 
     private String reduceToRaisedByTwo(String argument) {
-        return FatorationRulePerfectSquareTrinomialExpandedFormulaConversion.reduceToRaisedByTwo(argument, this.source);
+        return FatorationRulePerfectSquareTrinomialExpandedFormulaConversion.reduceToRaisedValue(argument, this.source, true);
     }
 }

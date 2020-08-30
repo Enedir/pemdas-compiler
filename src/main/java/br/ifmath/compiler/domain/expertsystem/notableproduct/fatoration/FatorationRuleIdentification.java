@@ -44,7 +44,7 @@ public class FatorationRuleIdentification implements IRule {
         }
 
         if (isPerfectCube(this.source)) {
-            return (isCubeDifference(this.source)) ? "Cubo perfeito (cubo da diferença)" : "Cubo perfeito (cubo da soma)";
+            return (isCubeDifference(this.source)) ? "Cubo perfeito (cubo da diferença)." : "Cubo perfeito (cubo da soma).";
         }
 
         if (isDifferenceOfTwoSquares(this.source)) {
@@ -180,7 +180,7 @@ public class FatorationRuleIdentification implements IRule {
 
     public static boolean isPerfectCube(ThreeAddressCode source) {
         ExpandedQuadruple root = source.getRootQuadruple();
-        ExpandedQuadruple last = getLastQuadruple(root, source);
+        ExpandedQuadruple last = source.getLastQuadruple(root);
         ExpandedQuadruple middleQuadruple = source.findQuadrupleByResult(root.getArgument2());
 
 
@@ -233,19 +233,6 @@ public class FatorationRuleIdentification implements IRule {
 
     }
 
-    private static ExpandedQuadruple getLastQuadruple(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source) {
-        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return getLastQuadruple(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), source);
-        }
-
-        if (iterationQuadruple.isNegative())
-            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
-
-        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return getLastQuadruple(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), source);
-        }
-        return iterationQuadruple;
-    }
 
     private static boolean isMiddleTermValid(NumericValueVariable firstTerm, NumericValueVariable lastTerm, String middleValue, boolean isMiddleTerm1) {
         String firstTermVariable = (isMiddleTerm1) ? firstTerm.getLabelVariable() : lastTerm.getLabelVariable();
@@ -302,7 +289,7 @@ public class FatorationRuleIdentification implements IRule {
     private static boolean isCubeDifference(ThreeAddressCode source) {
         ExpandedQuadruple root = source.getRootQuadruple();
         if (root.isMinus()) {
-            ExpandedQuadruple lastQuadruple = getLastQuadruple(root, source);
+            ExpandedQuadruple lastQuadruple = source.getLastQuadruple(root);
             return lastQuadruple.isMinus();
         }
         return false;

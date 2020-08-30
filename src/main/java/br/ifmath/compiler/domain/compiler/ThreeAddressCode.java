@@ -76,8 +76,27 @@ public class ThreeAddressCode {
      *
      * @return {@link ExpandedQuadruple} na ultima posicao da {@link List}.
      */
-    public ExpandedQuadruple getLastQuadruple() {
+    public ExpandedQuadruple getListLastQuadruple() {
         return this.getExpandedQuadruples().get(getExpandedQuadruples().size() - 1);
+    }
+
+    /**
+     * Obtem a ultima quadrupla de acordo com o encadeamento das quadruplas
+     * @param iterationQuadruple  {@link ExpandedQuadruple} de onde vai ser começada a busca
+     * @return {@link ExpandedQuadruple} que representa a ultima quadrupla
+     */
+    public ExpandedQuadruple getLastQuadruple(ExpandedQuadruple iterationQuadruple) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return getLastQuadruple(this.findQuadrupleByResult(iterationQuadruple.getArgument1()));
+        }
+
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = this.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return getLastQuadruple(this.findQuadrupleByResult(iterationQuadruple.getArgument2()));
+        }
+        return iterationQuadruple;
     }
 
     /**

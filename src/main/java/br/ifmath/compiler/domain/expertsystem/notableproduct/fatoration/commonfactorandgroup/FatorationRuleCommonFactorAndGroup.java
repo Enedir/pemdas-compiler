@@ -273,9 +273,9 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
             ThreeAddressCode secondCouple = new ThreeAddressCode();
             List<ExpandedQuadruple> quadruples = new ArrayList<>();
-            quadruples.add(source.getLastQuadruple());
+            quadruples.add(source.getListLastQuadruple());
             secondCouple.setExpandedQuadruples(quadruples);
-            secondCouple.setLeft(source.getLastQuadruple().getResult());
+            secondCouple.setLeft(source.getListLastQuadruple().getResult());
 
             this.source = firstCouple;
             String firstCoupleFactor = this.getCommonFactor();
