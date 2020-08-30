@@ -24,17 +24,20 @@ public class FatorationRulePerfectSquareTrinomialSumSquare implements IRule {
         this.source = source.get(0);
 
         String exponent = this.generateSum();
+        String sign = this.getSign();
+        String operation = (sign.equals("+")) ? "soma" : "diferença";
 
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), this.source.getExpandedQuadruples());
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Identificamos os " +
-                "elementos a e b e escrevemos o resultado como o quadrado da soma/diferença, no formato (a &#177; b)^" + exponent + "."));
+                "elementos a e b e escrevemos o resultado como o quadrado da " + operation +
+                ", no formato (a " + sign + " b)^" + exponent + "."));
         return steps;
     }
 
     private String generateSum() {
-        String argument1 = this.source.findDirectSonArgument(this.source.findQuadrupleByResult(this.source.getRootQuadruple().getArgument1()).getResult(),true);
+        String argument1 = this.source.findDirectSonArgument(this.source.findQuadrupleByResult(this.source.getRootQuadruple().getArgument1()).getResult(), true);
         ExpandedQuadruple argumentQuadruple = this.source.getLastQuadruple(this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()));
         String argument2 = argumentQuadruple.getArgument1();
         ExpandedQuadruple lastQuadrupleExponent = this.source.findQuadrupleByArgument(argumentQuadruple.getResult());
@@ -50,5 +53,11 @@ public class FatorationRulePerfectSquareTrinomialSumSquare implements IRule {
         this.source = new ThreeAddressCode("T2", newQuadruples);
 
         return exponent;
+    }
+
+    private String getSign() {
+        ExpandedQuadruple root = this.source.getRootQuadruple();
+        ExpandedQuadruple insideQuadruple = this.source.findQuadrupleByResult(root.getArgument1());
+        return insideQuadruple.getOperator();
     }
 }

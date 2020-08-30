@@ -30,7 +30,7 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
         boolean isPerfectSquare = FatorationRuleIdentification.isPerfectSquareTrinomial(source.get(0));
         String sign = this.adjustToExpandedFormula(isPerfectSquare);
         String reason = (isPerfectSquare) ? "Escrevemos a " +
-                "expressão no formato a^2 + 2 * a * b &#177; b^2, identificando os elementos que estão elevados ao " +
+                "expressão no formato a^2 + 2 * a * b " + sign + " b^2, identificando os elementos que estão elevados ao " +
                 "quadrado e os respectivos produtos." : "Escrevemos a " +
                 "expressão no formato a^3 " + sign + " 3 * a^2 * b + 3 * a * b^2 " + sign + " b^3, identificando os " +
                 "elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
@@ -56,7 +56,7 @@ public class FatorationRulePerfectSquareTrinomialExpandedFormulaConversion imple
             this.convertCubeMiddleTerm(lastQuadruple, root);
         lastQuadruple.setArgument2(this.convertToRaisedValue(lastQuadruple.getArgument2(), isPerfectSquare));
         root.setArgument1(this.convertToRaisedValue(this.source.getRootQuadruple().getArgument1(), isPerfectSquare));
-        return root.getOperator();
+        return lastQuadruple.getOperator();
     }
 
 

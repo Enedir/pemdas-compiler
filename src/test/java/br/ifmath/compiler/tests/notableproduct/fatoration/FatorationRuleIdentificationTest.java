@@ -18,16 +18,19 @@ public class FatorationRuleIdentificationTest {
     private String stepOneResult3Expected;
     private String stepOneResult4Expected;
     private String stepOneResult5Expected;
-    private String stepOneResult5SumExpected;
-    private String stepOneResult5DiffExpected;
+    private String stepOneResult5PlusExpected;
+    private String stepOneResult5MinusExpected;
     private String stepTwoResult1Expected;
     private String stepTwoResult2Expected;
-    private String stepTwoResult3Expected;
+    private String stepTwoResult3PlusExpected;
+    private String stepTwoResult3MinusExpected;
     private String stepTwoResult4Expected;
     private String stepTwoResult5SumExpected;
-    private String stepThreeResult3Expected;
+    private String stepThreeResult3PlusExpected;
+    private String stepThreeResult3MinusExpected;
     private String stepThreeResult4Expected;
-    private String stepThreeResult5Expected;
+    private String stepThreeResult5PlusExpected;
+    private String stepThreeResult5MinusExpected;
     private String finalResultExplicationExpected;
 
 
@@ -43,17 +46,21 @@ public class FatorationRuleIdentificationTest {
                 "produto entre o priemiro termo e o segundo termo.";
         stepOneResult4Expected = stepOneBaseResult + "Diferença de dois quadrados.";
         stepOneResult5Expected = stepOneBaseResult + "Cubo perfeito ";
-        stepOneResult5SumExpected = stepOneResult5Expected + "(cubo da soma).";
-        stepOneResult5DiffExpected = stepOneResult5Expected + "(cubo da diferença).";
+        stepOneResult5PlusExpected = stepOneResult5Expected + "(cubo da soma).";
+        stepOneResult5MinusExpected = stepOneResult5Expected + "(cubo da diferença).";
 
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
         stepTwoResult2Expected = "Removendo os parênteses dos polinômios.";
 
-        stepTwoResult3Expected = "Escrevemos a expressão no formato a^2 + 2 * a * b &#177; b^2, identificando os " +
+        stepTwoResult3PlusExpected = "Escrevemos a expressão no formato a^2 + 2 * a * b + b^2, identificando os " +
                 "elementos que estão elevados ao quadrado e os respectivos produtos.";
-        stepThreeResult3Expected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "soma/diferença, no formato (a &#177; b)^2.";
+        stepTwoResult3MinusExpected = "Escrevemos a expressão no formato a^2 + 2 * a * b - b^2, identificando os " +
+                "elementos que estão elevados ao quadrado e os respectivos produtos.";
+        stepThreeResult3PlusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
+                "soma, no formato (a + b)^2.";
+        stepThreeResult3MinusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
+                "diferença, no formato (a - b)^2.";
 
         stepTwoResult4Expected = "Escrevemos a expressão no formato a^2 - b^2, identificando os elementos que estão " +
                 "elevados ao quadrado.";
@@ -61,8 +68,10 @@ public class FatorationRuleIdentificationTest {
 
         stepTwoResult5SumExpected = "Escrevemos a expressão no formato a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3, " +
                 "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
-        stepThreeResult5Expected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "soma/diferença, no formato (a &#177; b)^3.";
+        stepThreeResult5PlusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
+                "soma, no formato (a + b)^3.";
+        stepThreeResult5MinusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
+                "diferença, no formato (a - b)^3.";
 
         finalResultExplicationExpected = "Soma dos termos semelhantes.";
     }
@@ -427,9 +436,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -456,9 +465,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -485,9 +494,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -514,9 +523,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3MinusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3MinusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -543,9 +552,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3MinusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3MinusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -572,9 +581,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3MinusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3MinusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -601,9 +610,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3MinusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3MinusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -630,9 +639,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -659,9 +668,9 @@ public class FatorationRuleIdentificationTest {
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult3Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3Expected, stepTwo.getReason());
+        assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3Expected, finalStep.getReason());
+        assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
     }
 
     @Test()
@@ -924,11 +933,11 @@ public class FatorationRuleIdentificationTest {
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult5SumExpected, stepOne.getReason());
+        assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
         assertEquals(stepTwoResult5SumExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult5Expected, finalStep.getReason());
+        assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
     }
 
 }
