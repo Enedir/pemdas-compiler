@@ -10,8 +10,8 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSExpandedFormula;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSSumDifferenceProduct;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialExpandedFormulaConversion;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialSumSquare;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialExpandedFormulaConversion;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialNotableProduct;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -26,9 +26,9 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRuleCommonFactorAndGroup commonFactor;
 
-    private FatorationRulePerfectSquareTrinomialExpandedFormulaConversion trinomialFormula;
+    private FatorationRulePerfectPolynomialExpandedFormulaConversion polynomialFormula;
 
-    private FatorationRulePerfectSquareTrinomialSumSquare trinomialSumSquare;
+    private FatorationRulePerfectPolynomialNotableProduct polynomialNotableProduct;
 
     private FatorationRuleDOTSExpandedFormula diffSquaresFormula;
 
@@ -37,8 +37,8 @@ public class FatorationExpertSystem implements IExpertSystem {
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
         this.commonFactor = new FatorationRuleCommonFactorAndGroup();
-        this.trinomialFormula = new FatorationRulePerfectSquareTrinomialExpandedFormulaConversion();
-        this.trinomialSumSquare = new FatorationRulePerfectSquareTrinomialSumSquare();
+        this.polynomialFormula = new FatorationRulePerfectPolynomialExpandedFormulaConversion();
+        this.polynomialNotableProduct = new FatorationRulePerfectPolynomialNotableProduct();
         this.diffSquaresFormula = new FatorationRuleDOTSExpandedFormula();
         this.diffSquaresProduct = new FatorationRuleDOTSSumDifferenceProduct();
     }
@@ -63,15 +63,14 @@ public class FatorationExpertSystem implements IExpertSystem {
             sources = steps.get(steps.size() - 1).getSource();
         }
 
-//TODO Mudar nome do atributo para antender o quadrado e o cubo perfeito
         validateExpressions(sources);
-        if (trinomialFormula.match(sources)) {
-            steps.addAll(trinomialFormula.handle(sources));
+        if (polynomialFormula.match(sources)) {
+            steps.addAll(polynomialFormula.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
 
             validateExpressions(sources);
-            if (trinomialSumSquare.match(sources)) {
-                steps.addAll(trinomialSumSquare.handle(sources));
+            if (polynomialNotableProduct.match(sources)) {
+                steps.addAll(polynomialNotableProduct.handle(sources));
                 sources = steps.get(steps.size() - 1).getSource();
             }
 

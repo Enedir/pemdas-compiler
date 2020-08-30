@@ -1,4 +1,4 @@
-package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial;
+package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
@@ -8,8 +8,7 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO Mudar nome da classe para antender o quadrado e o cubo perfeito
-public class FatorationRulePerfectSquareTrinomialSumSquare implements IRule {
+public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
 
     private ThreeAddressCode source;
 
@@ -37,17 +36,23 @@ public class FatorationRulePerfectSquareTrinomialSumSquare implements IRule {
     }
 
     private String generateSum() {
-        String argument1 = this.source.findDirectSonArgument(this.source.findQuadrupleByResult(this.source.getRootQuadruple().getArgument1()).getResult(), true);
-        ExpandedQuadruple argumentQuadruple = this.source.getLastQuadruple(this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()));
+        ExpandedQuadruple argumentQuadruple = this.source.findQuadrupleByResult(this.source.getRootQuadruple().getArgument1());
+        String argument1 = this.source.findDirectSonArgument(argumentQuadruple.getResult(), true);
+
+        argumentQuadruple = this.source.getLastQuadruple(this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()));
         String argument2 = argumentQuadruple.getArgument1();
+
         ExpandedQuadruple lastQuadrupleExponent = this.source.findQuadrupleByArgument(argumentQuadruple.getResult());
         ExpandedQuadruple lastQuadruple = this.source.findQuadrupleByArgument(lastQuadrupleExponent.getResult());
         ExpandedQuadruple coreQuadruple = new ExpandedQuadruple(lastQuadruple.getOperator(), argument1, argument2, "T1", 0, 1);
 
         List<ExpandedQuadruple> newQuadruples = new ArrayList<>();
+
         newQuadruples.add(coreQuadruple);
+
         String exponent = this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument1()).getArgument2();
         ExpandedQuadruple squareQuadruple = new ExpandedQuadruple("^", "T1", exponent, "T2", 0, 0);
+
         newQuadruples.add(squareQuadruple);
 
         this.source = new ThreeAddressCode("T2", newQuadruples);

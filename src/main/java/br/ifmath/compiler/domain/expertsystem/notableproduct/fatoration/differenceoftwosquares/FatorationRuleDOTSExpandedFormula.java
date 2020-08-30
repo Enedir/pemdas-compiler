@@ -5,7 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectsquaretrinomial.FatorationRulePerfectSquareTrinomialExpandedFormulaConversion;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialExpandedFormulaConversion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,6 @@ public class FatorationRuleDOTSExpandedFormula implements IRule {
     }
 
     private String reduceToRaisedByTwo(String argument) {
-        return FatorationRulePerfectSquareTrinomialExpandedFormulaConversion.reduceToRaisedValue(argument, this.source, true);
+        return FatorationRulePerfectPolynomialExpandedFormulaConversion.reduceToRaisedValue(argument, this.source, true);
     }
 }
