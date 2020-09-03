@@ -8,6 +8,7 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,10 @@ public class FatorationRuleIdentification implements IRule {
 
         if (isDifferenceOfTwoSquares(this.source)) {
             return "Diferença de dois quadrados.";
+        }
+
+        if (isTwoBinomialProduct(this.source)) {
+            return "Trinômio do segundo grau.";
         }
 
         if (isCommonFactor(this.source.getRootQuadruple(), this.source)) {
@@ -302,6 +307,47 @@ public class FatorationRuleIdentification implements IRule {
         return false;
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Two Binomial Product">
+    //TODO testar
+    public static boolean isTwoBinomialProduct(ThreeAddressCode source) {
+        ExpandedQuadruple root = source.getRootQuadruple();
+        if (root.isMinus()) {
+
+            String rootArgument1 = root.getArgument1();
+
+            if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(rootArgument1);
+                rootArgument1 = innerQuadruple.getArgument1();
+            }
+
+            if (StringUtil.match(rootArgument1, RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+
+                NumericValueVariable argument = new NumericValueVariable(rootArgument1);
+                if (argument.getValue() != 0 && argument.getLabelPower() == 2) {
+
+                    if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+
+                        ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(root.getArgument2());
+                        if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+                            if (innerQuadruple.isPlus()) {
+                                argument = new NumericValueVariable(innerQuadruple.getArgument1());
+                                if (argument.getValue() != 0 && argument.getLabelPower() == 1) {
+
+                                    if (StringUtil.match(innerQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
+                                        return !innerQuadruple.getArgument2().equals("0");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
     //</editor-fold>
 
 }

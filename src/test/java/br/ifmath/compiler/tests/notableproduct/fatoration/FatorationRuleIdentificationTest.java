@@ -1148,4 +1148,35 @@ public class FatorationRuleIdentificationTest {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Two Binomial Product">
+    @Test()
+    public void identify_simple_binomial_product_scenery_one_with_success() {
+        //Arrange
+        String expression = "x^2 - 5x + 6";
+
+        String stepTwoValueExpected = "(x  ) ^ 2  + (-5/1)x + (3/1)";
+        String lastStepValueExpected = "1 * (x - 2) * (x - 3)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
+    }
+
+    //</editor-fold>
 }
