@@ -12,6 +12,7 @@ import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differen
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSSumDifferenceProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialExpandedFormulaConversion;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialNotableProduct;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleConvertToDivisionFormula;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
@@ -34,6 +35,8 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRuleDOTSSumDifferenceProduct diffSquaresProduct;
 
+    private FatorationRuleConvertToDivisionFormula binomialDivisionFormula;
+
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
         this.commonFactor = new FatorationRuleCommonFactorAndGroup();
@@ -41,6 +44,7 @@ public class FatorationExpertSystem implements IExpertSystem {
         this.polynomialNotableProduct = new FatorationRulePerfectPolynomialNotableProduct();
         this.diffSquaresFormula = new FatorationRuleDOTSExpandedFormula();
         this.diffSquaresProduct = new FatorationRuleDOTSSumDifferenceProduct();
+        this.binomialDivisionFormula = new FatorationRuleConvertToDivisionFormula();
     }
 
     @Override
@@ -82,7 +86,12 @@ public class FatorationExpertSystem implements IExpertSystem {
                 steps.addAll(diffSquaresProduct.handle(sources));
                 sources = steps.get(steps.size() - 1).getSource();
             }
-        }  else if (commonFactor.match(sources)) {
+        } else if (binomialDivisionFormula.match(sources)) {
+            steps.addAll(binomialDivisionFormula.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+
+
+        } else if (commonFactor.match(sources)) {
             steps.addAll(commonFactor.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
         }
