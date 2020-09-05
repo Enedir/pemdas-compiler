@@ -13,7 +13,7 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FatorationRuleConvertToDivisionFormula implements IRule {
+public class FatorationRuleTwoBinomialProductConvertToDivisionFormula implements IRule {
 
     ThreeAddressCode source;
 
@@ -35,7 +35,7 @@ public class FatorationRuleConvertToDivisionFormula implements IRule {
         codes.add(step);
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(),
                 "Escrevemos a expressão no formato x^2 + (b/a)x + (c/a), identificando os elementos que estão " +
-                        "elevados ao quadrado e as respectivas divisões. "));
+                        "elevados ao quadrado e as respectivas divisões."));
         return steps;
     }
 

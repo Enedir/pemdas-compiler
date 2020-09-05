@@ -310,7 +310,6 @@ public class FatorationRuleIdentification implements IRule {
     //</editor-fold>
 
     //<editor-fold desc="Two Binomial Product">
-    //TODO testar
     public static boolean isTwoBinomialProduct(ThreeAddressCode source) {
         ExpandedQuadruple root = source.getRootQuadruple();
 
