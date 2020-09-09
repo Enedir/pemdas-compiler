@@ -91,6 +91,7 @@ public class FatorationExpertSystem implements IExpertSystem {
                 sources = steps.get(steps.size() - 1).getSource();
             }
         } else if (binomialDivisionFormula.match(sources)) {
+
             steps.addAll(binomialDivisionFormula.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();
             if (binomialProduct.match(sources)) {

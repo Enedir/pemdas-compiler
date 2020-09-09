@@ -39,26 +39,29 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
         return steps;
     }
 
-    //TODO testar
     private void transformToProductOfRoots() throws InvalidAlgebraicExpressionException {
         ExpandedQuadruple root = this.source.getRootQuadruple();
-        String variable = new NumericValueVariable(root.getArgument1()).getLabelVariable();
-        int a = this.getVariable(root.getArgument1(), true);
-        int b = this.getVariable(root.getArgument1(), false);
-        int c = this.getVariable(root.getArgument2(), false);
-        root.setArgument1(String.valueOf(a));
-        root.setOperator("*");
         if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
 
-            Bhaskara bhaskara = new Bhaskara(a, b, c);
-            String x1 = String.valueOf(Math.round(bhaskara.getFirstRoot()));
-            String x2 = String.valueOf(Math.round(bhaskara.getSecondRoot()));
-
             ExpandedQuadruple innerQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
-            innerQuadruple.setOperator("*");
-            this.source.addQuadrupleToList("-", variable, x1, innerQuadruple, true);
-            this.source.addQuadrupleToList("-", variable, x2, innerQuadruple, false);
+            int a = this.getVariable(innerQuadruple.getArgument1(), true);
+            int b = this.getVariable(innerQuadruple.getArgument1(), false);
+            int c = this.getVariable(innerQuadruple.getArgument2(), false);
 
+            String variable = new NumericValueVariable(root.getArgument1()).getLabelVariable();
+            root.setArgument1(String.valueOf(a));
+            root.setOperator("*");
+
+            Bhaskara bhaskara = new Bhaskara(a, b, c);
+            int x1 = Math.round(bhaskara.getFirstRoot());
+            int x2 = Math.round(bhaskara.getSecondRoot());
+
+            String operatorX1 = (x1 < 0) ? "+" : "-";
+            String operatorX2 = (x2 < 0) ? "+" : "-";
+
+            this.source.addQuadrupleToList(operatorX1, variable, String.valueOf(Math.abs(x1)), innerQuadruple, true).setLevel(1);
+            this.source.addQuadrupleToList(operatorX2, variable, String.valueOf(Math.abs(x2)), innerQuadruple, false).setLevel(1);
+            innerQuadruple.setOperator("*");
         }
 
     }
@@ -66,13 +69,13 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
     private int getVariable(String argument, boolean isA) {
         int parenthesesIndex = (isA) ? argument.indexOf(')') : argument.indexOf('(');
         int divideBarIndex = argument.indexOf('/');
-        String variable = (isA) ? argument.substring(divideBarIndex, parenthesesIndex) :
-                argument.substring(parenthesesIndex, divideBarIndex);
+        String variable = (isA) ? argument.substring(divideBarIndex + 1, parenthesesIndex) :
+                argument.substring(parenthesesIndex + 1, divideBarIndex);
         return Integer.parseInt(variable);
     }
 
     private static class Bhaskara {
-        private double x1, x2;
+        private float x1, x2;
 
         public Bhaskara(int a, int b, int c) throws InvalidAlgebraicExpressionException {
             this.calculate(a, b, c);
@@ -80,19 +83,19 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
 
         private void calculate(int a, int b, int c) throws InvalidAlgebraicExpressionException {
             int delta = (b * b) + (-4 * (a * c));
-            if (delta >= 0) {
-                this.x1 = (-b + Math.sqrt(delta)) / 2 * a;
-                this.x2 = (-b - Math.sqrt(delta)) / 2 * a;
+             if (delta >= 0) {
+                this.x1 = (float) ((-b + Math.sqrt(delta)) / (2 * a));
+                this.x2 = (float) ((-b - Math.sqrt(delta)) / (2 * a));
                 return;
             }
             throw new InvalidAlgebraicExpressionException("Delta não possui raiz positiva");
         }
 
-        public double getFirstRoot() {
+        public float getFirstRoot() {
             return x1;
         }
 
-        public double getSecondRoot() {
+        public float getSecondRoot() {
             return x2;
         }
     }

@@ -17,9 +17,9 @@ public class FatorationRuleIdentificationTest {
     private String stepOneResult2Expected;
     private String stepOneResult3Expected;
     private String stepOneResult4Expected;
-    private String stepOneResult5Expected;
     private String stepOneResult5PlusExpected;
     private String stepOneResult5MinusExpected;
+    private String stepOneResult6Expected;
     private String stepTwoResult1Expected;
     private String stepTwoResult2Expected;
     private String stepTwoResult3PlusExpected;
@@ -27,12 +27,13 @@ public class FatorationRuleIdentificationTest {
     private String stepTwoResult4Expected;
     private String stepTwoResult5PlusExpected;
     private String stepTwoResult5MinusExpected;
+    private String stepTwoResult6Expected;
     private String stepThreeResult3PlusExpected;
     private String stepThreeResult3MinusExpected;
     private String stepThreeResult4Expected;
     private String stepThreeResult5PlusExpected;
     private String stepThreeResult5MinusExpected;
-    private String finalResultExplicationExpected;
+    private String stepThreeResult6Expected;
 
 
     @Before
@@ -46,9 +47,9 @@ public class FatorationRuleIdentificationTest {
                 "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
                 "produto entre o priemiro termo e o segundo termo.";
         stepOneResult4Expected = stepOneBaseResult + "Diferença de dois quadrados.";
-        stepOneResult5Expected = stepOneBaseResult + "Cubo perfeito ";
-        stepOneResult5PlusExpected = stepOneResult5Expected + "(cubo da soma).";
-        stepOneResult5MinusExpected = stepOneResult5Expected + "(cubo da diferença).";
+        stepOneResult5PlusExpected = stepOneBaseResult + "Cubo perfeito (cubo da soma).";
+        stepOneResult5MinusExpected = stepOneBaseResult + "Cubo perfeito (cubo da diferença).";
+        stepOneResult6Expected = stepOneBaseResult + "Trinômio do segundo grau.";
 
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
@@ -76,7 +77,11 @@ public class FatorationRuleIdentificationTest {
         stepThreeResult5MinusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
                 "diferença, no formato (a - b)^3.";
 
-        finalResultExplicationExpected = "Soma dos termos semelhantes.";
+        stepTwoResult6Expected = "Escrevemos a expressão no formato x^2 + (b/a)x + (c/a), identificando os elementos " +
+                "que estão elevados ao quadrado e as respectivas divisões.";
+        stepThreeResult6Expected = "Identificamos dois elementos x' e x'' tal que x' + x'' = -(b/a) e x' * x'' = c/a " +
+                "ou utilizando a fórmula de Bháskara e escrevemos o resultado como um produto a * (x - x') * (x - x'').";
+
     }
 
     //<editor-fold desc="Common Factor">
@@ -1154,8 +1159,8 @@ public class FatorationRuleIdentificationTest {
         //Arrange
         String expression = "x^2 - 5x + 6";
 
-        String stepTwoValueExpected = "(x  ) ^ 2  + (-5/1)x + (3/1)";
-        String lastStepValueExpected = "1 * (x - 2) * (x - 3)";
+        String stepTwoValueExpected = "x^2 + (-5/1)x + (6/1)";
+        String lastStepValueExpected = "1 * (x - 3) * (x - 2)";
 
         // Act
         IAnswer answer = null;
@@ -1171,11 +1176,69 @@ public class FatorationRuleIdentificationTest {
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepOneResult6Expected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
+        assertEquals(stepTwoResult6Expected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
+        assertEquals(stepThreeResult6Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_simple_binomial_product_scenery_two_with_success() {
+        //Arrange
+        String expression = "x^2 + 7x + 10";
+
+        String stepTwoValueExpected = "x^2 + (7/1)x + (10/1)";
+        String lastStepValueExpected = "1 * (x + 2) * (x + 5)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult6Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult6Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult6Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_simple_binomial_product_scenery_three_with_success() {
+        //Arrange
+        String expression = "2x^2 + 4x - 16";
+
+        String stepTwoValueExpected = "x^2 + (4/2)x + (-16/2)";
+        String lastStepValueExpected = "2 * (x - 2) * (x + 4)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult6Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult6Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult6Expected, finalStep.getReason());
     }
 
     //</editor-fold>

@@ -329,15 +329,13 @@ public class FatorationRuleIdentification implements IRule {
 
                     ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(root.getArgument2());
                     if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-                        if (innerQuadruple.isPlus()) {
-                            argument = new NumericValueVariable(innerQuadruple.getArgument1());
-                            if (argument.getValue() != 0 && argument.getLabelPower() == 1) {
-
-                                if (StringUtil.match(innerQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                    return !innerQuadruple.getArgument2().equals("0");
-                                }
+                        argument = new NumericValueVariable(innerQuadruple.getArgument1());
+                        if (argument.getValue() != 0 && argument.getLabelPower() == 1) {
+                            if (StringUtil.match(innerQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
+                                return !innerQuadruple.getArgument2().equals("0");
                             }
                         }
+
                     }
                 }
             }
