@@ -117,11 +117,11 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         NumericValueVariable lowestValueNVV = new NumericValueVariable(lowestValue);
         NumericValueVariable argumentNVV = new NumericValueVariable(argument);
         if (argumentNVV.getLabelPower() < lowestValueNVV.getLabelPower())
-            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue())) ? argument : argumentNVV.getLabel();
+            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue(), true)) ? argument : argumentNVV.getLabel();
 
 
         if (lowestValueNVV.getLabelPower() < argumentNVV.getLabelPower())
-            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue())) ? lowestValue : lowestValueNVV.getLabel();
+            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue(), true)) ? lowestValue : lowestValueNVV.getLabel();
 
         return (argumentNVV.getValue() < lowestValueNVV.getValue()) ? argument : lowestValue;
     }
@@ -158,20 +158,22 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         } else if (pattern.getValue() == null) {
             if (!StringUtil.match(nvv.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()))
                 return !nvv.getLabel().contains(pattern.getLabel());
-            return itDoesntMatchMonomy(pattern.getLabelPower(), nvv.getLabelPower(), nvv.getLabelVariable(), pattern.getLabelVariable());
+            return itDoesntMatchMonomy(pattern.getLabelPower(), nvv.getLabelPower(), nvv.getLabelVariable(), pattern.getLabelVariable(), false);
         }
         if (pattern.getValue() == 1)
             return !nvv.getLabel().contains(pattern.getLabelVariable());
-        return itDoesntMatchMonomy(pattern.getValue(), nvv.getValue(), nvv.getLabelVariable(), pattern.getLabelVariable());
+        return itDoesntMatchMonomy(pattern.getValue(), nvv.getValue(), nvv.getLabelVariable(), pattern.getLabelVariable(), true);
     }
 
-    private boolean itDoesntMatchMonomy(int numeralPart1, int numeralPart2, String literalPart1, String literalPart2) {
-        return !((this.isMultiple(numeralPart1, numeralPart2))
+    private boolean itDoesntMatchMonomy(int numeralPart1, int numeralPart2, String literalPart1, String literalPart2,
+                                        boolean isValue) {
+        return !((this.isMultiple(numeralPart1, numeralPart2, isValue))
                 && literalPart1.contains(literalPart2));
     }
 
-    private boolean isMultiple(int n1, int n2) {
-        return (n1 % n2 == 0 || n2 % n1 == 0) && !(n1 == 1 || n2 == 1);
+    private boolean isMultiple(int n1, int n2, boolean isLabel) {
+        return (isLabel) ? (n1 % n2 == 0 || n2 % n1 == 0) && !(n1 == 1 || n2 == 1) :
+                (n1 % n2 == 0 || n2 % n1 == 0) || ((n1 == 1 && n2 != 1) || (n2 == 1) && n1 != 1);
     }
     //</editor-fold>>
 
