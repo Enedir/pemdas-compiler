@@ -264,9 +264,4 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
     //</editor-fold>>
 
     //</editor-fold>>
-
-    //<editor-fold desc="Group">
-
-
-    //</editor-fold>>
 }

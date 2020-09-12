@@ -42,14 +42,15 @@ public class FatorationRuleIdentificationTest {
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
         stepOneResult1Expected = stepOneBaseResult + "Fator comum em evidência.";
-        stepOneResult2Expected = stepOneBaseResult + "Quadrado da diferença de dois termos.";
+        stepOneResult2Expected = stepOneBaseResult + "Agrupamento.\n\nNote que nesse caso temos um elemento em comum " +
+                "nos dois primeiros termos e um elemento comum no terceiro e quarto termos.";
         stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito.\n\nNote que a expressão é formada " +
                 "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
                 "produto entre o priemiro termo e o segundo termo.";
         stepOneResult4Expected = stepOneBaseResult + "Diferença de dois quadrados.";
         stepOneResult5PlusExpected = stepOneBaseResult + "Cubo perfeito (cubo da soma).";
         stepOneResult5MinusExpected = stepOneBaseResult + "Cubo perfeito (cubo da diferença).";
-        stepOneResult6Expected = stepOneBaseResult + "Trinômio do segundo grau.";
+        stepOneResult6Expected = stepOneBaseResult + "Trinômio do segundo grau.\n\nNote que a expressão é um trinômio no formato ax^2 + bx + c.";
 
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
@@ -417,6 +418,34 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepTwoResult1Expected, finalStep.getReason());
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Groupment">
+
+    @Test()
+    public void identify_simple_terms_groupment_scenery_one_with_success() {
+        //Arrange
+        String expression = "3x + 9 + x^2 + 3x";
+
+        String lastStepValueExpected = "3 * (x + 3) + x * (x + 3)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult2Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResult1Expected, finalStep.getReason());
+    }
     //</editor-fold>
 
     //<editor-fold desc="Perfect Square Trinomial">

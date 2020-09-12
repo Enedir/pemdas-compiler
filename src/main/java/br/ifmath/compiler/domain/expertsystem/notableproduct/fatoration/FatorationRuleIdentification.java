@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.Couples;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
 import br.ifmath.compiler.domain.grammar.nonterminal.T;
@@ -57,11 +58,12 @@ public class FatorationRuleIdentification implements IRule {
         }
 
         if (isTwoBinomialProduct(this.source)) {
-            return "Trinômio do segundo grau.";
+            return "Trinômio do segundo grau.\n\nNote que a expressão é um trinômio no formato ax^2 + bx + c.";
         }
 
         if (isGroupment(this.source)) {
-            return "Agrupamento";
+            return "Agrupamento.\n\nNote que nesse caso temos um elemento em comum nos dois primeiros termos e um " +
+                    "elemento comum no terceiro e quarto termos.";
         }
 
         if (isCommonFactor(this.source.getRootQuadruple(), this.source)) {
@@ -108,20 +110,20 @@ public class FatorationRuleIdentification implements IRule {
         //TODO ver o que está fazendo
         ExpandedQuadruple root = source.getRootQuadruple();
         if (isCommonFactor(root, source)) {
-            if (quadruplesCount(source.getRootQuadruple(), source) == 4) {
+            if (quadruplesCount(source.getRootQuadruple(), source) == 3) {
 
                 ThreeAddressCode firstCouple = generateFirstCouple(source);
 
                 ThreeAddressCode secondCouple = new ThreeAddressCode();
                 List<ExpandedQuadruple> quadruples = new ArrayList<>();
-                quadruples.add(source.getListLastQuadruple());
+                quadruples.add(source.getLastQuadruple(root));
                 secondCouple.setExpandedQuadruples(quadruples);
-                secondCouple.setLeft(source.getListLastQuadruple().getResult());
+                secondCouple.setLeft(secondCouple.getExpandedQuadruples().get(0).getResult());
 
 
                 Couples couples = new Couples(firstCouple, secondCouple);
                 return !couples.getFirstCoupleFactor().equals(couples.getSecondCoupleFactor()) &&
-                        (couples.getFirstCoupleMultiplier().equals(couples.getSecondCoupleMultiplier()));
+                        couples.isFirstCoupleEqualsSecond();
 
             }
         }
@@ -130,7 +132,7 @@ public class FatorationRuleIdentification implements IRule {
     }
 
 
-    private static ThreeAddressCode generateFirstCouple(ThreeAddressCode source) {
+    public static ThreeAddressCode generateFirstCouple(ThreeAddressCode source) {
         String argument1 = source.getRootQuadruple().getArgument1();
         if (StringUtil.match(argument1, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             argument1 = source.findQuadrupleByResult(argument1).getArgument1();
@@ -161,60 +163,9 @@ public class FatorationRuleIdentification implements IRule {
             sum += quadruplesCount(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), source);
         }
 
-        sum++;
         return sum;
     }
 
-    private static class Couples {
-        private String firstCoupleFactor, firstCoupleMultiplier, secondCoupleFactor, secondCoupleMultiplier;
-
-        public Couples(ThreeAddressCode firstCouple, ThreeAddressCode secondCouple) throws InvalidAlgebraicExpressionException {
-            setCouples(firstCouple, true);
-            setCouples(secondCouple, false);
-        }
-
-        private void setCouples(ThreeAddressCode couple, boolean isFirstCouple) throws InvalidAlgebraicExpressionException {
-            FatorationRuleCommonFactorAndGroup commonFactor = new FatorationRuleCommonFactorAndGroup();
-            ThreeAddressCode source = getResultSource(commonFactor, couple);
-            if (isFirstCouple)
-                this.firstCoupleFactor = source.getRootQuadruple().getArgument1();
-            else
-                this.secondCoupleFactor = source.getRootQuadruple().getArgument1();
-            ExpandedQuadruple firstSourceRoot = couple.getRootQuadruple();
-            if (StringUtil.match(firstSourceRoot.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                if (isFirstCouple)
-                    this.firstCoupleMultiplier = getMultiplierFromQuadruple(firstSourceRoot.getArgument2(), source);
-                else
-                    this.secondCoupleMultiplier = getMultiplierFromQuadruple(firstSourceRoot.getArgument2(), source);
-            }
-        }
-
-        private String getMultiplierFromQuadruple(String quadrupleResult, ThreeAddressCode source) {
-            ExpandedQuadruple quadruple = source.findQuadrupleByResult(quadrupleResult);
-            return quadruple.getArgument1() + " " + quadruple.getOperator() + " " + quadruple.getArgument2();
-        }
-
-        private ThreeAddressCode getResultSource(IRule rule, ThreeAddressCode ruleSource) throws InvalidAlgebraicExpressionException {
-            return rule.handle(Collections.singletonList(ruleSource)).get(0).getSource().get(0);
-        }
-
-        public String getFirstCoupleFactor() {
-            return firstCoupleFactor;
-        }
-
-        public String getFirstCoupleMultiplier() {
-            return firstCoupleMultiplier;
-        }
-
-        public String getSecondCoupleFactor() {
-            return secondCoupleFactor;
-        }
-
-        public String getSecondCoupleMultiplier() {
-            return secondCoupleMultiplier;
-        }
-
-    }
 
     //</editor-fold>
 
