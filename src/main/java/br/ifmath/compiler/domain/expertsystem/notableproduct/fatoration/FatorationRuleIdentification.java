@@ -5,16 +5,12 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.Couples;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
-import br.ifmath.compiler.domain.grammar.nonterminal.T;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FatorationRuleIdentification implements IRule {
@@ -107,19 +103,13 @@ public class FatorationRuleIdentification implements IRule {
     //<editor-fold desc="Groupment">
 
     public static boolean isGroupment(ThreeAddressCode source) throws InvalidAlgebraicExpressionException {
-        //TODO ver o que está fazendo
         ExpandedQuadruple root = source.getRootQuadruple();
         if (isCommonFactor(root, source)) {
             if (quadruplesCount(source.getRootQuadruple(), source) == 3) {
 
-                ThreeAddressCode firstCouple = generateFirstCouple(source);
+                ThreeAddressCode firstCouple = generateCouple(root, source, true);
 
-                ThreeAddressCode secondCouple = new ThreeAddressCode();
-                List<ExpandedQuadruple> quadruples = new ArrayList<>();
-                quadruples.add(source.getLastQuadruple(root));
-                secondCouple.setExpandedQuadruples(quadruples);
-                secondCouple.setLeft(secondCouple.getExpandedQuadruples().get(0).getResult());
-
+                ThreeAddressCode secondCouple = generateCouple(root, source, false);
 
                 Couples couples = new Couples(firstCouple, secondCouple);
                 return !couples.getFirstCoupleFactor().equals(couples.getSecondCoupleFactor()) &&
@@ -132,13 +122,18 @@ public class FatorationRuleIdentification implements IRule {
     }
 
 
-    public static ThreeAddressCode generateFirstCouple(ThreeAddressCode source) {
-        String argument1 = source.getRootQuadruple().getArgument1();
+    public static ThreeAddressCode generateCouple(ExpandedQuadruple root, ThreeAddressCode source, boolean isFirstCouple) {
+        String argument1 = (isFirstCouple) ? root.getArgument1() : source.getLastQuadruple(root).getArgument1();
+
         if (StringUtil.match(argument1, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             argument1 = source.findQuadrupleByResult(argument1).getArgument1();
         }
-        String argument2 = source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()).getArgument1();
-        ExpandedQuadruple expandedQuadruple = new ExpandedQuadruple("+", argument1, argument2, "T1", 0, 0);
+        String argument2 = (isFirstCouple) ?
+                source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()).getArgument1() :
+                source.getLastQuadruple(root).getArgument2();
+
+        ExpandedQuadruple expandedQuadruple = new ExpandedQuadruple(root.getOperator(), argument1, argument2,
+                "T1", 0, 0);
 
         List<ExpandedQuadruple> quadruples = new ArrayList<>();
         quadruples.add(expandedQuadruple);

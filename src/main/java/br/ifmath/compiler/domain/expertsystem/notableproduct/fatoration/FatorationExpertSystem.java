@@ -10,11 +10,14 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSExpandedFormula;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSSumDifferenceProduct;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.FatorationRuleGroupmentCommonFactor;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.FatorationRuleGroupmentSumProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialExpandedFormulaConversion;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialNotableProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProductConvertToDivisionFormula;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.grammar.nonterminal.F;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -40,6 +43,10 @@ public class FatorationExpertSystem implements IExpertSystem {
 
     private FatorationRuleTwoBinomialProduct binomialProduct;
 
+    private FatorationRuleGroupmentCommonFactor groupFactor;
+
+    private FatorationRuleGroupmentSumProduct groupSumProduct;
+
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
         this.commonFactor = new FatorationRuleCommonFactorAndGroup();
@@ -49,6 +56,8 @@ public class FatorationExpertSystem implements IExpertSystem {
         this.diffSquaresProduct = new FatorationRuleDOTSSumDifferenceProduct();
         this.binomialDivisionFormula = new FatorationRuleTwoBinomialProductConvertToDivisionFormula();
         this.binomialProduct = new FatorationRuleTwoBinomialProduct();
+        this.groupFactor = new FatorationRuleGroupmentCommonFactor();
+        this.groupSumProduct = new FatorationRuleGroupmentSumProduct();
     }
 
     @Override
@@ -99,6 +108,14 @@ public class FatorationExpertSystem implements IExpertSystem {
                 sources = steps.get(steps.size() - 1).getSource();
             }
 
+        } else if (groupFactor.match(sources)) {
+            steps.addAll(groupFactor.handle(sources));
+            sources = steps.get(steps.size() - 1).getSource();
+
+            if (groupSumProduct.match(sources)) {
+                steps.addAll(groupSumProduct.handle(sources));
+                sources = steps.get(steps.size() - 1).getSource();
+            }
         } else if (commonFactor.match(sources)) {
             steps.addAll(commonFactor.handle(sources));
             sources = steps.get(steps.size() - 1).getSource();

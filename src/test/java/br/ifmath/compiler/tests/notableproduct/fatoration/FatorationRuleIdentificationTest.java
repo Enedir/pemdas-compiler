@@ -28,6 +28,7 @@ public class FatorationRuleIdentificationTest {
     private String stepTwoResult5PlusExpected;
     private String stepTwoResult5MinusExpected;
     private String stepTwoResult6Expected;
+    private String stepThreeResult2Expected;
     private String stepThreeResult3PlusExpected;
     private String stepThreeResult3MinusExpected;
     private String stepThreeResult4Expected;
@@ -54,7 +55,11 @@ public class FatorationRuleIdentificationTest {
 
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
-        stepTwoResult2Expected = "Removendo os parênteses dos polinômios.";
+
+        stepTwoResult2Expected = "Colocamos em evidência o elemento que temos em comum nos primeiros termos e somamos " +
+                "ao elemento que possuímos em comum nos últimos termos.";
+        stepThreeResult2Expected = "Escrevemos a expressão como o produto da soma de dois termos, sem alterar o " +
+                "resultado final.";
 
         stepTwoResult3PlusExpected = "Escrevemos a expressão no formato a^2 + 2 * a * b + b^2, identificando os " +
                 "elementos que estão elevados ao quadrado e os respectivos produtos.";
@@ -427,7 +432,8 @@ public class FatorationRuleIdentificationTest {
         //Arrange
         String expression = "3x + 9 + x^2 + 3x";
 
-        String lastStepValueExpected = "3 * (x + 3) + x * (x + 3)";
+        String stepTwoValueExpected = "3 * (x + 3) + x * (x + 3)";
+        String lastStepValueExpected = "(3 + x) * (x + 3)";
 
         // Act
         IAnswer answer = null;
@@ -438,13 +444,16 @@ public class FatorationRuleIdentificationTest {
         }
 
         // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
         assertEquals(stepOneResult2Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepTwoResult1Expected, finalStep.getReason());
+        assertEquals(stepThreeResult2Expected, finalStep.getReason());
     }
     //</editor-fold>
 
