@@ -1,9 +1,8 @@
-package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup;
+package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactor;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
@@ -13,7 +12,7 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FatorationRuleCommonFactorAndGroup implements IRule {
+public class FatorationRuleCommonFactor implements IRule {
 
     private ThreeAddressCode source;
 
@@ -24,7 +23,7 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
 
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> source) {
         List<Step> steps = new ArrayList<>();
         this.source = source.get(0);
         String commonFactor = this.getCommonFactor();
@@ -39,10 +38,8 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         return steps;
     }
 
-    //<editor-fold desc="CommonFactor">
-
     //<editor-fold desc="getCommonFactor">
-    private String getCommonFactor() throws InvalidAlgebraicExpressionException {
+    private String getCommonFactor() {
         NumericValueVariable patternNVV = new NumericValueVariable(this.getSmallestUnit());
 
         if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
@@ -57,7 +54,7 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         patternNVV.setValue(patternNVVValue);
         if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
             return patternNVV.getValue().toString();
-        throw new InvalidAlgebraicExpressionException("Padrão não encontrado");
+        return "";
     }
 
     private String getSmallestUnit() {
@@ -152,7 +149,9 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
         if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
             argument = this.source.findQuadrupleByResult(argument).getArgument1();
         NumericValueVariable nvv = new NumericValueVariable(argument);
-        if (pattern.getLabel().isEmpty()) {
+        if (pattern.getLabel().isEmpty() && pattern.getValue() == null) {
+            return true;
+        } else if (pattern.getLabel().isEmpty()) {
             return nvv.getValue() % pattern.getValue() != 0;
 
         } else if (pattern.getValue() == null) {
@@ -263,5 +262,4 @@ public class FatorationRuleCommonFactorAndGroup implements IRule {
     }
     //</editor-fold>>
 
-    //</editor-fold>>
 }

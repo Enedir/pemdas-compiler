@@ -4,7 +4,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactor.FatorationRuleCommonFactor;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -20,7 +20,7 @@ public class Couples {
     }
 
     private void setCouples(ThreeAddressCode couple, boolean isFirstCouple) throws InvalidAlgebraicExpressionException {
-        FatorationRuleCommonFactorAndGroup commonFactor = new FatorationRuleCommonFactorAndGroup();
+        FatorationRuleCommonFactor commonFactor = new FatorationRuleCommonFactor();
         ThreeAddressCode source = getResultSource(commonFactor, couple);
         if (isFirstCouple)
             this.firstCoupleFactor = source.getRootQuadruple().getArgument1();
@@ -55,14 +55,19 @@ public class Couples {
         return secondCoupleMultiplier;
     }
 
-    public boolean isFirstCoupleEqualsSecond(){
+    public boolean isFirstCoupleEqualsSecond() {
         boolean isEquals = firstCoupleMultiplier.getArgument1().equals(secondCoupleMultiplier.getArgument1());
-        if(isEquals){
+        if (isEquals) {
             isEquals = firstCoupleMultiplier.getOperator().equals(secondCoupleMultiplier.getOperator());
-            if(isEquals){
+            if (isEquals) {
                 return firstCoupleMultiplier.getArgument2().equals(secondCoupleMultiplier.getArgument2());
             }
         }
         return false;
+    }
+
+    public boolean areEmpty() {
+        return firstCoupleFactor == null || firstCoupleMultiplier == null
+                || secondCoupleFactor == null || secondCoupleMultiplier == null;
     }
 }

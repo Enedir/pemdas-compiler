@@ -7,7 +7,7 @@ import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactorandgroup.FatorationRuleCommonFactorAndGroup;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactor.FatorationRuleCommonFactor;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSExpandedFormula;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.differenceoftwosquares.FatorationRuleDOTSSumDifferenceProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.FatorationRuleGroupmentCommonFactor;
@@ -17,7 +17,6 @@ import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectp
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProductConvertToDivisionFormula;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
-import br.ifmath.compiler.domain.grammar.nonterminal.F;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -27,29 +26,29 @@ import java.util.List;
 
 public class FatorationExpertSystem implements IExpertSystem {
 
-    private FatorationRuleIdentification identification;
+    private final FatorationRuleIdentification identification;
 
-    private FatorationRuleCommonFactorAndGroup commonFactor;
+    private final FatorationRuleCommonFactor commonFactor;
 
-    private FatorationRulePerfectPolynomialExpandedFormulaConversion polynomialFormula;
+    private final FatorationRulePerfectPolynomialExpandedFormulaConversion polynomialFormula;
 
-    private FatorationRulePerfectPolynomialNotableProduct polynomialNotableProduct;
+    private final FatorationRulePerfectPolynomialNotableProduct polynomialNotableProduct;
 
-    private FatorationRuleDOTSExpandedFormula diffSquaresFormula;
+    private final FatorationRuleDOTSExpandedFormula diffSquaresFormula;
 
-    private FatorationRuleDOTSSumDifferenceProduct diffSquaresProduct;
+    private final FatorationRuleDOTSSumDifferenceProduct diffSquaresProduct;
 
-    private FatorationRuleTwoBinomialProductConvertToDivisionFormula binomialDivisionFormula;
+    private final FatorationRuleTwoBinomialProductConvertToDivisionFormula binomialDivisionFormula;
 
-    private FatorationRuleTwoBinomialProduct binomialProduct;
+    private final FatorationRuleTwoBinomialProduct binomialProduct;
 
-    private FatorationRuleGroupmentCommonFactor groupFactor;
+    private final FatorationRuleGroupmentCommonFactor groupFactor;
 
-    private FatorationRuleGroupmentSumProduct groupSumProduct;
+    private final FatorationRuleGroupmentSumProduct groupSumProduct;
 
     public FatorationExpertSystem() {
         this.identification = new FatorationRuleIdentification();
-        this.commonFactor = new FatorationRuleCommonFactorAndGroup();
+        this.commonFactor = new FatorationRuleCommonFactor();
         this.polynomialFormula = new FatorationRulePerfectPolynomialExpandedFormulaConversion();
         this.polynomialNotableProduct = new FatorationRulePerfectPolynomialNotableProduct();
         this.diffSquaresFormula = new FatorationRuleDOTSExpandedFormula();
@@ -69,10 +68,6 @@ public class FatorationExpertSystem implements IExpertSystem {
         sources.get(0).setUp();
 
         setUpQuadruples(sources);
-
-        /*TODO Pensar no caso de colocar uma variável como uma flag, que no identification vai identificar qual regra vai
-           entrar. Isso para não precisar ficar verificando a mesma coisa antes de entrar em toda regra.
-         */
 
         validateExpressions(sources);
         if (identification.match(sources)) {

@@ -112,6 +112,8 @@ public class FatorationRuleIdentification implements IRule {
                 ThreeAddressCode secondCouple = generateCouple(root, source, false);
 
                 Couples couples = new Couples(firstCouple, secondCouple);
+                if(couples.areEmpty())
+                    return false;
                 return !couples.getFirstCoupleFactor().equals(couples.getSecondCoupleFactor()) &&
                         couples.isFirstCoupleEqualsSecond();
 
