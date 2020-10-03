@@ -40,9 +40,9 @@ public class FatorationRuleIdentification implements IRule {
 
     private String identify() throws InvalidAlgebraicExpressionException {
         if (isPerfectSquareTrinomial(this.source)) {
-            return "Trinômio quadrado perfeito.\n\nNote que a expressão é formada " +
+            return "Trinômio quadrado perfeito. Note que a expressão é formada " +
                     "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
-                    "produto entre o priemiro termo e o segundo termo.";
+                    "produto entre o primeiro termo e o segundo termo.";
         }
 
         if (isPerfectCube(this.source)) {
@@ -54,11 +54,12 @@ public class FatorationRuleIdentification implements IRule {
         }
 
         if (isTwoBinomialProduct(this.source)) {
-            return "Trinômio do segundo grau.\n\nNote que a expressão é um trinômio no formato ax^2 + bx + c.";
+            return "Trinômio do segundo grau. Note que a expressão é um trinômio no " +
+                    "formato &ascr;&xscr;&sup2; &plus; &bscr;&xscr; &plus; &cscr;.";
         }
 
         if (isGroupment(this.source)) {
-            return "Agrupamento.\n\nNote que nesse caso temos um elemento em comum nos dois primeiros termos e um " +
+            return "Agrupamento. Note que nesse caso temos um elemento em comum nos dois primeiros termos e um " +
                     "elemento comum no terceiro e quarto termos.";
         }
 

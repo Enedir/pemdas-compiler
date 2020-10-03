@@ -33,9 +33,10 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(),
-                "Identificamos dois elementos x' e x'' tal que x' + x'' = -(b/a) e x' * x'' = c/a ou " +
-                        "utilizando a fórmula de Bháskara e escrevemos o resultado como um produto " +
-                        "a * (x - x') * (x - x'')."));
+                "Identificamos dois elementos &xscr;&apos; e &xscr;&apos;&apos; tal que &xscr;&apos; &plus; " +
+                        "&xscr;&apos;&apos; &equals; &minus;(&bscr;&sol;&ascr;) e &xscr;&apos; &middot; &xscr;&apos;&apos; " +
+                        "&equals; &cscr;&sol;&ascr; ou utilizando a fórmula de Bháskara e escrevemos o resultado como um produto " +
+                        "&ascr; &middot; (&xscr; &minus; &xscr;&apos;) &middot; (&xscr; &minus; &xscr;&apos;&apos;)."));
         return steps;
     }
 

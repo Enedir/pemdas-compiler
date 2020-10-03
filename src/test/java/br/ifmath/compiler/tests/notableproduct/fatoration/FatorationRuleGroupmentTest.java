@@ -26,7 +26,7 @@ public class FatorationRuleGroupmentTest {
         compiler = new Compiler();
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
-        stepOneResult2Expected = stepOneBaseResult + "Agrupamento.\n\nNote que nesse caso temos um elemento em comum " +
+        stepOneResult2Expected = stepOneBaseResult + "Agrupamento. Note que nesse caso temos um elemento em comum " +
                 "nos dois primeiros termos e um elemento comum no terceiro e quarto termos.";
         stepTwoResult2Expected = "Colocamos em evidência o elemento que temos em comum nos primeiros termos e somamos " +
                 "ao elemento que possuímos em comum nos últimos termos.";

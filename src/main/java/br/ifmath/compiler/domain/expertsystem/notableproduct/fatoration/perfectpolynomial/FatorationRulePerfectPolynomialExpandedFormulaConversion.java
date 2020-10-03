@@ -29,10 +29,12 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         boolean isPerfectSquare = FatorationRuleIdentification.isPerfectSquareTrinomial(source.get(0));
         String sign = this.adjustToExpandedFormula(isPerfectSquare);
         String reason = (isPerfectSquare) ?
-                "Escrevemos a expressão no formato a^2 + 2 * a * b " + sign + " b^2, identificando os elementos que " +
-                        "estão elevados ao quadrado e os respectivos produtos." :
-                "Escrevemos a expressão no formato a^3 " + sign + " 3 * a^2 * b + 3 * a * b^2 " + sign + " b^3, " +
-                        "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
+                "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " + sign +
+                        " &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos." :
+
+                "Escrevemos a expressão no formato &ascr;&sup3; " + sign + " 3 &middot; &ascr;&sup2; &middot; &bscr; " +
+                        "&plus; 3 &middot; &ascr; &middot; &bscr;&sup2; " + sign + " &bscr;&sup3;," +
+                        " identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
 
         this.source.clearNonUsedQuadruples();
 
@@ -59,7 +61,7 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         lastQuadruple.setArgument2(this.convertToRaisedValue(lastQuadruple.getArgument2(), isPerfectSquare));
         root.setArgument1(this.convertToRaisedValue(this.source.getRootQuadruple().getArgument1(), isPerfectSquare));
 
-        return lastQuadruple.getOperator();
+        return (lastQuadruple.getOperator().equals("+")) ? "&plus;" : "&minus;";
     }
 
 

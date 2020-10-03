@@ -33,8 +33,8 @@ public class FatorationRuleTwoBinomialProductConvertToDivisionFormula implements
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(),
-                "Escrevemos a expressão no formato x^2 + (b/a)x + (c/a), identificando os elementos que estão " +
-                        "elevados ao quadrado e as respectivas divisões."));
+                "Escrevemos a expressão no formato &xscr;&sup2; &plus; (&bscr;&sol;&ascr;)&xscr; &plus; " +
+                        "(&cscr;&sol;&ascr;), identificando os elementos que estão elevados ao quadrado e as respectivas divisões."));
         return steps;
     }
 

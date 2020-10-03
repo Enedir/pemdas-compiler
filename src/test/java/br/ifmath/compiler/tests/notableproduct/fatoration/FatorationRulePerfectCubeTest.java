@@ -31,14 +31,16 @@ public class FatorationRulePerfectCubeTest {
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
         stepOneResult5PlusExpected = stepOneBaseResult + "Cubo perfeito (cubo da soma).";
         stepOneResult5MinusExpected = stepOneBaseResult + "Cubo perfeito (cubo da diferença).";
-        stepTwoResult5PlusExpected = "Escrevemos a expressão no formato a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3, " +
+        stepTwoResult5PlusExpected = "Escrevemos a expressão no formato &ascr;&sup3; &plus; 3 &middot; &ascr;&sup2; &middot; &bscr; " +
+                "&plus; 3 &middot; &ascr; &middot; &bscr;&sup2; &plus; &bscr;&sup3;, identificando os elementos que " +
+                "estão elevados ao cubo, ao quadrado e os respectivos produtos.";
+        stepTwoResult5MinusExpected = "Escrevemos a expressão no formato &ascr;&sup3; &minus; 3 &middot; &ascr;&sup2; " +
+                "&middot; &bscr; &plus; 3 &middot; &ascr; &middot; &bscr;&sup2; &minus; &bscr;&sup3;, " +
                 "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
-        stepTwoResult5MinusExpected = "Escrevemos a expressão no formato a^3 - 3 * a^2 * b + 3 * a * b^2 - b^3, " +
-                "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
-        stepThreeResult5PlusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "soma, no formato (a + b)^3.";
-        stepThreeResult5MinusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "diferença, no formato (a - b)^3.";
+        stepThreeResult5PlusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
+                "soma, no formato (&ascr; &plus; &bscr;)&sup3;.";
+        stepThreeResult5MinusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
+                "diferença, no formato (&ascr; &minus; &bscr;)&sup3;.";
     }
 
     //<editor-fold desc="Perfect Cube">

@@ -69,6 +69,15 @@ public class FatorationExpertSystem implements IExpertSystem {
 
         setUpQuadruples(sources);
 
+        /*As fórmulas das explicações foram escritas usando entidades HTML, para ficar com uma melhor visualização.
+        * Por exemplo, para escrever "a", usa-se o código "&ascr;".
+        *
+        * Abaixo está um site com as entidades e seus códigos.
+        *
+        * https://dev.w3.org/html5/html-author/charref
+        *
+        */
+
         validateExpressions(sources);
         if (identification.match(sources)) {
             steps.addAll(identification.handle(sources));

@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class FatorationRuleDifferenceOfTwoSqauresTest {
+public class FatorationRuleDifferenceOfTwoSquaresTest {
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String stepOneResult4Expected;
@@ -26,8 +26,8 @@ public class FatorationRuleDifferenceOfTwoSqauresTest {
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
         stepOneResult4Expected = stepOneBaseResult + "Diferença de dois quadrados.";
-        stepTwoResult4Expected = "Escrevemos a expressão no formato a^2 - b^2, identificando os elementos que estão " +
-                "elevados ao quadrado.";
+        stepTwoResult4Expected = "Escrevemos a expressão no formato &ascr;&sup2; &minus; &bscr;&sup2;, identificando os " +
+                "elementos que estão elevados ao quadrado.";
         stepThreeResult4Expected = "Escrevemos a expressão como o produto da soma pela diferença de dois termos.";
     }
 

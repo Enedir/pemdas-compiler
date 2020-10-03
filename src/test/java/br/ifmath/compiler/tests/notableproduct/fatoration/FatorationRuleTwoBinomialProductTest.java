@@ -26,11 +26,14 @@ public class FatorationRuleTwoBinomialProductTest {
         compiler = new Compiler();
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
-        stepOneResult6Expected = stepOneBaseResult + "Trinômio do segundo grau.\n\nNote que a expressão é um trinômio no formato ax^2 + bx + c.";
-        stepTwoResult6Expected = "Escrevemos a expressão no formato x^2 + (b/a)x + (c/a), identificando os elementos " +
-                "que estão elevados ao quadrado e as respectivas divisões.";
-        stepThreeResult6Expected = "Identificamos dois elementos x' e x'' tal que x' + x'' = -(b/a) e x' * x'' = c/a " +
-                "ou utilizando a fórmula de Bháskara e escrevemos o resultado como um produto a * (x - x') * (x - x'').";
+        stepOneResult6Expected = stepOneBaseResult + "Trinômio do segundo grau. " +
+                "Note que a expressão é um trinômio no formato &ascr;&xscr;&sup2; &plus; &bscr;&xscr; &plus; &cscr;.";
+        stepTwoResult6Expected = "Escrevemos a expressão no formato &xscr;&sup2; &plus; (&bscr;&sol;&ascr;)&xscr; &plus; " +
+                "(&cscr;&sol;&ascr;), identificando os elementos que estão elevados ao quadrado e as respectivas divisões.";
+        stepThreeResult6Expected = "Identificamos dois elementos &xscr;&apos; e &xscr;&apos;&apos; tal que &xscr;&apos; &plus; " +
+                "&xscr;&apos;&apos; &equals; &minus;(&bscr;&sol;&ascr;) e &xscr;&apos; &middot; &xscr;&apos;&apos; " +
+                "&equals; &cscr;&sol;&ascr; ou utilizando a fórmula de Bháskara e escrevemos o resultado como um produto " +
+                "&ascr; &middot; (&xscr; &minus; &xscr;&apos;) &middot; (&xscr; &minus; &xscr;&apos;&apos;).";
 
     }
 

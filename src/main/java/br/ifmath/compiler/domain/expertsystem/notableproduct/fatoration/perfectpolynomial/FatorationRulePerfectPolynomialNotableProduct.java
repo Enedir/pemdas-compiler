@@ -24,14 +24,14 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
 
         String exponent = this.generateSum();
         String sign = this.getSign();
-        String operation = (sign.equals("+")) ? "soma" : "diferença";
+        String operation = (sign.equals("&plus;")) ? "soma" : "diferença";
 
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), this.source.getExpandedQuadruples());
         List<ThreeAddressCode> codes = new ArrayList<>();
         codes.add(step);
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Identificamos os " +
-                "elementos a e b e escrevemos o resultado como o quadrado da " + operation +
-                ", no formato (a " + sign + " b)^" + exponent + "."));
+                "elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " + operation +
+                ", no formato (&ascr; " + sign + " &bscr;)" + exponent));
         return steps;
     }
 
@@ -57,12 +57,12 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
 
         this.source = new ThreeAddressCode("T2", newQuadruples);
 
-        return exponent;
+        return (exponent.equals("2")) ? "&sup2;." : "&sup3;.";
     }
 
     private String getSign() {
         ExpandedQuadruple root = this.source.getRootQuadruple();
         ExpandedQuadruple insideQuadruple = this.source.findQuadrupleByResult(root.getArgument1());
-        return insideQuadruple.getOperator();
+        return (insideQuadruple.getOperator().equals("+")) ? "&plus;" : "&minus;";
     }
 }

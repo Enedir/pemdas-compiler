@@ -27,17 +27,17 @@ public class FatorationRulePerfectPolynomialTest {
         compiler = new Compiler();
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
-        stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito.\n\nNote que a expressão é formada " +
+        stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito. Note que a expressão é formada " +
                 "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
-                "produto entre o priemiro termo e o segundo termo.";
-        stepTwoResult3PlusExpected = "Escrevemos a expressão no formato a^2 + 2 * a * b + b^2, identificando os " +
-                "elementos que estão elevados ao quadrado e os respectivos produtos.";
-        stepTwoResult3MinusExpected = "Escrevemos a expressão no formato a^2 + 2 * a * b - b^2, identificando os " +
-                "elementos que estão elevados ao quadrado e os respectivos produtos.";
-        stepThreeResult3PlusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "soma, no formato (a + b)^2.";
-        stepThreeResult3MinusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "diferença, no formato (a - b)^2.";
+                "produto entre o primeiro termo e o segundo termo.";
+        stepTwoResult3PlusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " +
+                "&plus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";
+        stepTwoResult3MinusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " +
+                "&minus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";
+        stepThreeResult3PlusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
+                "soma, no formato (&ascr; &plus; &bscr;)&sup2;.";
+        stepThreeResult3MinusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
+                "diferença, no formato (&ascr; &minus; &bscr;)&sup2;.";
     }
 
 

@@ -30,7 +30,7 @@ public class FatorationRuleDOTSExpandedFormula implements IRule {
         codes.add(step);
         List<Step> steps = new ArrayList<>();
         steps.add(new Step(codes, step.toLaTeXNotation().trim(), step.toMathNotation().trim(), "Escrevemos a " +
-                "expressão no formato a^2 - b^2, identificando os elementos que estão elevados ao quadrado."));
+                "expressão no formato &ascr;&sup2; &minus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado."));
         return steps;
     }
 

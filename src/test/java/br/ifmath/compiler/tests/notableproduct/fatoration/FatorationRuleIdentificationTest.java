@@ -40,15 +40,16 @@ public class FatorationRuleIdentificationTest {
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
         stepOneResult1Expected = stepOneBaseResult + "Fator comum em evidência.";
-        stepOneResult2Expected = stepOneBaseResult + "Agrupamento.\n\nNote que nesse caso temos um elemento em comum " +
+        stepOneResult2Expected = stepOneBaseResult + "Agrupamento. Note que nesse caso temos um elemento em comum " +
                 "nos dois primeiros termos e um elemento comum no terceiro e quarto termos.";
-        stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito.\n\nNote que a expressão é formada " +
+        stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito. Note que a expressão é formada " +
                 "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
-                "produto entre o priemiro termo e o segundo termo.";
+                "produto entre o primeiro termo e o segundo termo.";
         stepOneResult4Expected = stepOneBaseResult + "Diferença de dois quadrados.";
         stepOneResult5PlusExpected = stepOneBaseResult + "Cubo perfeito (cubo da soma).";
         stepOneResult5MinusExpected = stepOneBaseResult + "Cubo perfeito (cubo da diferença).";
-        stepOneResult6Expected = stepOneBaseResult + "Trinômio do segundo grau.\n\nNote que a expressão é um trinômio no formato ax^2 + bx + c.";
+        stepOneResult6Expected = stepOneBaseResult + "Trinômio do segundo grau. " +
+                "Note que a expressão é um trinômio no formato &ascr;&xscr;&sup2; &plus; &bscr;&xscr; &plus; &cscr;.";
 
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
@@ -58,28 +59,32 @@ public class FatorationRuleIdentificationTest {
         stepThreeResult2Expected = "Escrevemos a expressão como o produto da soma de dois termos, sem alterar o " +
                 "resultado final.";
 
-        stepTwoResult3PlusExpected = "Escrevemos a expressão no formato a^2 + 2 * a * b + b^2, identificando os " +
-                "elementos que estão elevados ao quadrado e os respectivos produtos.";
-        stepThreeResult3PlusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "soma, no formato (a + b)^2.";
+        stepTwoResult3PlusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " +
+                "&plus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";
+        stepThreeResult3PlusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
+                "soma, no formato (&ascr; &plus; &bscr;)&sup2;.";
 
-        stepTwoResult4Expected = "Escrevemos a expressão no formato a^2 - b^2, identificando os elementos que estão " +
-                "elevados ao quadrado.";
+        stepTwoResult4Expected = "Escrevemos a expressão no formato &ascr;&sup2; &minus; &bscr;&sup2;, identificando os " +
+                "elementos que estão elevados ao quadrado.";
         stepThreeResult4Expected = "Escrevemos a expressão como o produto da soma pela diferença de dois termos.";
 
-        stepTwoResult5PlusExpected = "Escrevemos a expressão no formato a^3 + 3 * a^2 * b + 3 * a * b^2 + b^3, " +
-                "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
-        stepTwoResult5MinusExpected = "Escrevemos a expressão no formato a^3 - 3 * a^2 * b + 3 * a * b^2 - b^3, " +
-                "identificando os elementos que estão elevados ao cubo, ao quadrado e os respectivos produtos.";
-        stepThreeResult5PlusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "soma, no formato (a + b)^3.";
-        stepThreeResult5MinusExpected = "Identificamos os elementos a e b e escrevemos o resultado como o quadrado da " +
-                "diferença, no formato (a - b)^3.";
+        stepTwoResult5PlusExpected = "Escrevemos a expressão no formato &ascr;&sup3; &plus; 3 &middot; &ascr;&sup2; &middot; &bscr; " +
+                "&plus; 3 &middot; &ascr; &middot; &bscr;&sup2; &plus; &bscr;&sup3;, identificando os elementos que " +
+                "estão elevados ao cubo, ao quadrado e os respectivos produtos.";
+        stepTwoResult5MinusExpected = "Escrevemos a expressão no formato &ascr;&sup3; &minus; 3 &middot; &ascr;&sup2; &middot; &bscr; " +
+                "&plus; 3 &middot; &ascr; &middot; &bscr;&sup2; &minus; &bscr;&sup3;, identificando os elementos que " +
+                "estão elevados ao cubo, ao quadrado e os respectivos produtos.";
+        stepThreeResult5PlusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
+                "soma, no formato (&ascr; &plus; &bscr;)&sup3;.";
+        stepThreeResult5MinusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
+                "diferença, no formato (&ascr; &minus; &bscr;)&sup3;.";
 
-        stepTwoResult6Expected = "Escrevemos a expressão no formato x^2 + (b/a)x + (c/a), identificando os elementos " +
-                "que estão elevados ao quadrado e as respectivas divisões.";
-        stepThreeResult6Expected = "Identificamos dois elementos x' e x'' tal que x' + x'' = -(b/a) e x' * x'' = c/a " +
-                "ou utilizando a fórmula de Bháskara e escrevemos o resultado como um produto a * (x - x') * (x - x'').";
+        stepTwoResult6Expected = "Escrevemos a expressão no formato &xscr;&sup2; &plus; (&bscr;&sol;&ascr;)&xscr; &plus; " +
+                "(&cscr;&sol;&ascr;), identificando os elementos que estão elevados ao quadrado e as respectivas divisões.";
+        stepThreeResult6Expected = "Identificamos dois elementos &xscr;&apos; e &xscr;&apos;&apos; tal que &xscr;&apos; &plus; " +
+                "&xscr;&apos;&apos; &equals; &minus;(&bscr;&sol;&ascr;) e &xscr;&apos; &middot; &xscr;&apos;&apos; " +
+                "&equals; &cscr;&sol;&ascr; ou utilizando a fórmula de Bháskara e escrevemos o resultado como um produto " +
+                "&ascr; &middot; (&xscr; &minus; &xscr;&apos;) &middot; (&xscr; &minus; &xscr;&apos;&apos;).";
 
     }
 
