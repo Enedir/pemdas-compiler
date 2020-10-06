@@ -69,7 +69,7 @@ public class FatorationRuleCommonFactor implements IRule {
             return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), lowestValue);
         }
 
-        lowestValue = this.getLowerTerm(iterationQuadruple, lowestValue, true);
+        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument1(), lowestValue);
         if (iterationQuadruple.isNegative())
             iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
 
@@ -77,50 +77,24 @@ public class FatorationRuleCommonFactor implements IRule {
             return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), lowestValue);
         }
 
-        lowestValue = this.getLowerTerm(iterationQuadruple, lowestValue, false);
+        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument2(), lowestValue);
         return lowestValue;
     }
 
-    private String getLowerTerm(ExpandedQuadruple quadruple, String lowestValue, boolean isArgument1) {
-        String argument = (isArgument1) ? quadruple.getArgument1() : quadruple.getArgument2();
-
-        if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
-            int lowestValueNumber = (StringUtil.match(lowestValue, RegexPattern.NATURAL_NUMBER.toString())) ?
-                    Integer.parseInt(lowestValue) : new NumericValueVariable(lowestValue).getValue();
-            if (Integer.parseInt(argument) < lowestValueNumber)
-                return argument;
-            return String.valueOf(lowestValueNumber);
-        }
-
-        if (StringUtil.match(argument, RegexPattern.VARIABLE.toString())) {
-            return argument;
-        }
-
-        if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-            if (StringUtil.matchAny(lowestValue, RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.VARIABLE.toString()))
-                return lowestValue;
-            int argumentNVV = new NumericValueVariable(argument).getValue();
-            int lowestValueNVV = new NumericValueVariable(lowestValue).getValue();
-            if (argumentNVV < lowestValueNVV || StringUtil.match(lowestValue, RegexPattern.VARIABLE_WITH_EXPONENT.toString()))
-                return argument;
-            return lowestValue;
-
-        }
-
-        if (StringUtil.matchAny(argument,
-                RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-            return argument;
-        }
-        NumericValueVariable lowestValueNVV = new NumericValueVariable(lowestValue);
+    private String getLowerTerm(String argument, String lowestValue) {
         NumericValueVariable argumentNVV = new NumericValueVariable(argument);
-        if (argumentNVV.getLabelPower() < lowestValueNVV.getLabelPower())
-            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue(), true)) ? argument : argumentNVV.getLabel();
+        NumericValueVariable lowestNVV = new NumericValueVariable(lowestValue);
 
+        if(argumentNVV.getValue() < lowestNVV.getValue())
+            lowestNVV.setValue(argumentNVV.getValue());
 
-        if (lowestValueNVV.getLabelPower() < argumentNVV.getLabelPower())
-            return (this.isMultiple(argumentNVV.getValue(), lowestValueNVV.getValue(), true)) ? lowestValue : lowestValueNVV.getLabel();
+        if(argumentNVV.getLabelPower() < lowestNVV.getLabelPower())
+            if(argumentNVV.getLabelPower() == 0)
+                lowestNVV.setLabel("");
+            else
+                lowestNVV.setLabelPower(argumentNVV.getLabelPower());
 
-        return (argumentNVV.getValue() < lowestValueNVV.getValue()) ? argument : lowestValue;
+        return lowestNVV.toString();
     }
 
     //</editor-fold>>

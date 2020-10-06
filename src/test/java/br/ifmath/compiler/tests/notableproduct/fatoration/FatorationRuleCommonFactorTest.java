@@ -332,5 +332,30 @@ public class FatorationRuleCommonFactorTest {
         assertEquals(stepTwoResult1Expected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_multiple_patterns_common_factor_scenery_three_with_success() {
+        //Arrange
+        String expression = "3y^5 + 6y^3 + 12y^6";
+
+        String lastStepValueExpected = "3y^3 * (y^2 + 2 + 4y^3)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResult1Expected, finalStep.getReason());
+    }
+
 
 }
