@@ -69,7 +69,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(3 + y) ^ 2";
 
-        String stepTwoValueExpected = "( 3 ) ^ 2 + 2 * 3 * y + ( y ) ^ 2";
+        String stepTwoValueExpected = "(3  ) ^ 2 + 2 * 3 * y + (y  ) ^ 2";
         String stepThreeValueExpected = "9 + 2 * 3 * y + y^2";
         String stepFourValueExpected = "9 + 6y + y^2";
         String finalStepValueExpected = "y^2 + 6y + 9";
@@ -108,7 +108,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(5 - 2) ^ 2";
 
-        String stepTwoValueExpected = "( 5 ) ^ 2 - 2 * 5 * 2 + ( 2 ) ^ 2";
+        String stepTwoValueExpected = "(5  ) ^ 2 - 2 * 5 * 2 + (2  ) ^ 2";
         String stepThreeValueExpected = "25 - 2 * 5 * 2 + 4";
         String stepFourValueExpected = "25 - 20 + 4";
         String finalStepValueExpected = "9";
@@ -147,7 +147,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(k + 4) ^ 2";
 
-        String stepTwoValueExpected = "( k ) ^ 2 + 2 * k * 4 + ( 4 ) ^ 2";
+        String stepTwoValueExpected = "(k  ) ^ 2 + 2 * k * 4 + (4  ) ^ 2";
         String stepThreeValueExpected = "k^2 + 2 * k * 4 + 16";
         String finalStepValueExpected = "k^2 + 8k + 16";
 
@@ -182,7 +182,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(-7 + x) ^ 2";
 
-        String stepTwoValueExpected = "(-7) ^ 2 + 2 * (-7) * x + ( x ) ^ 2";
+        String stepTwoValueExpected = "(-7) ^ 2 + 2 * (-7) * x + (x  ) ^ 2";
         String stepThreeValueExpected = "49 + 2 * (-7) * x + x^2";
         String stepFourValueExpected = "49 - 14x + x^2";
         String finalStepValueExpected = "x^2 - 14x + 49";
@@ -221,7 +221,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(q + 2) * (q - 2)";
 
-        String stepTwoValueExpected = "( q ) ^ 2 - ( 2 ) ^ 2";
+        String stepTwoValueExpected = "(q  ) ^ 2 - (2  ) ^ 2";
         String finalStepValueExpected = "q^2 - 4";
 
         // Act
@@ -252,7 +252,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(1 - 7) * (1 + 7)";
 
-        String stepTwoValueExpected = "( 1 ) ^ 2 - ( 7 ) ^ 2";
+        String stepTwoValueExpected = "(1  ) ^ 2 - (7  ) ^ 2";
         String stepThreeValueExpected = "1 - 49";
         String finalStepValueExpected = "-48";
 
@@ -286,7 +286,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(l - 3) ^ 3";
 
-        String stepTwoValueExpected = "( l ) ^ 3 - 3 * ( l ) ^ 2 * 3 + 3 * l * ( 3 ) ^ 2 - ( 3 ) ^ 3";
+        String stepTwoValueExpected = "(l  ) ^ 3 - 3 * (l  ) ^ 2 * 3 + 3 * l * (3  ) ^ 2 - (3  ) ^ 3";
         String stepThreeValueExpected = "l^3 - 3 * l^2 * 3 + 3 * l * 9 - 27";
         String finalStepValueExpected = "l^3 - 9l^2 + 27l - 27";
 
@@ -320,7 +320,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(2 + 4) ^ 3";
 
-        String stepTwoValueExpected = "( 2 ) ^ 3 + 3 * ( 2 ) ^ 2 * 4 + 3 * 2 * ( 4 ) ^ 2 + ( 4 ) ^ 3";
+        String stepTwoValueExpected = "(2  ) ^ 3 + 3 * (2  ) ^ 2 * 4 + 3 * 2 * (4  ) ^ 2 + (4  ) ^ 3";
         String stepThreeValueExpected = "8 + 3 * 4 * 4 + 3 * 2 * 16 + 64";
         String stepFourValueExpected = "8 + 48 + 96 + 64";
         String finalStepValueExpected = "216";
@@ -358,7 +358,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(o + x) ^ 3";
 
-        String stepTwoValueExpected = "( o ) ^ 3 + 3 * ( o ) ^ 2 * x + 3 * o * ( x ) ^ 2 + ( x ) ^ 3";
+        String stepTwoValueExpected = "(o  ) ^ 3 + 3 * (o  ) ^ 2 * x + 3 * o * (x  ) ^ 2 + (x  ) ^ 3";
         String stepThreeValueExpected = "o^3 + 3 * o^2 * x + 3 * o * x^2 + x^3";
         String stepFourValueExpected = "o^3 + 3o^2x + 3ox^2 + x^3";
         String finalStepValueExpected = "o^3 + x^3 + 3ox^2 + 3o^2x";
@@ -397,7 +397,7 @@ public class NotableProductsRulePowerTest {
         //Arrange
         String expression = "(-x + 3) ^ 3";
 
-        String stepTwoValueExpected = "(-x) ^ 3 + 3 * (-x) ^ 2 * 3 + 3 * (-x) * ( 3 ) ^ 2 + ( 3 ) ^ 3";
+        String stepTwoValueExpected = "(-x) ^ 3 + 3 * (-x) ^ 2 * 3 + 3 * (-x) * (3  ) ^ 2 + (3  ) ^ 3";
         String stepThreeValueExpected = "(-x^3) + 3 * x^2 * 3 + 3 * (-x) * 9 + 27";
         String finalStepValueExpected = "(-x^3) + 9x^2 - 27x + 27";
 

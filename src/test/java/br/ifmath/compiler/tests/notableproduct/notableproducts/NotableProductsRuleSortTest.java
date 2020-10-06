@@ -67,7 +67,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(5 + a) ^ 2";
 
-        String stepTwoValueExpected = "( 5 ) ^ 2 + 2 * 5 * a + ( a ) ^ 2";
+        String stepTwoValueExpected = "(5  ) ^ 2 + 2 * 5 * a + (a  ) ^ 2";
         String stepThreeValueExpected = "25 + 2 * 5 * a + a^2";
         String stepFourValueExpected = "25 + 10a + a^2";
         String stepFiveValueExpected = "a^2 + 10a + 25";
@@ -104,7 +104,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(2 - g) ^ 2";
 
-        String stepTwoValueExpected = "( 2 ) ^ 2 - 2 * 2 * g + ( g ) ^ 2";
+        String stepTwoValueExpected = "(2  ) ^ 2 - 2 * 2 * g + (g  ) ^ 2";
         String stepThreeValueExpected = "4 - 2 * 2 * g + g^2";
         String stepFourValueExpected = "4 - 4g + g^2";
         String stepFiveValueExpected = "g^2 - 4g + 4";
@@ -141,7 +141,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(3b + 8a) ^ 2";
 
-        String stepTwoValueExpected = "( 3b ) ^ 2 + 2 * 3b * 8a + ( 8a ) ^ 2";
+        String stepTwoValueExpected = "(3b  ) ^ 2 + 2 * 3b * 8a + (8a  ) ^ 2";
         String stepThreeValueExpected = "9b^2 + 2 * 3b * 8a + 64a^2";
         String stepFourValueExpected = "9b^2 + 48ab + 64a^2";
         String stepFiveValueExpected = "9b^2 + 64a^2 + 48ab";
@@ -178,7 +178,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(-2g + 5a) ^ 2";
 
-        String stepTwoValueExpected = "(-2g) ^ 2 + 2 * (-2g) * 5a + ( 5a ) ^ 2";
+        String stepTwoValueExpected = "(-2g) ^ 2 + 2 * (-2g) * 5a + (5a  ) ^ 2";
         String stepThreeValueExpected = "4g^2 + 2 * (-2g) * 5a + 25a^2";
         String stepFourValueExpected = "4g^2 - 20ag + 25a^2";
         String stepFiveValueExpected = "4g^2 + 25a^2 - 20ag";
@@ -215,7 +215,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(e^2 + f^2) ^ 2";
 
-        String stepTwoValueExpected = "( e^2 ) ^ 2 + 2 * e^2 * f^2 + ( f^2 ) ^ 2";
+        String stepTwoValueExpected = "(e^2  ) ^ 2 + 2 * e^2 * f^2 + (f^2  ) ^ 2";
         String stepThreeValueExpected = "e^4 + 2 * e^2 * f^2 + f^4";
         String stepFourValueExpected = "e^4 + 2e^2f^2 + f^4";
         String finalStepValueExpected = "e^4 + f^4 + 2e^2f^2";
@@ -253,7 +253,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(6 - n) * (6 + n)";
 
-        String stepTwoValueExpected = "( 6 ) ^ 2 - ( n ) ^ 2";
+        String stepTwoValueExpected = "(6  ) ^ 2 - (n  ) ^ 2";
         String stepThreeValueExpected = "36 - n^2";
         String stepFourValueExpected = "-n^2 + 36";
 
@@ -286,7 +286,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(4 + u) * (4 - u)";
 
-        String stepTwoValueExpected = "( 4 ) ^ 2 - ( u ) ^ 2";
+        String stepTwoValueExpected = "(4  ) ^ 2 - (u  ) ^ 2";
         String stepThreeValueExpected = "16 - u^2";
         String stepFourValueExpected = "-u^2 + 16";
 
@@ -319,7 +319,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(-4s + 2u) * (-4s - 2u)";
 
-        String stepTwoValueExpected = "(-4s) ^ 2 - ( 2u ) ^ 2";
+        String stepTwoValueExpected = "(-4s) ^ 2 - (2u  ) ^ 2";
         String stepThreeValueExpected = "16s^2 - 4u^2";
 
         // Act
@@ -348,7 +348,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(s^2 + u^2) * (s^2 - u^2)";
 
-        String stepTwoValueExpected = "( s^2 ) ^ 2 - ( u^2 ) ^ 2";
+        String stepTwoValueExpected = "(s^2  ) ^ 2 - (u^2  ) ^ 2";
         String finalStepValueExpected = "s^4 - u^4";
 
         // Act
@@ -377,7 +377,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(2x + 3y) * (2x - 3y)";
 
-        String stepTwoValueExpected = "( 2x ) ^ 2 - ( 3y ) ^ 2";
+        String stepTwoValueExpected = "(2x  ) ^ 2 - (3y  ) ^ 2";
         String stepThreeValueExpected = "4x^2 - 9y^2";
 
         // Act
@@ -406,7 +406,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(2 + p) ^ 3";
 
-        String stepTwoValueExpected = "( 2 ) ^ 3 + 3 * ( 2 ) ^ 2 * p + 3 * 2 * ( p ) ^ 2 + ( p ) ^ 3";
+        String stepTwoValueExpected = "(2  ) ^ 3 + 3 * (2  ) ^ 2 * p + 3 * 2 * (p  ) ^ 2 + (p  ) ^ 3";
         String stepThreeValueExpected = "8 + 3 * 4 * p + 3 * 2 * p^2 + p^3";
         String stepFourValueExpected = "8 + 12p + 6p^2 + p^3";
         String stepFiveValueExpected = "p^3 + 6p^2 + 12p + 8";
@@ -443,7 +443,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(k - l) ^ 3";
 
-        String stepTwoValueExpected = "( k ) ^ 3 - 3 * ( k ) ^ 2 * l + 3 * k * ( l ) ^ 2 - ( l ) ^ 3";
+        String stepTwoValueExpected = "(k  ) ^ 3 - 3 * (k  ) ^ 2 * l + 3 * k * (l  ) ^ 2 - (l  ) ^ 3";
         String stepThreeValueExpected = "k^3 - 3 * k^2 * l + 3 * k * l^2 - l^3";
         String stepFourValueExpected = "k^3 - 3k^2l + 3kl^2 - l^3";
         String finalStepValueExpected = "k^3 - l^3 + 3kl^2 - 3k^2l";
@@ -481,7 +481,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(-2s - 3y) ^ 3";
 
-        String stepTwoValueExpected = "(-2s) ^ 3 - 3 * (-2s) ^ 2 * 3y + 3 * (-2s) * ( 3y ) ^ 2 - ( 3y ) ^ 3";
+        String stepTwoValueExpected = "(-2s) ^ 3 - 3 * (-2s) ^ 2 * 3y + 3 * (-2s) * (3y  ) ^ 2 - (3y  ) ^ 3";
         String stepThreeValueExpected = "-8s^3 - 3 * 4s^2 * 3y + 3 * (-2s) * 9y^2 - 27y^3";
         String stepFourValueExpected = "-8s^3 - 36s^2y - 54sy^2 - 27y^3";
         String finalStepValueExpected = "-8s^3 - 27y^3 - 54sy^2 - 36s^2y";
@@ -518,7 +518,7 @@ public class NotableProductsRuleSortTest {
         //Arrange
         String expression = "(h^2 - j^2) ^ 3";
 
-        String stepTwoValueExpected = "( h^2 ) ^ 3 - 3 * ( h^2 ) ^ 2 * j^2 + 3 * h^2 * ( j^2 ) ^ 2 - ( j^2 ) ^ 3";
+        String stepTwoValueExpected = "(h^2  ) ^ 3 - 3 * (h^2  ) ^ 2 * j^2 + 3 * h^2 * (j^2  ) ^ 2 - (j^2  ) ^ 3";
         String stepThreeValueExpected = "h^6 - 3 * h^4 * j^2 + 3 * h^2 * j^4 - j^6";
         String stepFourValueExpected = "h^6 - 3h^4j^2 + 3h^2j^4 - j^6";
         String finalStepValueExpected = "h^6 - j^6 + 3h^2j^4 - 3h^4j^2";
