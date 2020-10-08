@@ -7,7 +7,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         FatorationRuleCommonFactorTest.class,
         FatorationRuleDifferenceOfTwoSquaresTest.class,
-        FatorationRuleGroupmentTest.class,
+        // FatorationRuleGroupmentTest.class,
         FatorationRuleIdentificationTest.class,
         FatorationRulePerfectCubeTest.class,
         FatorationRulePerfectPolynomialTest.class,
