@@ -4,7 +4,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -63,7 +63,7 @@ public class NotableProductsRuleMultiplication implements IRule {
     }
 
     private void multiplyBetweenBounds(String startBound, String endBound, List<String> values) {
-        NumericValueVariable nvv = new NumericValueVariable();
+        Monomial monomial = new Monomial();
         for (String value : values) {
             boolean isMinus = false;
             if (StringUtil.match(value, RegexPattern.TEMPORARY_VARIABLE.toString())) {
@@ -87,26 +87,26 @@ public class NotableProductsRuleMultiplication implements IRule {
                     }
                 }
             }
-            NumericValueVariable numericVariable = new NumericValueVariable();
+            Monomial valueMonomy = new Monomial();
             if (StringUtil.isVariable(value)) {
-                numericVariable.setAttributesFromString(value);
-                value = numericVariable.getValue().toString();
+                valueMonomy.setAttributesFromString(value);
+                value = valueMonomy.getCoefficient().toString();
             }
 
             if (StringUtil.match(value, RegexPattern.INTEGER_NUMBER.toString()))
-                nvv.setValue((nvv.getValue() == null) ? Integer.parseInt(value) : nvv.getValue() * Integer.parseInt(value));
+                monomial.setCoefficient((monomial.getCoefficient() == null) ? Integer.parseInt(value) : monomial.getCoefficient() * Integer.parseInt(value));
 
             if (isMinus)
-                nvv.setValue(nvv.getValue() * -1);
+                monomial.setCoefficient(monomial.getCoefficient() * -1);
 
-            if (numericVariable.getLabel() != null)
-                value = numericVariable.getLabel();
+            if (valueMonomy.getLiteral() != null)
+                value = valueMonomy.getLiteral();
 
             if (StringUtil.isVariable(value))
-                if (nvv.getLabel() == null)
-                    nvv.setLabel(value);
+                if (monomial.getLiteral() == null)
+                    monomial.setLiteral(value);
                 else
-                    nvv.setLabel((nvv.getLabel().compareTo(value) < 0) ? nvv.getLabel() + value : value + nvv.getLabel());
+                    monomial.setLiteral((monomial.getLiteral().compareTo(value) < 0) ? monomial.getLiteral() + value : value + monomial.getLiteral());
         }
         ExpandedQuadruple startQuadrupleFather = this.source.findQuadrupleByArgument(startBound);
         if (startQuadrupleFather.getArgument1().equals(startBound))
@@ -116,12 +116,12 @@ public class NotableProductsRuleMultiplication implements IRule {
 
 
         ExpandedQuadruple endBoundQuadruple = this.source.findQuadrupleByResult(endBound);
-        if (nvv.getValue() < 0) {
-            nvv.setValue(nvv.getValue() * -1);
+        if (monomial.getCoefficient() < 0) {
+            monomial.setCoefficient(monomial.getCoefficient() * -1);
 
             startQuadrupleFather.setOperator(MathOperatorUtil.signalRule(startQuadrupleFather.getOperator(), "-"));
         }
-        endBoundQuadruple.setArgument1(nvv.toString());
+        endBoundQuadruple.setArgument1(monomial.toString());
 
     }
 

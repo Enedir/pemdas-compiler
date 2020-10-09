@@ -5,7 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleGroupSimilarTerms;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleSortSimilarTerms;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
@@ -134,17 +134,17 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
         }
 
         if (expandedQuadruple.isPotentiation()) {
-            String nvvLabel = expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
+            String monomialLiteral = expandedQuadruple.getArgument1() + expandedQuadruple.getOperator() + expandedQuadruple.getArgument2();
 
             ExpandedQuadruple parent;
             parent = source.get(0).findQuadrupleByArgument1(result);
 
             if (parent != null) {
-                parent.setArgument1(nvvLabel);
+                parent.setArgument1(monomialLiteral);
             } else {
                 parent = source.get(0).findQuadrupleByArgument2(result);
                 if (parent != null) {
-                    parent.setArgument2(nvvLabel);
+                    parent.setArgument2(monomialLiteral);
                 }
             }
 
@@ -154,7 +154,7 @@ public class PolynomialAddAndSubExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public void setVariables(List<NumericValueVariable> variables) {
+    public void setVariables(List<Monomial> variables) {
 
     }
 

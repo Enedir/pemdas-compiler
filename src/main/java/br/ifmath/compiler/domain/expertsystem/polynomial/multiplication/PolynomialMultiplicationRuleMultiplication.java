@@ -4,7 +4,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -132,39 +132,39 @@ public class PolynomialMultiplicationRuleMultiplication implements IRule {
      */
     private String multiplyQuadrupleArguments(String quadrupleArgument1, String quadrupleArgument2) {
 
-        NumericValueVariable argument1 = new NumericValueVariable();
+        Monomial argument1 = new Monomial();
         argument1.setAttributesFromString(quadrupleArgument1);
 
-        NumericValueVariable argument2 = new NumericValueVariable();
+        Monomial argument2 = new Monomial();
         argument2.setAttributesFromString(quadrupleArgument2);
 
-        NumericValueVariable product = new NumericValueVariable();
+        Monomial product = new Monomial();
 
         //Essa seria a multiplicacao dos valores da base, no caso do exemplo, 2 * 3
-        product.setValue(argument1.getValue() * argument2.getValue());
+        product.setCoefficient(argument1.getCoefficient() * argument2.getCoefficient());
 
         //caso seja somente a multiplicacao de numeros
-        if (argument1.getLabel().equals("") && argument2.getLabel().equals(""))
-            product.setLabel("");
-        else if (!argument1.getLabel().equals("") && !argument2.getLabel().equals("")) {
+        if (argument1.getLiteral().equals("") && argument2.getLiteral().equals(""))
+            product.setLiteral("");
+        else if (!argument1.getLiteral().equals("") && !argument2.getLiteral().equals("")) {
             //caso os dois expoentes tenham algum valor
-            int power = argument1.getLabelPower() + argument2.getLabelPower();
+            int power = argument1.getLiteralDegree() + argument2.getLiteralDegree();
 
             //obtem o valor da incognita, para ficar no formato correto
-            String label = StringUtil.removeNonAlphanumericChars(StringUtil.removeNumericChars(argument1.getLabel()));
-            product.setLabel(label + "^" + power);
+            String label = StringUtil.removeNonAlphanumericChars(StringUtil.removeNumericChars(argument1.getLiteral()));
+            product.setLiteral(label + "^" + power);
         } else {
             //caso seja a multiplicacao de um numero puro, com um fator com expoente
-            if (argument1.getLabel().equals(""))
-                product.setLabel(argument2.getLabel());
+            if (argument1.getLiteral().equals(""))
+                product.setLiteral(argument2.getLiteral());
             else
-                product.setLabel(argument1.getLabel());
+                product.setLiteral(argument1.getLiteral());
         }
         /*caso haja um fator sem valor no expoente, mas tenha uma incognita, como eh o caso do fator 2x do exemplo
         que no caso seria 2x^1
          */
-        if (product.getValue() == 1 && !product.getLabel().equals(""))
-            return product.getLabel();
+        if (product.getCoefficient() == 1 && !product.getLiteral().equals(""))
+            return product.getLiteral();
         return product.toString();
     }
 

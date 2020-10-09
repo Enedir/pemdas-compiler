@@ -4,7 +4,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -66,20 +66,20 @@ public class NotableProductsRulePower implements IRule {
                         String result;
                         if (StringUtil.matchAny(base.replace("-", ""), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(),
                                 RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
-                            NumericValueVariable nvv = new NumericValueVariable();
-                            nvv.setAttributesFromString(base);
+                            Monomial monomial = new Monomial();
+                            monomial.setAttributesFromString(base);
                             String exponent = expandedQuadruple.getArgument2();
-                            nvv.setValue(
-                                    (int) Math.pow(nvv.getValue(), Double.parseDouble(exponent)));
-                            int power = nvv.getLabelPower();
+                            monomial.setCoefficient(
+                                    (int) Math.pow(monomial.getCoefficient(), Double.parseDouble(exponent)));
+                            int power = monomial.getLiteralDegree();
                             if (power != 1)
                                 exponent = String.valueOf(power * Integer.parseInt(expandedQuadruple.getArgument2()));
-                            if (nvv.getLabel().contains("^")) {
-                                nvv.setLabelPower(Integer.parseInt(exponent));
+                            if (monomial.getLiteral().contains("^")) {
+                                monomial.setLiteralDegree(Integer.parseInt(exponent));
                             } else {
-                                nvv.setLabel(nvv.getLabel() + "^" + exponent);
+                                monomial.setLiteral(monomial.getLiteral() + "^" + exponent);
                             }
-                            result = nvv.toString();
+                            result = monomial.toString();
                         } else
                             result = String.valueOf(
                                     Math.round(

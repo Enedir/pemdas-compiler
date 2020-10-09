@@ -3,7 +3,7 @@ package br.ifmath.compiler.tests.polynomial.numericValue;
 import br.ifmath.compiler.application.Compiler;
 import br.ifmath.compiler.application.ICompiler;
 import br.ifmath.compiler.domain.expertsystem.*;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class PolynomialRuleSubstituteVariableTest {
     private IExpertSystem expertSystem;
     private String finalResultExplicationExpected;
     private String stepTwoResultExpected;
-    private List<NumericValueVariable> userInput = new ArrayList<>();
+    private List<Monomial> userInput = new ArrayList<>();
 
 
     @Before
@@ -29,9 +29,9 @@ public class PolynomialRuleSubstituteVariableTest {
         stepTwoResultExpected = "Substituindo os valores nas variáveis correspondentes.";
         finalResultExplicationExpected = "Somando os valores.";
 
-        userInput.add(new NumericValueVariable("a", 777));
-        userInput.add(new NumericValueVariable("y", 3));
-        userInput.add(new NumericValueVariable("z", 4));
+        userInput.add(new Monomial("a", 777));
+        userInput.add(new Monomial("y", 3));
+        userInput.add(new Monomial("z", 4));
     }
 
     @Test()

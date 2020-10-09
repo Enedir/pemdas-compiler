@@ -7,8 +7,7 @@ package br.ifmath.compiler.domain.expertsystem;
 
 
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
-import br.ifmath.compiler.infrastructure.input.ValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 
 import java.util.List;
 
@@ -23,5 +22,5 @@ public interface IExpertSystem {
 
     public void validateExpressions(List<ThreeAddressCode> sources) throws InvalidAlgebraicExpressionException;
 
-    public void setVariables(List<NumericValueVariable> variables);
+    public void setVariables(List<Monomial> variables);
 }

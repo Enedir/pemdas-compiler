@@ -1,6 +1,6 @@
 package br.ifmath.compiler.infrastructure.util;
 
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 
 /**
@@ -490,9 +490,9 @@ public class StringUtil {
     }
 
     public static int getPowerValue(String param){
-        NumericValueVariable numericValueVariable = new NumericValueVariable();
+        Monomial numericValueVariable = new Monomial();
         numericValueVariable.setAttributesFromString(param);
-        return numericValueVariable.getLabelPower();
+        return numericValueVariable.getLiteralDegree();
     }
 
     public static boolean isVariable(String param) {

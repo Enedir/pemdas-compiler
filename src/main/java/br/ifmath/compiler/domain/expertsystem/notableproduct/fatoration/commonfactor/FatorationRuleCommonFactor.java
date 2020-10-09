@@ -5,7 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -40,20 +40,20 @@ public class FatorationRuleCommonFactor implements IRule {
 
     //<editor-fold desc="getCommonFactor">
     private String getCommonFactor() {
-        NumericValueVariable patternNVV = new NumericValueVariable(this.getSmallestUnit());
+        Monomial monomialPattern = new Monomial(this.getSmallestUnit());
 
-        if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
-            return patternNVV.toString();
+        if (this.isEqualPattern(this.source.getRootQuadruple(), monomialPattern))
+            return monomialPattern.toString();
 
-        Integer patternNVVValue = patternNVV.getValue();
-        patternNVV.setValue(null);
-        if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
-            return patternNVV.getLabel();
+        Integer monomialPatternCoefficient = monomialPattern.getCoefficient();
+        monomialPattern.setCoefficient(null);
+        if (this.isEqualPattern(this.source.getRootQuadruple(), monomialPattern))
+            return monomialPattern.getLiteral();
 
-        patternNVV.setLabel("");
-        patternNVV.setValue(patternNVVValue);
-        if (this.isEqualPattern(this.source.getRootQuadruple(), patternNVV))
-            return patternNVV.getValue().toString();
+        monomialPattern.setLiteral("");
+        monomialPattern.setCoefficient(monomialPatternCoefficient);
+        if (this.isEqualPattern(this.source.getRootQuadruple(), monomialPattern))
+            return monomialPattern.getCoefficient().toString();
         return "";
     }
 
@@ -82,25 +82,25 @@ public class FatorationRuleCommonFactor implements IRule {
     }
 
     private String getLowerTerm(String argument, String lowestValue) {
-        NumericValueVariable argumentNVV = new NumericValueVariable(argument);
-        NumericValueVariable lowestNVV = new NumericValueVariable(lowestValue);
+        Monomial argumentMonomial = new Monomial(argument);
+        Monomial lowestMonomial = new Monomial(lowestValue);
 
-        if(argumentNVV.getValue() < lowestNVV.getValue())
-            lowestNVV.setValue(argumentNVV.getValue());
+        if(argumentMonomial.getCoefficient() < lowestMonomial.getCoefficient())
+            lowestMonomial.setCoefficient(argumentMonomial.getCoefficient());
 
-        if(argumentNVV.getLabelPower() < lowestNVV.getLabelPower())
-            if(argumentNVV.getLabelPower() == 0)
-                lowestNVV.setLabel("");
+        if(argumentMonomial.getLiteralDegree() < lowestMonomial.getLiteralDegree())
+            if(argumentMonomial.getLiteralDegree() == 0)
+                lowestMonomial.setLiteral("");
             else
-                lowestNVV.setLabelPower(argumentNVV.getLabelPower());
+                lowestMonomial.setLiteralDegree(argumentMonomial.getLiteralDegree());
 
-        return lowestNVV.toString();
+        return lowestMonomial.toString();
     }
 
     //</editor-fold>>
 
     //<editor-fold desc="isEqualPattern">
-    private boolean isEqualPattern(ExpandedQuadruple iterationQuadruple, NumericValueVariable pattern) {
+    private boolean isEqualPattern(ExpandedQuadruple iterationQuadruple, Monomial pattern) {
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             return this.isEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), pattern);
         }
@@ -119,23 +119,23 @@ public class FatorationRuleCommonFactor implements IRule {
 
     }
 
-    private boolean isDifferentPattern(String argument, NumericValueVariable pattern) {
+    private boolean isDifferentPattern(String argument, Monomial pattern) {
         if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString()))
             argument = this.source.findQuadrupleByResult(argument).getArgument1();
-        NumericValueVariable nvv = new NumericValueVariable(argument);
-        if (pattern.getLabel().isEmpty() && pattern.getValue() == null) {
+        Monomial monomial = new Monomial(argument);
+        if (pattern.getLiteral().isEmpty() && pattern.getCoefficient() == null) {
             return true;
-        } else if (pattern.getLabel().isEmpty()) {
-            return nvv.getValue() % pattern.getValue() != 0;
+        } else if (pattern.getLiteral().isEmpty()) {
+            return monomial.getCoefficient() % pattern.getCoefficient() != 0;
 
-        } else if (pattern.getValue() == null) {
-            if (!StringUtil.match(nvv.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()))
-                return !nvv.getLabel().contains(pattern.getLabel());
-            return itDoesntMatchMonomy(pattern.getLabelPower(), nvv.getLabelPower(), nvv.getLabelVariable(), pattern.getLabelVariable(), false);
+        } else if (pattern.getCoefficient() == null) {
+            if (!StringUtil.match(monomial.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString()))
+                return !monomial.getLiteral().contains(pattern.getLiteral());
+            return itDoesntMatchMonomy(pattern.getLiteralDegree(), monomial.getLiteralDegree(), monomial.getLiteralVariable(), pattern.getLiteralVariable(), false);
         }
-        if (pattern.getValue() == 1)
-            return !nvv.getLabel().contains(pattern.getLabelVariable());
-        return itDoesntMatchMonomy(pattern.getValue(), nvv.getValue(), nvv.getLabelVariable(), pattern.getLabelVariable(), true);
+        if (pattern.getCoefficient() == 1)
+            return !monomial.getLiteral().contains(pattern.getLiteralVariable());
+        return itDoesntMatchMonomy(pattern.getCoefficient(), monomial.getCoefficient(), monomial.getLiteralVariable(), pattern.getLiteralVariable(), true);
     }
 
     private boolean itDoesntMatchMonomy(int numeralPart1, int numeralPart2, String literalPart1, String literalPart2,
@@ -190,30 +190,30 @@ public class FatorationRuleCommonFactor implements IRule {
             else if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))
                 newArgument = argument.replace(commonFactor, "");
             else {
-                NumericValueVariable nvv = new NumericValueVariable(argument);
-                nvv.setLabelPower(nvv.getLabelPower() - 1);
-                newArgument = nvv.toString();
+                Monomial monomial = new Monomial(argument);
+                monomial.setLiteralDegree(monomial.getLiteralDegree() - 1);
+                newArgument = monomial.toString();
             }
         } else if (StringUtil.match(commonFactor, RegexPattern.NATURAL_NUMBER.toString())) {
             int commonFactorValue = Integer.parseInt(commonFactor);
-            NumericValueVariable nvv = new NumericValueVariable(argument);
-            int iterationValue = nvv.getValue();
+            Monomial monomial = new Monomial(argument);
+            int iterationValue = monomial.getCoefficient();
             if (iterationValue % commonFactorValue == 0)
-                nvv.setValue(iterationValue / commonFactorValue);
-            newArgument = nvv.toString();
+                monomial.setCoefficient(iterationValue / commonFactorValue);
+            newArgument = monomial.toString();
 
         } else {
-            NumericValueVariable argumentNVV = new NumericValueVariable(argument);
-            NumericValueVariable factorNVV = new NumericValueVariable(commonFactor);
+            Monomial argumentMonomial = new Monomial(argument);
+            Monomial monomialFactor = new Monomial(commonFactor);
 
-            if (argumentNVV.getLabel().equals(factorNVV.getLabel()))
-                argumentNVV.setLabel("");
+            if (argumentMonomial.getLiteral().equals(monomialFactor.getLiteral()))
+                argumentMonomial.setLiteral("");
             else
-                argumentNVV.setLabelPower(argumentNVV.getLabelPower() - factorNVV.getLabelPower());
+                argumentMonomial.setLiteralDegree(argumentMonomial.getLiteralDegree() - monomialFactor.getLiteralDegree());
 
-            argumentNVV.setValue(argumentNVV.getValue() / factorNVV.getValue());
+            argumentMonomial.setCoefficient(argumentMonomial.getCoefficient() / monomialFactor.getCoefficient());
 
-            newArgument = argumentNVV.toString();
+            newArgument = argumentMonomial.toString();
         }
 
         if (isArgument1)

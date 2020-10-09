@@ -5,7 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -71,16 +71,16 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
 
 
     public static String reduceToRaisedValue(String argument, ThreeAddressCode source, boolean isRaisedByTwo) {
-        NumericValueVariable nvv = new NumericValueVariable(argument);
+        Monomial monomial = new Monomial(argument);
         int exponent = (isRaisedByTwo) ? 2 : 3;
 
-        if (nvv.getValue() != 1)
-            nvv.setValue((isRaisedByTwo) ? (int) Math.sqrt(nvv.getValue()) : (int) Math.cbrt(nvv.getValue()));
+        if (monomial.getCoefficient() != 1)
+            monomial.setCoefficient((isRaisedByTwo) ? (int) Math.sqrt(monomial.getCoefficient()) : (int) Math.cbrt(monomial.getCoefficient()));
 
-        if (nvv.getLabelPower() > 1)
-            nvv.setLabelPower(nvv.getLabelPower() / exponent);
+        if (monomial.getLiteralDegree() > 1)
+            monomial.setLiteralDegree(monomial.getLiteralDegree() / exponent);
 
-        ExpandedQuadruple parenthesesQuadruple = new ExpandedQuadruple("", nvv.toString(), "", source.retrieveNextTemporary(), 0, 1);
+        ExpandedQuadruple parenthesesQuadruple = new ExpandedQuadruple("", monomial.toString(), "", source.retrieveNextTemporary(), 0, 1);
         source.getExpandedQuadruples().add(parenthesesQuadruple);
 
         ExpandedQuadruple exponentQuadruple = new ExpandedQuadruple("^", parenthesesQuadruple.getResult(), String.valueOf(exponent), source.retrieveNextTemporary(), 0, 0);
@@ -107,14 +107,14 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
                     (int) Math.sqrt(Integer.parseInt(argument)) :
                     (int) Math.cbrt(Integer.parseInt(argument)));
 
-        NumericValueVariable nvv = new NumericValueVariable(argument);
+        Monomial monomial = new Monomial(argument);
         int exponent = (isPerfectSquare) ? 2 : 3;
 
-        nvv.setLabelPower(nvv.getLabelPower() / exponent);
-        if (nvv.getValue() != 1)
-            nvv.setValue((isPerfectSquare) ? (int) Math.sqrt(nvv.getValue()) : (int) Math.cbrt(nvv.getValue()));
+        monomial.setLiteralDegree(monomial.getLiteralDegree() / exponent);
+        if (monomial.getCoefficient() != 1)
+            monomial.setCoefficient((isPerfectSquare) ? (int) Math.sqrt(monomial.getCoefficient()) : (int) Math.cbrt(monomial.getCoefficient()));
 
-        return nvv.toString();
+        return monomial.toString();
     }
 
     private void convertCubeMiddleTerm(ExpandedQuadruple lastQuadruple, ExpandedQuadruple firstArgument) {

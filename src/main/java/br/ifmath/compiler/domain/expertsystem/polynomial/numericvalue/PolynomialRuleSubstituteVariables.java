@@ -4,7 +4,7 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PolynomialRuleSubstituteVariables implements IRule {
-    private List<NumericValueVariable> userInput = new ArrayList<>();
+    private List<Monomial> userInput = new ArrayList<>();
 
 
     private List<ExpandedQuadruple> expandedQuadruples;
@@ -22,8 +22,8 @@ public class PolynomialRuleSubstituteVariables implements IRule {
 
     }
 
-    public void Add(NumericValueVariable variable) {
-        this.userInput.add(new NumericValueVariable(variable.getLabel(), variable.getValue()));
+    public void Add(Monomial variable) {
+        this.userInput.add(new Monomial(variable.getLiteral(), variable.getCoefficient()));
     }
 
 
@@ -90,14 +90,14 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         if (!this.userInput.isEmpty()) {
 
             if (!StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())
-                    && expandedQuadruple.getArgument1().contains(this.userInput.get(0).getLabel())) {
-                expandedQuadruple.setArgument1(this.userInput.get(0).getValue().toString());
+                    && expandedQuadruple.getArgument1().contains(this.userInput.get(0).getLiteral())) {
+                expandedQuadruple.setArgument1(this.userInput.get(0).getCoefficient().toString());
             }
 
             if (!StringUtil.match(expandedQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 if (!expandedQuadruple.isNegative()) {
-                    if (expandedQuadruple.getArgument2().contains(this.userInput.get(0).getLabel())) {
-                        expandedQuadruple.setArgument2(this.userInput.get(0).getValue().toString());
+                    if (expandedQuadruple.getArgument2().contains(this.userInput.get(0).getLiteral())) {
+                        expandedQuadruple.setArgument2(this.userInput.get(0).getCoefficient().toString());
                     }
                 }
             }
@@ -116,23 +116,23 @@ public class PolynomialRuleSubstituteVariables implements IRule {
         for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
 
             if (!expandedQuadruple.isNegative()) {
-                if (!userInput.isEmpty() && (expandedQuadruple.getArgument1().contains(userInput.get(0).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(0).getLabel()))) {
+                if (!userInput.isEmpty() && (expandedQuadruple.getArgument1().contains(userInput.get(0).getLiteral()) || expandedQuadruple.getArgument2().contains(userInput.get(0).getLiteral()))) {
                     countEqualVariable++;
                 }
 
-                if (userInput.size() > 1 && (expandedQuadruple.getArgument1().contains(userInput.get(1).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(1).getLabel()))) {
+                if (userInput.size() > 1 && (expandedQuadruple.getArgument1().contains(userInput.get(1).getLiteral()) || expandedQuadruple.getArgument2().contains(userInput.get(1).getLiteral()))) {
                     countEqualVariable++;
                 }
 
-                if (userInput.size() > 2 && (expandedQuadruple.getArgument1().contains(userInput.get(2).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(2).getLabel()))) {
+                if (userInput.size() > 2 && (expandedQuadruple.getArgument1().contains(userInput.get(2).getLiteral()) || expandedQuadruple.getArgument2().contains(userInput.get(2).getLiteral()))) {
                     countEqualVariable++;
                 }
 
-                if (userInput.size() > 3 && (expandedQuadruple.getArgument1().contains(userInput.get(3).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(3).getLabel()))) {
+                if (userInput.size() > 3 && (expandedQuadruple.getArgument1().contains(userInput.get(3).getLiteral()) || expandedQuadruple.getArgument2().contains(userInput.get(3).getLiteral()))) {
                     countEqualVariable++;
                 }
 
-                if (userInput.size() > 4 && (expandedQuadruple.getArgument1().contains(userInput.get(4).getLabel()) || expandedQuadruple.getArgument2().contains(userInput.get(4).getLabel()))) {
+                if (userInput.size() > 4 && (expandedQuadruple.getArgument1().contains(userInput.get(4).getLiteral()) || expandedQuadruple.getArgument2().contains(userInput.get(4).getLiteral()))) {
                     countEqualVariable++;
                 }
             }

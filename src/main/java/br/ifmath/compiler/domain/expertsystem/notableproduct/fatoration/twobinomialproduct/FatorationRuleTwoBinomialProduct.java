@@ -5,7 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -49,7 +49,7 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
             int b = this.getVariable(innerQuadruple.getArgument1(), false);
             int c = this.getVariable(innerQuadruple.getArgument2(), false);
 
-            String variable = new NumericValueVariable(root.getArgument1()).getLabelVariable();
+            String variable = new Monomial(root.getArgument1()).getLiteralVariable();
             root.setArgument1(String.valueOf(a));
             root.setOperator("*");
 

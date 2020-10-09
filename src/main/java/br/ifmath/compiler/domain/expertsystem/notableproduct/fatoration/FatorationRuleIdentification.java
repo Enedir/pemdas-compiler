@@ -6,7 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.Couples;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -76,8 +76,8 @@ public class FatorationRuleIdentification implements IRule {
     public static boolean isCommonFactor(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source) {
         String argument = (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
                 ? source.findQuadrupleByResult(iterationQuadruple.getArgument1()).getArgument1() : iterationQuadruple.getArgument1();
-        NumericValueVariable patternNVV = new NumericValueVariable(argument);
-        return isThereAEqualPattern(iterationQuadruple, patternNVV.getLabel(), source);
+        Monomial monomialPattern = new Monomial(argument);
+        return isThereAEqualPattern(iterationQuadruple, monomialPattern.getLiteral(), source);
     }
 
     private static boolean isThereAEqualPattern(ExpandedQuadruple iterationQuadruple, String pattern, ThreeAddressCode source) {
@@ -85,8 +85,8 @@ public class FatorationRuleIdentification implements IRule {
             return isThereAEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), pattern, source);
         }
 
-        NumericValueVariable iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument1());
-        if (iterationArgumentNVV.getLabel().contains(pattern))
+        Monomial iterationMonomialArgument = new Monomial(iterationQuadruple.getArgument1());
+        if (iterationMonomialArgument.getLiteral().contains(pattern))
             return true;
 
         if (iterationQuadruple.isNegative())
@@ -96,8 +96,8 @@ public class FatorationRuleIdentification implements IRule {
             return isThereAEqualPattern(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), pattern, source);
         }
 
-        iterationArgumentNVV = new NumericValueVariable(iterationQuadruple.getArgument2());
-        return iterationArgumentNVV.getLabel().contains(pattern);
+        iterationMonomialArgument = new Monomial(iterationQuadruple.getArgument2());
+        return iterationMonomialArgument.getLiteral().contains(pattern);
     }
     //</editor-fold>>
 
@@ -176,25 +176,25 @@ public class FatorationRuleIdentification implements IRule {
                     ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
                     if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
                             RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
-                        NumericValueVariable middleTerm = new NumericValueVariable(middleTermQuadruple.getArgument1());
+                        Monomial middleTerm = new Monomial(middleTermQuadruple.getArgument1());
                         if (isSquareReducibleTerm(middleTermQuadruple.getArgument2())) {
 
-                            NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
-                            NumericValueVariable secondTerm = new NumericValueVariable(middleTermQuadruple.getArgument2());
+                            Monomial firstTerm = new Monomial(root.getArgument1());
+                            Monomial secondTerm = new Monomial(middleTermQuadruple.getArgument2());
                             //Variável com variável
                             if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
                                     RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
                                     (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
                                             RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))) {
-                                if (firstTerm.getLabelVariable().equals(secondTerm.getLabelVariable())) {
-                                    if ((firstTerm.getLabelPower() + secondTerm.getLabelPower()) / 2 == middleTerm.getLabelPower()) {
-                                        if (firstTerm.getValue() == 1 && secondTerm.getValue() == 1 && middleTerm.getValue() == 2)
+                                if (firstTerm.getLiteralVariable().equals(secondTerm.getLiteralVariable())) {
+                                    if ((firstTerm.getLiteralDegree() + secondTerm.getLiteralDegree()) / 2 == middleTerm.getLiteralDegree()) {
+                                        if (firstTerm.getCoefficient() == 1 && secondTerm.getCoefficient() == 1 && middleTerm.getCoefficient() == 2)
                                             return true;
-                                        else if (firstTerm.getValue() != 1 && secondTerm.getValue() != 1) {
-                                            return (((int) Math.sqrt(firstTerm.getValue()) * (int) Math.sqrt(secondTerm.getValue())) * 2) == middleTerm.getValue();
+                                        else if (firstTerm.getCoefficient() != 1 && secondTerm.getCoefficient() != 1) {
+                                            return (((int) Math.sqrt(firstTerm.getCoefficient()) * (int) Math.sqrt(secondTerm.getCoefficient())) * 2) == middleTerm.getCoefficient();
                                         } else {
-                                            int value = (firstTerm.getValue() != 1) ? (int) Math.sqrt(firstTerm.getValue()) : (int) Math.sqrt(secondTerm.getValue());
-                                            return (value * 2) == middleTerm.getValue();
+                                            int coefficient = (firstTerm.getCoefficient() != 1) ? (int) Math.sqrt(firstTerm.getCoefficient()) : (int) Math.sqrt(secondTerm.getCoefficient());
+                                            return (coefficient * 2) == middleTerm.getCoefficient();
                                         }
                                     }
                                 }
@@ -203,16 +203,16 @@ public class FatorationRuleIdentification implements IRule {
                             //Número com número
                             if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
                                     StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                return ((Math.round(Math.sqrt(firstTerm.getValue()) * Math.sqrt(secondTerm.getValue()))) * 2) == middleTerm.getValue();
+                                return ((Math.round(Math.sqrt(firstTerm.getCoefficient()) * Math.sqrt(secondTerm.getCoefficient()))) * 2) == middleTerm.getCoefficient();
                             }
 
                             //Variável com número
                             if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
                                     RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
                                     StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                int variableValue = (firstTerm.getValue() == 1) ? 1 : (int) Math.sqrt(firstTerm.getValue());
-                                if (((variableValue * (int) Math.sqrt(secondTerm.getValue())) * 2) == middleTerm.getValue()) {
-                                    return middleTerm.getLabelPower() == firstTerm.getLabelPower() / 2;
+                                int variableCoefficient = (firstTerm.getCoefficient() == 1) ? 1 : (int) Math.sqrt(firstTerm.getCoefficient());
+                                if (((variableCoefficient * (int) Math.sqrt(secondTerm.getCoefficient())) * 2) == middleTerm.getCoefficient()) {
+                                    return middleTerm.getLiteralDegree() == firstTerm.getLiteralDegree() / 2;
                                 }
                             }
 
@@ -220,9 +220,9 @@ public class FatorationRuleIdentification implements IRule {
                             if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
                                     StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
                                             RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-                                int variableValue = (secondTerm.getValue() == 1) ? 1 : (int) Math.sqrt(secondTerm.getValue());
-                                if (((variableValue * (int) Math.sqrt(firstTerm.getValue())) * 2) == middleTerm.getValue()) {
-                                    return middleTerm.getLabelPower() == secondTerm.getLabelPower() / 2;
+                                int variableCoefficient = (secondTerm.getCoefficient() == 1) ? 1 : (int) Math.sqrt(secondTerm.getCoefficient());
+                                if (((variableCoefficient * (int) Math.sqrt(firstTerm.getCoefficient())) * 2) == middleTerm.getCoefficient()) {
+                                    return middleTerm.getLiteralDegree() == secondTerm.getLiteralDegree() / 2;
                                 }
                             }
                         }
@@ -237,8 +237,8 @@ public class FatorationRuleIdentification implements IRule {
         return StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()) &&
                 (Math.sqrt(Integer.parseInt(argument)) % 1 == 0) ||
                 (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
-                        (new NumericValueVariable(argument).getLabelPower() % 2 == 0 &&
-                                (Math.sqrt(new NumericValueVariable(argument).getValue()) % 1 == 0)));
+                        (new Monomial(argument).getLiteralDegree() % 2 == 0 &&
+                                (Math.sqrt(new Monomial(argument).getCoefficient()) % 1 == 0)));
     }
     //</editor-fold>>
 
@@ -264,8 +264,8 @@ public class FatorationRuleIdentification implements IRule {
 
         //Variável com variável
         if (isCubeReducibleVariableTerm(root.getArgument1()) && isCubeReducibleVariableTerm(last.getArgument2())) {
-            NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
-            NumericValueVariable lastTerm = new NumericValueVariable(last.getArgument2());
+            Monomial firstTerm = new Monomial(root.getArgument1());
+            Monomial lastTerm = new Monomial(last.getArgument2());
             if (isMiddleTermValid(firstTerm, lastTerm, middleQuadruple.getArgument1(), true)) {
                 middleQuadruple = source.findQuadrupleByResult(middleQuadruple.getArgument2());
                 return isMiddleTermValid(firstTerm, lastTerm, middleQuadruple.getArgument1(), false);
@@ -274,31 +274,31 @@ public class FatorationRuleIdentification implements IRule {
 
         //Número com número
         if (isCubeReducibleNumericTerm(root.getArgument1()) && isCubeReducibleNumericTerm(last.getArgument2())) {
-            int firstValue = (int) Math.cbrt(Integer.parseInt(root.getArgument1()));
-            int lastValue = (int) Math.cbrt(Integer.parseInt(last.getArgument2()));
-            if (Integer.parseInt(middleQuadruple.getArgument1()) == 3 * (Math.pow(firstValue, 2) * lastValue)) {
+            int firstCoefficient = (int) Math.cbrt(Integer.parseInt(root.getArgument1()));
+            int lastCoefficient = (int) Math.cbrt(Integer.parseInt(last.getArgument2()));
+            if (Integer.parseInt(middleQuadruple.getArgument1()) == 3 * (Math.pow(firstCoefficient, 2) * lastCoefficient)) {
                 middleQuadruple = source.findQuadrupleByResult(middleQuadruple.getArgument2());
-                return Integer.parseInt(middleQuadruple.getArgument1()) == 3 * (Math.pow(lastValue, 2) * firstValue);
+                return Integer.parseInt(middleQuadruple.getArgument1()) == 3 * (Math.pow(lastCoefficient, 2) * firstCoefficient);
             }
         }
 
         //Variável com número
         if (isCubeReducibleVariableTerm(root.getArgument1()) && isCubeReducibleNumericTerm(last.getArgument2())) {
-            NumericValueVariable firstTerm = new NumericValueVariable(root.getArgument1());
-            int lastValue = (int) Math.cbrt(Integer.parseInt(last.getArgument2()));
-            if (isVariableAndNumberValid(firstTerm, lastValue, middleQuadruple, true, true)) {
+            Monomial firstTerm = new Monomial(root.getArgument1());
+            int lastCoefficient = (int) Math.cbrt(Integer.parseInt(last.getArgument2()));
+            if (isVariableAndNumberValid(firstTerm, lastCoefficient, middleQuadruple, true, true)) {
                 middleQuadruple = source.findQuadrupleByResult(middleQuadruple.getArgument2());
-                return isVariableAndNumberValid(firstTerm, lastValue, middleQuadruple, true, false);
+                return isVariableAndNumberValid(firstTerm, lastCoefficient, middleQuadruple, true, false);
             }
         }
 
         //Número com variável
         if (isCubeReducibleNumericTerm(root.getArgument1()) && isCubeReducibleVariableTerm(last.getArgument2())) {
-            NumericValueVariable lastTerm = new NumericValueVariable(last.getArgument2());
-            int firstValue = (int) Math.cbrt(Integer.parseInt(root.getArgument1()));
-            if (isVariableAndNumberValid(lastTerm, firstValue, middleQuadruple, false, true)) {
+            Monomial lastTerm = new Monomial(last.getArgument2());
+            int firstCoefficient = (int) Math.cbrt(Integer.parseInt(root.getArgument1()));
+            if (isVariableAndNumberValid(lastTerm, firstCoefficient, middleQuadruple, false, true)) {
                 middleQuadruple = source.findQuadrupleByResult(middleQuadruple.getArgument2());
-                return isVariableAndNumberValid(lastTerm, firstValue, middleQuadruple, false, false);
+                return isVariableAndNumberValid(lastTerm, firstCoefficient, middleQuadruple, false, false);
             }
         }
         return false;
@@ -312,40 +312,40 @@ public class FatorationRuleIdentification implements IRule {
 
     private static boolean isCubeReducibleVariableTerm(String argument) {
         return StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
-                (new NumericValueVariable(argument).getLabelPower() % 3 == 0 &&
-                        (Math.cbrt(new NumericValueVariable(argument).getValue()) % 1 == 0));
+                (new Monomial(argument).getLiteralDegree() % 3 == 0 &&
+                        (Math.cbrt(new Monomial(argument).getCoefficient()) % 1 == 0));
 
     }
 
 
-    private static boolean isMiddleTermValid(NumericValueVariable firstTerm, NumericValueVariable lastTerm, String middleValue, boolean isMiddleTerm1) {
+    private static boolean isMiddleTermValid(Monomial firstTerm, Monomial lastTerm, String middleCoefficient, boolean isMiddleTerm1) {
         if (!isMiddleTerm1) {
-            NumericValueVariable aux = firstTerm;
+            Monomial aux = firstTerm;
             firstTerm = lastTerm;
             lastTerm = aux;
         }
 
-        String firstTermVariable = firstTerm.getLabelVariable();
-        String lastTermVariable = lastTerm.getLabelVariable();
+        String firstTermLiteral = firstTerm.getLiteralVariable();
+        String lastTermLiteral = lastTerm.getLiteralVariable();
 
-        if (middleValue.contains(firstTermVariable) && middleValue.contains(lastTermVariable)) {
-            if (middleValue.charAt(middleValue.indexOf(firstTermVariable) + 1) == '^') {
-                if (firstTerm.getLabelPower() % 3 == 0 && lastTerm.getLabelPower() % 3 == 0) {
-                    int firstPower = firstTerm.getLabelPower() / 3;
-                    int lastPower = lastTerm.getLabelPower() / 3;
-                    if ((firstPower * 2) + lastPower == new NumericValueVariable(middleValue).getLabelPower()) {
-                        if (firstTerm.getValue() == 1 && lastTerm.getValue() == 1 && middleValue.startsWith("3"))
+        if (middleCoefficient.contains(firstTermLiteral) && middleCoefficient.contains(lastTermLiteral)) {
+            if (middleCoefficient.charAt(middleCoefficient.indexOf(firstTermLiteral) + 1) == '^') {
+                if (firstTerm.getLiteralDegree() % 3 == 0 && lastTerm.getLiteralDegree() % 3 == 0) {
+                    int firstPower = firstTerm.getLiteralDegree() / 3;
+                    int lastPower = lastTerm.getLiteralDegree() / 3;
+                    if ((firstPower * 2) + lastPower == new Monomial(middleCoefficient).getLiteralDegree()) {
+                        if (firstTerm.getCoefficient() == 1 && lastTerm.getCoefficient() == 1 && middleCoefficient.startsWith("3"))
                             return true;
-                        else if (firstTerm.getValue() != 1 && lastTerm.getValue() != 1) {
-                            int firstTermCbrt = (int) Math.cbrt(firstTerm.getValue());
-                            int lastTermCbrt = (int) Math.cbrt(lastTerm.getValue());
-                            return ((firstTermCbrt * lastTermCbrt) * 3) == middleValue.charAt(0);
+                        else if (firstTerm.getCoefficient() != 1 && lastTerm.getCoefficient() != 1) {
+                            int firstTermCbrt = (int) Math.cbrt(firstTerm.getCoefficient());
+                            int lastTermCbrt = (int) Math.cbrt(lastTerm.getCoefficient());
+                            return ((firstTermCbrt * lastTermCbrt) * 3) == middleCoefficient.charAt(0);
                         } else {
-                            int value = (firstTerm.getValue() != 1) ?
-                                    (int) Math.cbrt(firstTerm.getValue()) :
-                                    (int) Math.cbrt(lastTerm.getValue());
+                            int coefficient = (firstTerm.getCoefficient() != 1) ?
+                                    (int) Math.cbrt(firstTerm.getCoefficient()) :
+                                    (int) Math.cbrt(lastTerm.getCoefficient());
 
-                            return (value * 3) == middleValue.charAt(0);
+                            return (coefficient * 3) == middleCoefficient.charAt(0);
                         }
                     }
                 }
@@ -355,19 +355,19 @@ public class FatorationRuleIdentification implements IRule {
         return false;
     }
 
-    private static boolean isVariableAndNumberValid(NumericValueVariable variableTerm, int numberValue,
-                                                    ExpandedQuadruple middleQuadruple, boolean isFirstTermAVariable,
+    private static boolean isVariableAndNumberValid(Monomial monomial, int numberCoefficient,
+                                                    ExpandedQuadruple middleQuadruple, boolean isFirstTermALiteral,
                                                     boolean isMiddleTerm1) {
-        int variableTermValue = (variableTerm.getValue() == 1) ?
-                variableTerm.getValue() : (int) Math.cbrt(variableTerm.getValue());
+        int monomialCoefficient = (monomial.getCoefficient() == 1) ?
+                monomial.getCoefficient() : (int) Math.cbrt(monomial.getCoefficient());
 
-        if ((isMiddleTerm1 && !isFirstTermAVariable) || (!isMiddleTerm1 && isFirstTermAVariable))
-            numberValue = (int) Math.pow(numberValue, 2);
+        if ((isMiddleTerm1 && !isFirstTermALiteral) || (!isMiddleTerm1 && isFirstTermALiteral))
+            numberCoefficient = (int) Math.pow(numberCoefficient, 2);
         else
-            variableTermValue = (int) Math.pow(variableTermValue, 2);
+            monomialCoefficient = (int) Math.pow(monomialCoefficient, 2);
 
-        NumericValueVariable middleTermNVV = new NumericValueVariable(middleQuadruple.getArgument1());
-        return middleTermNVV.getValue() == (3 * (variableTermValue * numberValue));
+        Monomial monomialMiddleTerm = new Monomial(middleQuadruple.getArgument1());
+        return monomialMiddleTerm.getCoefficient() == (3 * (monomialCoefficient * numberCoefficient));
     }
 
 
@@ -395,15 +395,15 @@ public class FatorationRuleIdentification implements IRule {
 
         if (StringUtil.match(rootArgument1, RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
 
-            NumericValueVariable argument = new NumericValueVariable(rootArgument1);
-            if (argument.getValue() != 0 && argument.getLabelPower() == 2) {
+            Monomial argument = new Monomial(rootArgument1);
+            if (argument.getCoefficient() != 0 && argument.getLiteralDegree() == 2) {
 
                 if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
 
                     ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(root.getArgument2());
                     if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-                        argument = new NumericValueVariable(innerQuadruple.getArgument1());
-                        if (argument.getValue() != 0 && argument.getLabelPower() == 1) {
+                        argument = new Monomial(innerQuadruple.getArgument1());
+                        if (argument.getCoefficient() != 0 && argument.getLiteralDegree() == 1) {
                             if (StringUtil.match(innerQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
                                 return !innerQuadruple.getArgument2().equals("0");
                             }

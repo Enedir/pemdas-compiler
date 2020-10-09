@@ -14,7 +14,7 @@ import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectp
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.perfectpolynomial.FatorationRulePerfectPolynomialNotableProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProductConvertToDivisionFormula;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
@@ -206,7 +206,7 @@ public class FatorationExpertSystem implements IExpertSystem {
     }
 
     @Override
-    public void setVariables(List<NumericValueVariable> variables) {
+    public void setVariables(List<Monomial> variables) {
     }
 
 

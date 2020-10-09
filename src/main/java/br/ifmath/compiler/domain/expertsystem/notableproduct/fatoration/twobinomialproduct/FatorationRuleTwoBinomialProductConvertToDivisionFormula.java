@@ -5,7 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -45,23 +45,23 @@ public class FatorationRuleTwoBinomialProductConvertToDivisionFormula implements
             ExpandedQuadruple minusQuadruple = this.source.findQuadrupleByResult(rootArgument1);
             rootArgument1 = "-" + minusQuadruple.getArgument1();
         }
-        NumericValueVariable term = new NumericValueVariable(rootArgument1);
-        String a = String.valueOf(term.getValue());
-        actualQuadruple.setArgument1(term.getLabel());
+        Monomial term = new Monomial(rootArgument1);
+        String a = String.valueOf(term.getCoefficient());
+        actualQuadruple.setArgument1(term.getLiteral());
         String operation = actualQuadruple.getOperator();
         actualQuadruple.setOperator("+");
 
         actualQuadruple = this.source.findQuadrupleByResult(actualQuadruple.getArgument2());
         term.setAttributesFromString(actualQuadruple.getArgument1());
         if (operation.equals("-"))
-            term.setValue(term.getValue() * -1);
-        actualQuadruple.setArgument1("(" + term.getValue() + "/" + a + ")" + term.getLabel());
+            term.setCoefficient(term.getCoefficient() * -1);
+        actualQuadruple.setArgument1("(" + term.getCoefficient() + "/" + a + ")" + term.getLiteral());
         operation = actualQuadruple.getOperator();
         actualQuadruple.setOperator("+");
 
         term.setAttributesFromString(actualQuadruple.getArgument2());
         if (operation.equals("-"))
-            term.setValue(term.getValue() * -1);
-        actualQuadruple.setArgument2("(" + term.getValue() + "/" + a + ")");
+            term.setCoefficient(term.getCoefficient() * -1);
+        actualQuadruple.setArgument2("(" + term.getCoefficient() + "/" + a + ")");
     }
 }
