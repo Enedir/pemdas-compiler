@@ -24,8 +24,7 @@ public class NotableProductsRuleSum implements IRule {
     public List<Step> handle(List<ThreeAddressCode> source) {
         this.source = source.get(0);
 
-        ExpandedQuadruple root = this.source.findQuadrupleByResult(this.source.getLeft());
-        this.applySum(root);
+        this.applySum(this.source.getRootQuadruple());
 
         ThreeAddressCode step = new ThreeAddressCode(this.source.getLeft(), this.source.getExpandedQuadruples());
         List<ThreeAddressCode> codes = new ArrayList<>();
@@ -36,6 +35,11 @@ public class NotableProductsRuleSum implements IRule {
         return steps;
     }
 
+    /**
+     * Aplica a soma entre os valores a partir de uma quádrupla.
+     *
+     * @param root {@link ExpandedQuadruple} que representa a primeira quádrupla da estrutura.
+     */
     private void applySum(ExpandedQuadruple root) {
         root.setArgument1(String.valueOf(sumNumbers(root.getResult(), false)));
         root.setOperator("");
@@ -72,6 +76,13 @@ public class NotableProductsRuleSum implements IRule {
         return sum;
     }
 
+    /**
+     * Identifica se há somente sinais de soma e subtração entre as quádruplas.
+     *
+     * @param source {@link List} de {@link ExpandedQuadruple} que contém todas as quádruplas.
+     * @return {@code true} caso haja somente operações de soma e subtração entre as quádruplas
+     * e {@code false} caso contrário.
+     */
     private boolean isThereOnlyPlusSigns(List<ThreeAddressCode> source) {
         for (ExpandedQuadruple expandedQuadruple : source.get(0).getExpandedQuadruples()) {
             if (!expandedQuadruple.isPlusOrMinus() || StringUtil.isVariable(expandedQuadruple.getArgument1())
