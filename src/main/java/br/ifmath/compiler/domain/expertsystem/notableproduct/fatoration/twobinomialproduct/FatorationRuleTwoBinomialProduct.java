@@ -22,7 +22,7 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
     }
 
     @Override
-    public List<Step> handle(List<ThreeAddressCode> source) throws InvalidAlgebraicExpressionException {
+    public List<Step> handle(List<ThreeAddressCode> source) {
         List<Step> steps = new ArrayList<>();
         this.source = source.get(0);
 
@@ -40,7 +40,7 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
         return steps;
     }
 
-    private void transformToProductOfRoots() throws InvalidAlgebraicExpressionException {
+    private void transformToProductOfRoots() {
         ExpandedQuadruple root = this.source.getRootQuadruple();
         if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
 
@@ -75,21 +75,34 @@ public class FatorationRuleTwoBinomialProduct implements IRule {
         return Integer.parseInt(variable);
     }
 
+    public boolean areRootsEqual(ThreeAddressCode source) {
+        ExpandedQuadruple root = source.getRootQuadruple();
+        if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+
+            ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(root.getArgument2());
+            int a = this.getVariable(innerQuadruple.getArgument1(), true);
+            int b = this.getVariable(innerQuadruple.getArgument1(), false);
+            int c = this.getVariable(innerQuadruple.getArgument2(), false);
+
+            Bhaskara bhaskara = new Bhaskara(a, b, c);
+            int x1 = Math.round(bhaskara.getFirstRoot());
+            int x2 = Math.round(bhaskara.getSecondRoot());
+            return x1 == x2;
+        }
+        return false;
+    }
+
     private static class Bhaskara {
         private float x1, x2;
 
-        public Bhaskara(int a, int b, int c) throws InvalidAlgebraicExpressionException {
+        public Bhaskara(int a, int b, int c) {
             this.calculate(a, b, c);
         }
 
-        private void calculate(int a, int b, int c) throws InvalidAlgebraicExpressionException {
+        private void calculate(int a, int b, int c) {
             int delta = (b * b) + (-4 * (a * c));
-             if (delta >= 0) {
-                this.x1 = (float) ((-b + Math.sqrt(delta)) / (2 * a));
-                this.x2 = (float) ((-b - Math.sqrt(delta)) / (2 * a));
-                return;
-            }
-            throw new InvalidAlgebraicExpressionException("Delta não possui raiz positiva");
+            this.x1 = (float) ((-b + Math.sqrt(delta)) / (2 * a));
+            this.x2 = (float) ((-b - Math.sqrt(delta)) / (2 * a));
         }
 
         public float getFirstRoot() {

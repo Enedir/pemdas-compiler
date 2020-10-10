@@ -4,6 +4,8 @@ import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
+import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +44,7 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
         argumentQuadruple = this.source.getLastQuadruple(this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()));
         String argument2 = argumentQuadruple.getArgument1();
 
-        ExpandedQuadruple lastQuadrupleExponent = this.source.findQuadrupleByArgument(argumentQuadruple.getResult());
-        ExpandedQuadruple lastQuadruple = this.source.findQuadrupleByArgument(lastQuadrupleExponent.getResult());
-        ExpandedQuadruple coreQuadruple = new ExpandedQuadruple(lastQuadruple.getOperator(), argument1, argument2, "T1", 0, 1);
+        ExpandedQuadruple coreQuadruple = new ExpandedQuadruple(source.getRootQuadruple().getOperator(), argument1, argument2, "T1", 0, 1);
 
         List<ExpandedQuadruple> newQuadruples = new ArrayList<>();
 
@@ -62,7 +62,8 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
 
     private String getSign() {
         ExpandedQuadruple root = this.source.getRootQuadruple();
-        ExpandedQuadruple insideQuadruple = this.source.findQuadrupleByResult(root.getArgument1());
-        return (insideQuadruple.getOperator().equals("+")) ? "&plus;" : "&minus;";
+        if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+            root = this.source.findQuadrupleByResult(root.getArgument1());
+        return (root.getOperator().equals("+")) ? "&plus;" : "&minus;";
     }
 }

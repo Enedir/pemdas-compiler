@@ -13,20 +13,20 @@ public class FatorationRuleIdentificationTest {
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String stepOneResult1Expected;
-    private String stepOneResult2Expected;
+    //private String stepOneResult2Expected;
     private String stepOneResult3Expected;
     private String stepOneResult4Expected;
     private String stepOneResult5PlusExpected;
     private String stepOneResult5MinusExpected;
     private String stepOneResult6Expected;
     private String stepTwoResult1Expected;
-    private String stepTwoResult2Expected;
+    //private String stepTwoResult2Expected;
     private String stepTwoResult3PlusExpected;
     private String stepTwoResult4Expected;
     private String stepTwoResult5PlusExpected;
     private String stepTwoResult5MinusExpected;
     private String stepTwoResult6Expected;
-    private String stepThreeResult2Expected;
+    //private String stepThreeResult2Expected;
     private String stepThreeResult3PlusExpected;
     private String stepThreeResult4Expected;
     private String stepThreeResult5PlusExpected;
@@ -40,8 +40,8 @@ public class FatorationRuleIdentificationTest {
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
         stepOneResult1Expected = stepOneBaseResult + "Fator comum em evidência.";
-        stepOneResult2Expected = stepOneBaseResult + "Agrupamento. Note que nesse caso temos um elemento em comum " +
-                "nos dois primeiros termos e um elemento comum no terceiro e quarto termos.";
+//        stepOneResult2Expected = stepOneBaseResult + "Agrupamento. Note que nesse caso temos um elemento em comum " +
+//                "nos dois primeiros termos e um elemento comum no terceiro e quarto termos.";
         stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito. Note que a expressão é formada " +
                 "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
                 "produto entre o primeiro termo e o segundo termo.";
@@ -54,10 +54,10 @@ public class FatorationRuleIdentificationTest {
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
 
-        stepTwoResult2Expected = "Colocamos em evidência o elemento que temos em comum nos primeiros termos e somamos " +
-                "ao elemento que possuímos em comum nos últimos termos.";
-        stepThreeResult2Expected = "Escrevemos a expressão como o produto da soma de dois termos, sem alterar o " +
-                "resultado final.";
+//        stepTwoResult2Expected = "Colocamos em evidência o elemento que temos em comum nos primeiros termos e somamos " +
+//                "ao elemento que possuímos em comum nos últimos termos.";
+//        stepThreeResult2Expected = "Escrevemos a expressão como o produto da soma de dois termos, sem alterar o " +
+//                "resultado final.";
 
         stepTwoResult3PlusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " +
                 "&plus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";
@@ -138,97 +138,6 @@ public class FatorationRuleIdentificationTest {
         assertEquals(stepOneResult1Expected, stepOne.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepTwoResult1Expected, finalStep.getReason());
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Groupment">
-
-    @Test()
-    public void identify_simple_terms_groupment_scenery_one_with_success() {
-        //Arrange
-        String expression = "3x + 9 + x^2 + 3x";
-
-        String stepTwoValueExpected = "3 * (x + 3) + x * (x + 3)";
-        String lastStepValueExpected = "(3 + x) * (x + 3)";
-
-        // Act
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult2Expected, stepOne.getReason());
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
-        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult2Expected, finalStep.getReason());
-    }
-
-    @Test()
-    public void identify_simple_terms_groupment_scenery_two_with_success() {
-        //Arrange
-        String expression = "6 - 6x^2 + x^2 - x^4";
-
-        String stepTwoValueExpected = "6 * (1 - x^2) + x^2 * (1 - x^2)";
-        String lastStepValueExpected = "(6 + x^2) * (1 - x^2)";
-
-        // Act
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult2Expected, stepOne.getReason());
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
-        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult2Expected, finalStep.getReason());
-    }
-
-    @Test()
-    public void identify_simple_terms_groupment_scenery_three_with_success() {
-        //Arrange
-        String expression = "4a^4 + 2a^2 - 6a^4 + 3a^2";
-
-        String stepTwoValueExpected = "2a^2 * (2a^2 + 1) - 3a^2 * (2a^2 + 1)";
-        String lastStepValueExpected = "(2a^2 - 3a^2) * (2a^2 + 1)";
-
-        // Act
-        IAnswer answer = null;
-        try {
-            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        // Assert
-        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
-        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
-        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
-
-        assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult2Expected, stepOne.getReason());
-        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
-        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult2Expected, finalStep.getReason());
     }
 
     //</editor-fold>

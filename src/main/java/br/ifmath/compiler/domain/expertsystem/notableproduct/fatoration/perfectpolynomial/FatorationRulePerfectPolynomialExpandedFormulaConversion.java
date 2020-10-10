@@ -29,7 +29,7 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         boolean isPerfectSquare = FatorationRuleIdentification.isPerfectSquareTrinomial(source.get(0));
         String sign = this.adjustToExpandedFormula(isPerfectSquare);
         String reason = (isPerfectSquare) ?
-                "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " + sign +
+                "Escrevemos a expressão no formato &ascr;&sup2; " + sign + " 2 &middot; &ascr; &middot; &bscr; &plus;" +
                         " &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos." :
 
                 "Escrevemos a expressão no formato &ascr;&sup3; " + sign + " 3 &middot; &ascr;&sup2; &middot; &bscr; " +
@@ -61,7 +61,7 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         lastQuadruple.setArgument2(this.convertToRaisedValue(lastQuadruple.getArgument2(), isPerfectSquare));
         root.setArgument1(this.convertToRaisedValue(this.source.getRootQuadruple().getArgument1(), isPerfectSquare));
 
-        return (lastQuadruple.getOperator().equals("+")) ? "&plus;" : "&minus;";
+        return (root.getOperator().equals("+")) ? "&plus;" : "&minus;";
     }
 
 

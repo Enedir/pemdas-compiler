@@ -10,7 +10,6 @@ import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.Fatorati
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class FatorationRulePerfectPolynomialTest {
@@ -32,8 +31,8 @@ public class FatorationRulePerfectPolynomialTest {
                 "produto entre o primeiro termo e o segundo termo.";
         stepTwoResult3PlusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " +
                 "&plus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";
-        stepTwoResult3MinusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " +
-                "&minus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";
+        stepTwoResult3MinusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &minus; 2 &middot; &ascr; &middot; &bscr; " +
+                "&plus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";
         stepThreeResult3PlusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
                 "soma, no formato (&ascr; &plus; &bscr;)&sup2;.";
         stepThreeResult3MinusExpected = "Identificamos os elementos &ascr; e &bscr;, e escrevemos o resultado como o quadrado da " +
@@ -132,9 +131,9 @@ public class FatorationRulePerfectPolynomialTest {
     @Test()
     public void identify_only_numbers_perfect_square_trinomial_scenery_two_with_success() {
         //Arrange
-        String expression = "36 + 84 - 49";
+        String expression = "36 - 84 + 49";
 
-        String stepTwoValueExpected = "(6  ) ^ 2 + 2 * 6 * 7 - (7  ) ^ 2";
+        String stepTwoValueExpected = "(6  ) ^ 2 - 2 * 6 * 7 + (7  ) ^ 2";
         String lastStepValueExpected = "(6 - 7) ^ 2";
 
         // Act
@@ -161,9 +160,9 @@ public class FatorationRulePerfectPolynomialTest {
     @Test()
     public void identify_only_variables_perfect_square_trinomial_scenery_one_with_success() {
         //Arrange
-        String expression = "a^4 + 2a^3 - a^2";
+        String expression = "a^4 - 2a^3 + a^2";
 
-        String stepTwoValueExpected = "(a^2  ) ^ 2 + 2 * a^2 * a - (a  ) ^ 2";
+        String stepTwoValueExpected = "(a^2  ) ^ 2 - 2 * a^2 * a + (a  ) ^ 2";
         String lastStepValueExpected = "(a^2 - a) ^ 2";
 
         // Act
@@ -190,9 +189,9 @@ public class FatorationRulePerfectPolynomialTest {
     @Test()
     public void identify_only_variables_perfect_square_trinomial_scenery_two_with_success() {
         //Arrange
-        String expression = "a^8 + 2a^10 - a^12";
+        String expression = "a^8 - 2a^10 + a^12";
 
-        String stepTwoValueExpected = "(a^4  ) ^ 2 + 2 * a^4 * a^6 - (a^6  ) ^ 2";
+        String stepTwoValueExpected = "(a^4  ) ^ 2 - 2 * a^4 * a^6 + (a^6  ) ^ 2";
         String lastStepValueExpected = "(a^4 - a^6) ^ 2";
 
         // Act
@@ -219,9 +218,9 @@ public class FatorationRulePerfectPolynomialTest {
     @Test()
     public void identify_variables_and_numbers_perfect_square_trinomial_scenery_one_with_success() {
         //Arrange
-        String expression = "4b^2 + 20b - 25";
+        String expression = "4b^2 - 20b + 25";
 
-        String stepTwoValueExpected = "(2b  ) ^ 2 + 2 * 2b * 5 - (5  ) ^ 2";
+        String stepTwoValueExpected = "(2b  ) ^ 2 - 2 * 2b * 5 + (5  ) ^ 2";
         String lastStepValueExpected = "(2b - 5) ^ 2";
 
         // Act
@@ -301,6 +300,35 @@ public class FatorationRulePerfectPolynomialTest {
         assertEquals(stepTwoResult3PlusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepThreeResult3PlusExpected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_square_trinomial_scenery_four_with_success() {
+        //Arrange
+        String expression = "y^2 - 22y + 121";
+
+        String stepTwoValueExpected = "(y  ) ^ 2 - 2 * y * 11 + (11  ) ^ 2";
+        String lastStepValueExpected = "(y - 11) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3MinusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3MinusExpected, finalStep.getReason());
     }
 
     //</editor-fold>

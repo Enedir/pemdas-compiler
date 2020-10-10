@@ -6,11 +6,14 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.Couples;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProductConvertToDivisionFormula;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FatorationRuleIdentification implements IRule {
@@ -113,7 +116,7 @@ public class FatorationRuleIdentification implements IRule {
                 ThreeAddressCode secondCouple = generateCouple(root, source, false);
 
                 Couples couples = new Couples(firstCouple, secondCouple);
-                if(couples.areEmpty())
+                if (couples.areEmpty())
                     return false;
                 return !couples.getFirstCoupleFactor().equals(couples.getSecondCoupleFactor()) &&
                         couples.isFirstCoupleEqualsSecond();
@@ -170,60 +173,65 @@ public class FatorationRuleIdentification implements IRule {
     //<editor-fold desc="PerfectSquareTrinomial">
     public static boolean isPerfectSquareTrinomial(ThreeAddressCode source) {
         ExpandedQuadruple root = source.getRootQuadruple();
-        if (root.isPlus()) {
-            if (isSquareReducibleTerm(root.getArgument1())) {
-                if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                    ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
-                    if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
-                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
-                        Monomial middleTerm = new Monomial(middleTermQuadruple.getArgument1());
-                        if (isSquareReducibleTerm(middleTermQuadruple.getArgument2())) {
+        if (isSquareReducibleTerm(root.getArgument1())) {
+            if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                ExpandedQuadruple middleTermQuadruple = source.findQuadrupleByResult(root.getArgument2());
+                if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                        RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.NATURAL_NUMBER.toString())) {
+                    Monomial middleTerm = new Monomial(middleTermQuadruple.getArgument1());
+                    if (isSquareReducibleTerm(middleTermQuadruple.getArgument2())) {
 
-                            Monomial firstTerm = new Monomial(root.getArgument1());
-                            Monomial secondTerm = new Monomial(middleTermQuadruple.getArgument2());
-                            //Variável com variável
-                            if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
-                                    RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
-                                    (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
-                                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))) {
-                                if (firstTerm.getLiteralVariable().equals(secondTerm.getLiteralVariable())) {
-                                    if ((firstTerm.getLiteralDegree() + secondTerm.getLiteralDegree()) / 2 == middleTerm.getLiteralDegree()) {
-                                        if (firstTerm.getCoefficient() == 1 && secondTerm.getCoefficient() == 1 && middleTerm.getCoefficient() == 2)
-                                            return true;
-                                        else if (firstTerm.getCoefficient() != 1 && secondTerm.getCoefficient() != 1) {
-                                            return (((int) Math.sqrt(firstTerm.getCoefficient()) * (int) Math.sqrt(secondTerm.getCoefficient())) * 2) == middleTerm.getCoefficient();
-                                        } else {
-                                            int coefficient = (firstTerm.getCoefficient() != 1) ? (int) Math.sqrt(firstTerm.getCoefficient()) : (int) Math.sqrt(secondTerm.getCoefficient());
-                                            return (coefficient * 2) == middleTerm.getCoefficient();
-                                        }
+                        Monomial firstTerm = new Monomial(root.getArgument1());
+                        Monomial secondTerm = new Monomial(middleTermQuadruple.getArgument2());
+                        //Variável com variável
+                        if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
+                                (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                        RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()))) {
+                            if (firstTerm.getLiteralVariable().equals(secondTerm.getLiteralVariable())) {
+                                if ((firstTerm.getLiteralDegree() + secondTerm.getLiteralDegree()) / 2 == middleTerm.getLiteralDegree()) {
+                                    if (firstTerm.getCoefficient() == 1 && secondTerm.getCoefficient() == 1 && middleTerm.getCoefficient() == 2)
+                                        return true;
+                                    else if (firstTerm.getCoefficient() != 1 && secondTerm.getCoefficient() != 1) {
+                                        return (((int) Math.sqrt(firstTerm.getCoefficient()) * (int) Math.sqrt(secondTerm.getCoefficient())) * 2) == middleTerm.getCoefficient();
+                                    } else {
+                                        int coefficient = (firstTerm.getCoefficient() != 1) ? (int) Math.sqrt(firstTerm.getCoefficient()) : (int) Math.sqrt(secondTerm.getCoefficient());
+                                        return (coefficient * 2) == middleTerm.getCoefficient();
                                     }
                                 }
                             }
+                        }
 
-                            //Número com número
-                            if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
-                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                return ((Math.round(Math.sqrt(firstTerm.getCoefficient()) * Math.sqrt(secondTerm.getCoefficient()))) * 2) == middleTerm.getCoefficient();
-                            }
+                        //Número com número
+                        if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                                StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
+                            return ((Math.round(Math.sqrt(firstTerm.getCoefficient()) * Math.sqrt(secondTerm.getCoefficient()))) * 2) == middleTerm.getCoefficient();
+                        }
 
-                            //Variável com número
-                            if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
-                                    RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
-                                    StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                int variableCoefficient = (firstTerm.getCoefficient() == 1) ? 1 : (int) Math.sqrt(firstTerm.getCoefficient());
-                                if (((variableCoefficient * (int) Math.sqrt(secondTerm.getCoefficient())) * 2) == middleTerm.getCoefficient()) {
-                                    return middleTerm.getLiteralDegree() == firstTerm.getLiteralDegree() / 2;
+                        //Variável com número
+                        if (StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                RegexPattern.VARIABLE_WITH_COEFFICIENT.toString()) &&
+                                StringUtil.match(middleTermQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
+                            int variableCoefficient = (firstTerm.getCoefficient() == 1) ? 1 : (int) Math.sqrt(firstTerm.getCoefficient());
+                            if (((variableCoefficient * (int) Math.sqrt(secondTerm.getCoefficient())) * 2) == middleTerm.getCoefficient()) {
+                                if (middleTerm.getLiteralDegree() == firstTerm.getLiteralDegree() / 2) {
+
+                                    /*o trinomio de segundo grau e o quadrado perfeito podem ter praticamente a mesma
+                                     * estrutura, então para ver qual é o caso, é verificado se as duas raízes gerados pelo
+                                     * trinomio de segundo grau são iguais, se forem iguais então na verdade é um
+                                     * trinomio quadrado perfeito*/
+                                    return isNotSecondDegree(source);
                                 }
                             }
+                        }
 
-                            //Número com variável
-                            if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
-                                    StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
-                                            RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-                                int variableCoefficient = (secondTerm.getCoefficient() == 1) ? 1 : (int) Math.sqrt(secondTerm.getCoefficient());
-                                if (((variableCoefficient * (int) Math.sqrt(firstTerm.getCoefficient())) * 2) == middleTerm.getCoefficient()) {
-                                    return middleTerm.getLiteralDegree() == secondTerm.getLiteralDegree() / 2;
-                                }
+                        //Número com variável
+                        if (StringUtil.match(root.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                                StringUtil.matchAny(middleTermQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                                        RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
+                            int variableCoefficient = (secondTerm.getCoefficient() == 1) ? 1 : (int) Math.sqrt(secondTerm.getCoefficient());
+                            if (((variableCoefficient * (int) Math.sqrt(firstTerm.getCoefficient())) * 2) == middleTerm.getCoefficient()) {
+                                return middleTerm.getLiteralDegree() == secondTerm.getLiteralDegree() / 2;
                             }
                         }
                     }
@@ -234,11 +242,44 @@ public class FatorationRuleIdentification implements IRule {
     }
 
     private static boolean isSquareReducibleTerm(String argument) {
-        return StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString()) &&
-                (Math.sqrt(Integer.parseInt(argument)) % 1 == 0) ||
-                (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString()) &&
-                        (new Monomial(argument).getLiteralDegree() % 2 == 0 &&
-                                (Math.sqrt(new Monomial(argument).getCoefficient()) % 1 == 0)));
+        if (StringUtil.match(argument, RegexPattern.NATURAL_NUMBER.toString())) {
+            //faz a raiz quadrada do número
+            double result = Math.sqrt(Integer.parseInt(argument));
+
+            //verifica se é raiz quadrada exata
+            return result % 1 == 0;
+        }
+
+        if (StringUtil.match(argument, RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
+            Monomial monomial = new Monomial(argument);
+
+            //verifica se o número é divisivel por 2
+            boolean isDivisibleByTwo = monomial.getLiteralDegree() % 2 == 0;
+
+            //faz a raiz do coeficiente do monomio
+            double sqrt = Math.sqrt(monomial.getCoefficient());
+
+            //verifica se é divisivel por 2 e também é uma raiz quadrada exata
+            return isDivisibleByTwo && sqrt % 1 == 0;
+        }
+        return false;
+    }
+
+    private static boolean isNotSecondDegree(ThreeAddressCode source) {
+        List<ExpandedQuadruple> expandedQuadruples = new ArrayList<>();
+        for (ExpandedQuadruple expandedQuadruple : source.getExpandedQuadruples()) {
+            ExpandedQuadruple newQuadruple = new ExpandedQuadruple(expandedQuadruple.getOperator(),
+                    expandedQuadruple.getArgument1(), expandedQuadruple.getArgument2(), expandedQuadruple.getResult(),
+                    expandedQuadruple.getPosition(), expandedQuadruple.getLevel());
+            expandedQuadruples.add(newQuadruple);
+        }
+        ThreeAddressCode trinomialSource = new ThreeAddressCode(source.getLeft(), expandedQuadruples);
+
+        FatorationRuleTwoBinomialProductConvertToDivisionFormula perfectSqrFirstRule = new FatorationRuleTwoBinomialProductConvertToDivisionFormula();
+        perfectSqrFirstRule.handle(Collections.singletonList(trinomialSource));
+
+        FatorationRuleTwoBinomialProduct perfectSqrSecondRule = new FatorationRuleTwoBinomialProduct();
+        return perfectSqrSecondRule.areRootsEqual(trinomialSource);
     }
     //</editor-fold>>
 
@@ -388,7 +429,7 @@ public class FatorationRuleIdentification implements IRule {
 
         String rootArgument1 = root.getArgument1();
 
-        if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+        if (StringUtil.match(rootArgument1, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(rootArgument1);
             rootArgument1 = innerQuadruple.getArgument1();
         }
