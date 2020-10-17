@@ -109,18 +109,24 @@ public class FatorationRuleIdentification implements IRule {
     public static boolean isGroupment(ThreeAddressCode source) throws InvalidAlgebraicExpressionException {
         ExpandedQuadruple root = source.getRootQuadruple();
         if (isCommonFactor(root, source)) {
-            if (quadruplesCount(source.getRootQuadruple(), source) == 3) {
+            int argumentsCount = argumentsCount(source.getRootQuadruple(), source);
+            if (argumentsCount > 3 && argumentsCount % 2 == 0) {
 
-                ThreeAddressCode firstCouple = generateCouple(root, source, true);
+                List<ThreeAddressCode> couplesSources = generateCouples(source, argumentsCount);
 
-                ThreeAddressCode secondCouple = generateCouple(root, source, false);
+                if (!couplesSources.isEmpty()) {
+                    ThreeAddressCode firstCouple = couplesSources.get(0);
+                    ThreeAddressCode secondCouple = couplesSources.get(1);
 
-                Couples couples = new Couples(firstCouple, secondCouple);
-                if (couples.areEmpty())
-                    return false;
-                return !couples.getFirstCoupleFactor().equals(couples.getSecondCoupleFactor()) &&
-                        couples.isFirstCoupleEqualsSecond();
 
+                    String secondCoupleOperation = source.findQuadrupleByArgument(secondCouple.getLeft()).getOperator();
+
+                    Couples couples = new Couples(firstCouple, secondCouple, secondCoupleOperation);
+                    if (couples.areEmpty())
+                        return false;
+                    return !couples.getFirstCoupleFactor().equals(couples.getSecondCoupleFactor()) &&
+                            couples.isFirstCoupleEqualsSecond();
+                }
             }
         }
 
@@ -128,32 +134,64 @@ public class FatorationRuleIdentification implements IRule {
     }
 
 
-    public static ThreeAddressCode generateCouple(ExpandedQuadruple root, ThreeAddressCode source, boolean isFirstCouple) {
-        String argument1 = (isFirstCouple) ? root.getArgument1() : source.getLastQuadruple(root).getArgument1();
+    public static List<ThreeAddressCode> generateCouples(ThreeAddressCode source, int argumentsCount) {
 
-        if (StringUtil.match(argument1, RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            argument1 = source.findQuadrupleByResult(argument1).getArgument1();
+        List<ExpandedQuadruple> firstCoupleQuadruples = new ArrayList<>();
+        List<ExpandedQuadruple> secondCoupleQuadruples = new ArrayList<>();
+        fillQuadruples(source.getRootQuadruple(), source, firstCoupleQuadruples, secondCoupleQuadruples, 0,
+                argumentsCount);
+
+        ExpandedQuadruple lastQuadruple = firstCoupleQuadruples.get(firstCoupleQuadruples.size() - 1);
+        if (StringUtil.match(lastQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            firstCoupleQuadruples.get(firstCoupleQuadruples.size() - 2).setArgument2(lastQuadruple.getArgument1());
+            firstCoupleQuadruples.remove(firstCoupleQuadruples.size() - 1);
         }
-        String argument2 = (isFirstCouple) ?
-                source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()).getArgument1() :
-                source.getLastQuadruple(root).getArgument2();
+        if (!firstCoupleQuadruples.isEmpty() && !secondCoupleQuadruples.isEmpty()) {
+            ThreeAddressCode firstSource = new ThreeAddressCode();
+            firstSource.setExpandedQuadruples(firstCoupleQuadruples);
+            firstSource.setLeft(firstCoupleQuadruples.get(0).getResult());
 
-        ExpandedQuadruple expandedQuadruple = new ExpandedQuadruple(root.getOperator(), argument1, argument2,
-                "T1", 0, 0);
+            ThreeAddressCode secondSource = new ThreeAddressCode();
+            secondSource.setExpandedQuadruples(secondCoupleQuadruples);
+            secondSource.setLeft(secondCoupleQuadruples.get(0).getResult());
 
-        List<ExpandedQuadruple> quadruples = new ArrayList<>();
-        quadruples.add(expandedQuadruple);
-        ThreeAddressCode newSource = new ThreeAddressCode();
-        newSource.setExpandedQuadruples(quadruples);
-        newSource.setLeft("T1");
-        return newSource;
-
+            List<ThreeAddressCode> newSourceList = new ArrayList<>();
+            newSourceList.add(firstSource);
+            newSourceList.add(secondSource);
+            return newSourceList;
+        }
+        return new ArrayList<>();
     }
 
-    private static int quadruplesCount(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source) {
+    private static void fillQuadruples(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source,
+                                       List<ExpandedQuadruple> firstQuadruples, List<ExpandedQuadruple> secondQuadruples,
+                                       int analyzedArgumentsCount, int argumentsCount) {
+
+        ExpandedQuadruple expandedQuadruple = new ExpandedQuadruple(iterationQuadruple.getOperator(), iterationQuadruple.getArgument1(),
+                iterationQuadruple.getArgument2(), iterationQuadruple.getResult(), iterationQuadruple.getPosition(), iterationQuadruple.getLevel());
+
+        if (analyzedArgumentsCount < argumentsCount / 2) {
+            firstQuadruples.add(expandedQuadruple);
+        } else {
+            secondQuadruples.add(expandedQuadruple);
+        }
+
+        analyzedArgumentsCount++;
+
+        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            fillQuadruples(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), source, firstQuadruples,
+                    secondQuadruples, analyzedArgumentsCount, argumentsCount);
+        } else {
+            if (!secondQuadruples.isEmpty())
+                secondQuadruples.get(secondQuadruples.indexOf(expandedQuadruple)).setArgument2(iterationQuadruple.getArgument2());
+        }
+    }
+
+
+    public static int argumentsCount(ExpandedQuadruple iterationQuadruple, ThreeAddressCode source) {
         int sum = 0;
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            sum += quadruplesCount(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), source);
+            sum += argumentsCount(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), source);
         }
 
         sum++;
@@ -161,12 +199,13 @@ public class FatorationRuleIdentification implements IRule {
             iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            sum += quadruplesCount(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), source);
+            sum += argumentsCount(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), source);
+        } else {
+            sum++;
         }
 
         return sum;
     }
-
 
     //</editor-fold>
 

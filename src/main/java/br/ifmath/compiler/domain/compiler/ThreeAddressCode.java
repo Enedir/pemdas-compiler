@@ -82,7 +82,8 @@ public class ThreeAddressCode {
 
     /**
      * Obtem a ultima quadrupla de acordo com o encadeamento das quadruplas
-     * @param iterationQuadruple  {@link ExpandedQuadruple} de onde vai ser começada a busca
+     *
+     * @param iterationQuadruple {@link ExpandedQuadruple} de onde vai ser começada a busca
      * @return {@link ExpandedQuadruple} que representa a ultima quadrupla
      */
     public ExpandedQuadruple getLastQuadruple(ExpandedQuadruple iterationQuadruple) {
@@ -328,11 +329,15 @@ public class ThreeAddressCode {
     /**
      * Obtem a String que sera utilizada como {@code result} da nova quadrupla
      *
-     * @return {@link String} que eh o numero da ultima temporaria da lista, mais um (+1).
+     * @return {@link String} que é o numero da ultima temporaria da lista, mais um (+1).
      */
     public String retrieveNextTemporary() {
-        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() - 1).getResult();
-        int value = Integer.parseInt(lastQuadrupleResult.replace("T", ""));
+        int value = 0;
+        for (ExpandedQuadruple expandedQuadruple : this.expandedQuadruples) {
+            int iterationValue = Integer.parseInt(expandedQuadruple.getResult().replace("T", ""));
+            if (value < iterationValue)
+                value = iterationValue;
+        }
 
         return "T" + (value + 1);
     }
@@ -386,19 +391,20 @@ public class ThreeAddressCode {
 
     /**
      * Encontra o próximo argumento válido do filho.
+     *
      * @param quadrupleResult {@link String} representando uma variável temporária que será analisada
-     * @param isArgument1 {@link Boolean} que indica se o argument 1 ou 2 será analisado e obtido
+     * @param isArgument1     {@link Boolean} que indica se o argument 1 ou 2 será analisado e obtido
      * @return {@link String} do argumento correspondente do filho
      */
     public String findDirectSonArgument(String quadrupleResult, boolean isArgument1) {
         if (this.getLeft().equals(quadrupleResult))
             return null;
-        if(!StringUtil.match(quadrupleResult,RegexPattern.TEMPORARY_VARIABLE.toString()))
+        if (!StringUtil.match(quadrupleResult, RegexPattern.TEMPORARY_VARIABLE.toString()))
             return quadrupleResult;
         ExpandedQuadruple son = this.findQuadrupleByResult(quadrupleResult);
         String argument = (isArgument1) ? son.getArgument1() : son.getArgument2();
-        if (StringUtil.match(argument,RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.findDirectSonArgument(argument,isArgument1);
+        if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.findDirectSonArgument(argument, isArgument1);
         }
         return argument;
     }

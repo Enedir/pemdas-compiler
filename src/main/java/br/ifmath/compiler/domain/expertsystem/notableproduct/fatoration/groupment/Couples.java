@@ -8,13 +8,20 @@ import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfa
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class Couples {
-    private String firstCoupleFactor, secondCoupleFactor;
-    private ExpandedQuadruple firstCoupleMultiplier, secondCoupleMultiplier;
+    private String firstCoupleFactor;
+    private String secondCoupleFactor;
+    private final String secondCoupleOperator;
+    private final List<ExpandedQuadruple> firstCoupleMultiplier, secondCoupleMultiplier;
 
-    public Couples(ThreeAddressCode firstCouple, ThreeAddressCode secondCouple) throws InvalidAlgebraicExpressionException {
+    public Couples(ThreeAddressCode firstCouple, ThreeAddressCode secondCouple, String secondCoupleOperator) throws InvalidAlgebraicExpressionException {
+        firstCoupleMultiplier = new ArrayList<>();
+        secondCoupleMultiplier = new ArrayList<>();
+        this.secondCoupleOperator = secondCoupleOperator;
         setCouples(firstCouple, true);
         setCouples(secondCouple, false);
     }
@@ -28,10 +35,14 @@ public class Couples {
             this.secondCoupleFactor = source.getRootQuadruple().getArgument1();
         ExpandedQuadruple firstSourceRoot = couple.getRootQuadruple();
         if (StringUtil.match(firstSourceRoot.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            if (isFirstCouple)
-                this.firstCoupleMultiplier = source.findQuadrupleByResult(firstSourceRoot.getArgument2());
-            else
-                this.secondCoupleMultiplier = source.findQuadrupleByResult(firstSourceRoot.getArgument2());
+            for (ExpandedQuadruple expandedQuadruple : couple.getExpandedQuadruples()) {
+                if (!expandedQuadruple.equals(couple.getRootQuadruple())) {
+                    if (isFirstCouple)
+                        this.firstCoupleMultiplier.add(expandedQuadruple);
+                    else
+                        this.secondCoupleMultiplier.add(expandedQuadruple);
+                }
+            }
         }
     }
 
@@ -47,27 +58,47 @@ public class Couples {
         return secondCoupleFactor;
     }
 
-    public ExpandedQuadruple getFirstCoupleMultiplier() {
+    public List<ExpandedQuadruple> getFirstCoupleMultiplier() {
         return firstCoupleMultiplier;
     }
 
-    public ExpandedQuadruple getSecondCoupleMultiplier() {
+    public List<ExpandedQuadruple> getSecondCoupleMultiplier() {
         return secondCoupleMultiplier;
     }
 
-    public boolean isFirstCoupleEqualsSecond() {
-        boolean isEquals = firstCoupleMultiplier.getArgument1().equals(secondCoupleMultiplier.getArgument1());
-        if (isEquals) {
-            isEquals = firstCoupleMultiplier.getOperator().equals(secondCoupleMultiplier.getOperator());
-            if (isEquals) {
-                return firstCoupleMultiplier.getArgument2().equals(secondCoupleMultiplier.getArgument2());
-            }
-        }
-        return false;
+    public String getSecondCoupleOperator() {
+        return secondCoupleOperator;
     }
 
     public boolean areEmpty() {
         return firstCoupleFactor == null || firstCoupleMultiplier == null
                 || secondCoupleFactor == null || secondCoupleMultiplier == null;
+    }
+
+    public boolean isFirstCoupleEqualsSecond() {
+        if (firstCoupleMultiplier.size() != secondCoupleMultiplier.size())
+            return false;
+        for (int i = 0; i < firstCoupleMultiplier.size(); i++) {
+
+            ExpandedQuadruple firstMultiplierQuadruple = firstCoupleMultiplier.get(i);
+            ExpandedQuadruple secondMultiplierQuadruple = secondCoupleMultiplier.get(i);
+
+            String argument = firstMultiplierQuadruple.getArgument1();
+            if (!StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                if (!argument.equals(secondMultiplierQuadruple.getArgument1())) {
+                    return false;
+                }
+            }
+
+            if (!firstMultiplierQuadruple.getOperator().equals(secondMultiplierQuadruple.getOperator()))
+                return false;
+            argument = firstMultiplierQuadruple.getArgument2();
+            if (!StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                if (!argument.equals(secondMultiplierQuadruple.getArgument2())) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

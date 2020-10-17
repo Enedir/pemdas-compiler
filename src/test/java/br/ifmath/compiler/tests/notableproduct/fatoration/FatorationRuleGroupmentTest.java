@@ -97,6 +97,38 @@ public class FatorationRuleGroupmentTest {
         assertEquals(stepThreeResult2Expected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_multiple_terms_groupment_scenery_one_with_success() {
+        //Arrange
+        String expression = "x^3 + 2x^2 - x + 2x^2 + 4x - 2";
+
+        String stepTwoValueExpected = "x * (x^2 + 2x - 1) + 2 * (x^2 + 2x - 1)";
+        String lastStepValueExpected = "(x + 2) * (x^2 + 2x - 1)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult2Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult2Expected, finalStep.getReason());
+    }
+
+    //TODO adicionar outros testes como o acima
+
+
     //</editor-fold>
 
 }

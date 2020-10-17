@@ -6,11 +6,13 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
+import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification.generateCouple;
 
 public class FatorationRuleGroupmentCommonFactor implements IRule {
 
@@ -43,11 +45,15 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
     }
 
     private void generateDoubleCommonFactor() throws InvalidAlgebraicExpressionException {
-        ThreeAddressCode firstCouple = generateCouple(this.source.getRootQuadruple(), source, true);
+        int argumentsCount = FatorationRuleIdentification.argumentsCount(source.getRootQuadruple(), source);
+        List<ThreeAddressCode> couplesSources = FatorationRuleIdentification.generateCouples(source, argumentsCount);
 
-        ThreeAddressCode secondCouple = generateCouple(this.source.getRootQuadruple(), source, false);
+        ThreeAddressCode firstCouple = couplesSources.get(0);
+        ThreeAddressCode secondCouple = couplesSources.get(1);
 
-        Couples couples = new Couples(firstCouple, secondCouple);
+        String secondCoupleOperation = this.source.findQuadrupleByArgument(secondCouple.getLeft()).getOperator();
+
+        Couples couples = new Couples(firstCouple, secondCouple, secondCoupleOperation);
 
         this.changeQuadruples(couples);
 
@@ -59,12 +65,24 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
         root.setOperator("*");
         root.setLevel(0);
 
-        ExpandedQuadruple firstCouple = couples.getFirstCoupleMultiplier();
+        List<ExpandedQuadruple> firstCouple = couples.getFirstCoupleMultiplier();
         ExpandedQuadruple innerQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
+        Collections.reverse(firstCouple);
 
-        this.source.addQuadrupleToList(firstCouple.getOperator(), firstCouple.getArgument1(),
-                firstCouple.getArgument2(), innerQuadruple, true).setLevel(1);
+        String lastInsertQuadruple = null;
+        for (ExpandedQuadruple expandedQuadruple : firstCouple) {
+            ExpandedQuadruple insertQuadruple = this.source.addQuadrupleToList(expandedQuadruple.getOperator(), expandedQuadruple.getArgument1(),
+                    expandedQuadruple.getArgument2(), innerQuadruple, true);
 
+            insertQuadruple.setLevel(1);
+
+            if (StringUtil.match(insertQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                insertQuadruple.setArgument2(lastInsertQuadruple);
+            }
+
+            lastInsertQuadruple = insertQuadruple.getResult();
+        }
+        innerQuadruple.setOperator(couples.getSecondCoupleOperator());
 
         innerQuadruple = this.source.findQuadrupleByResult(innerQuadruple.getArgument2());
 
@@ -72,8 +90,19 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
         innerQuadruple.setOperator("*");
         innerQuadruple.setLevel(0);
 
-        ExpandedQuadruple secondQuadruple = couples.getSecondCoupleMultiplier();
-        this.source.addQuadrupleToList(secondQuadruple.getOperator(), secondQuadruple.getArgument1(),
-                secondQuadruple.getArgument2(), innerQuadruple, false).setLevel(1);
+        List<ExpandedQuadruple> secondQuadruple = couples.getSecondCoupleMultiplier();
+        Collections.reverse(secondQuadruple);
+
+        for (ExpandedQuadruple expandedQuadruple : secondQuadruple) {
+            ExpandedQuadruple insertQuadruple = this.source.addQuadrupleToList(expandedQuadruple.getOperator(), expandedQuadruple.getArgument1(),
+                    expandedQuadruple.getArgument2(), innerQuadruple, false);
+            insertQuadruple.setLevel(1);
+
+            if (StringUtil.match(insertQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                insertQuadruple.setArgument2(lastInsertQuadruple);
+            }
+
+            lastInsertQuadruple = insertQuadruple.getResult();
+        }
     }
 }
