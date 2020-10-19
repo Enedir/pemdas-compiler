@@ -71,10 +71,10 @@ public class FatorationRuleGroupmentTest {
     @Test()
     public void identify_simple_terms_groupment_scenery_two_with_success() {
         //Arrange
-        String expression = "3y^2 + 6y^3 - y + 2y^2";
+        String expression = "-3y^2 + 6y^3 - y + 2y^2";
 
-        String stepTwoValueExpected = "3y^2 * (1 + 2y) - y * (1 + 2y)";
-        String lastStepValueExpected = "(3y^2 - y) * (1 + 2y)";
+        String stepTwoValueExpected = "3y^2 * (-1 + 2y) + y * (-1 + 2y)";
+        String lastStepValueExpected = "(3y^2 + y) * (-1 + 2y)";
 
         // Act
         IAnswer answer = null;
@@ -126,7 +126,34 @@ public class FatorationRuleGroupmentTest {
         assertEquals(stepThreeResult2Expected, finalStep.getReason());
     }
 
-    //TODO adicionar outros testes como o acima
+    @Test()
+    public void identify_multiple_terms_groupment_scenery_two_with_success() {
+        //Arrange
+        String expression = "-25x^3 + 5x + 5 - 20x^4 + 4x^2 + 4x";
+
+        String stepTwoValueExpected = "5 * (-5x^3 + x + 1) + 4x * (-5x^3 + x + 1)";
+        String lastStepValueExpected = "(5 + 4x) * (-5x^3 + x + 1)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult2Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult2Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult2Expected, finalStep.getReason());
+    }
 
 
     //</editor-fold>

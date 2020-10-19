@@ -66,15 +66,25 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
         root.setLevel(0);
 
         List<ExpandedQuadruple> firstCouple = couples.getFirstCoupleMultiplier();
+        this.adjustMinusQuadruple(firstCouple);
         ExpandedQuadruple innerQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
         Collections.reverse(firstCouple);
 
         String lastInsertQuadruple = null;
+        String minusQuadrupleResult = null;
         for (ExpandedQuadruple expandedQuadruple : firstCouple) {
+
             ExpandedQuadruple insertQuadruple = this.source.addQuadrupleToList(expandedQuadruple.getOperator(), expandedQuadruple.getArgument1(),
                     expandedQuadruple.getArgument2(), innerQuadruple, true);
 
+            if (insertQuadruple.isNegative())
+                minusQuadrupleResult = insertQuadruple.getResult();
+
             insertQuadruple.setLevel(1);
+
+            if (StringUtil.match(insertQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                insertQuadruple.setArgument1(minusQuadrupleResult);
+            }
 
             if (StringUtil.match(insertQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 insertQuadruple.setArgument2(lastInsertQuadruple);
@@ -82,7 +92,8 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
 
             lastInsertQuadruple = insertQuadruple.getResult();
         }
-        innerQuadruple.setOperator(couples.getSecondCoupleOperator());
+
+        innerQuadruple.setOperator("+");
 
         innerQuadruple = this.source.findQuadrupleByResult(innerQuadruple.getArgument2());
 
@@ -96,13 +107,35 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
         for (ExpandedQuadruple expandedQuadruple : secondQuadruple) {
             ExpandedQuadruple insertQuadruple = this.source.addQuadrupleToList(expandedQuadruple.getOperator(), expandedQuadruple.getArgument1(),
                     expandedQuadruple.getArgument2(), innerQuadruple, false);
-            insertQuadruple.setLevel(1);
+
+            if (insertQuadruple.isNegative())
+                minusQuadrupleResult = insertQuadruple.getResult();
+
+            if (StringUtil.match(insertQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                insertQuadruple.setArgument1(minusQuadrupleResult);
+            }
 
             if (StringUtil.match(insertQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 insertQuadruple.setArgument2(lastInsertQuadruple);
             }
 
+            insertQuadruple.setLevel(1);
+
+
             lastInsertQuadruple = insertQuadruple.getResult();
+        }
+    }
+
+    private void adjustMinusQuadruple(List<ExpandedQuadruple> couple) {
+        ExpandedQuadruple minusQuadruple = null;
+        for (ExpandedQuadruple expandedQuadruple : couple) {
+            if (expandedQuadruple.isNegative())
+                minusQuadruple = expandedQuadruple;
+        }
+
+        if (minusQuadruple != null) {
+            couple.remove(minusQuadruple);
+            couple.add(minusQuadruple);
         }
     }
 }

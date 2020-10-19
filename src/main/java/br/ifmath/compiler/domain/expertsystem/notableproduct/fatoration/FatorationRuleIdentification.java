@@ -9,6 +9,7 @@ import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupmen
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProductConvertToDivisionFormula;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
+import br.ifmath.compiler.domain.grammar.nonterminal.E;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -118,7 +119,6 @@ public class FatorationRuleIdentification implements IRule {
                     ThreeAddressCode firstCouple = couplesSources.get(0);
                     ThreeAddressCode secondCouple = couplesSources.get(1);
 
-
                     String secondCoupleOperation = source.findQuadrupleByArgument(secondCouple.getLeft()).getOperator();
 
                     Couples couples = new Couples(firstCouple, secondCouple, secondCoupleOperation);
@@ -146,10 +146,15 @@ public class FatorationRuleIdentification implements IRule {
             firstCoupleQuadruples.get(firstCoupleQuadruples.size() - 2).setArgument2(lastQuadruple.getArgument1());
             firstCoupleQuadruples.remove(firstCoupleQuadruples.size() - 1);
         }
+
         if (!firstCoupleQuadruples.isEmpty() && !secondCoupleQuadruples.isEmpty()) {
             ThreeAddressCode firstSource = new ThreeAddressCode();
             firstSource.setExpandedQuadruples(firstCoupleQuadruples);
-            firstSource.setLeft(firstCoupleQuadruples.get(0).getResult());
+            ExpandedQuadruple firstQuadruple = firstCoupleQuadruples.get(0);
+            String firstQuadrupleResult = firstQuadruple.getResult();
+            if (firstQuadruple.isNegative())
+                firstQuadrupleResult = firstSource.findQuadrupleByArgument1(firstQuadrupleResult).getResult();
+            firstSource.setLeft(firstQuadrupleResult);
 
             ThreeAddressCode secondSource = new ThreeAddressCode();
             secondSource.setExpandedQuadruples(secondCoupleQuadruples);
@@ -169,6 +174,12 @@ public class FatorationRuleIdentification implements IRule {
 
         ExpandedQuadruple expandedQuadruple = new ExpandedQuadruple(iterationQuadruple.getOperator(), iterationQuadruple.getArgument1(),
                 iterationQuadruple.getArgument2(), iterationQuadruple.getResult(), iterationQuadruple.getPosition(), iterationQuadruple.getLevel());
+
+        if (StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(expandedQuadruple.getArgument1());
+            firstQuadruples.add(new ExpandedQuadruple(innerQuadruple.getOperator(), innerQuadruple.getArgument1(),
+                    innerQuadruple.getArgument2(), innerQuadruple.getResult(), innerQuadruple.getPosition(), innerQuadruple.getLevel()));
+        }
 
         if (analyzedArgumentsCount < argumentsCount / 2) {
             firstQuadruples.add(expandedQuadruple);
@@ -192,16 +203,17 @@ public class FatorationRuleIdentification implements IRule {
         int sum = 0;
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
             sum += argumentsCount(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), source);
-        }
-
-        sum++;
-        if (iterationQuadruple.isNegative())
-            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
-
-        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            sum += argumentsCount(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), source);
         } else {
+
             sum++;
+            if (iterationQuadruple.isNegative())
+                iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                sum += argumentsCount(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), source);
+            } else {
+                sum++;
+            }
         }
 
         return sum;
