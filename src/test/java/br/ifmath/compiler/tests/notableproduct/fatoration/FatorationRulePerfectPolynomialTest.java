@@ -331,6 +331,35 @@ public class FatorationRulePerfectPolynomialTest {
         assertEquals(stepThreeResult3MinusExpected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_variables_and_numbers_perfect_square_trinomial_scenery_five_with_success() {
+        //Arrange
+        String expression = "36 - 12x + x^2";
+
+        String stepTwoValueExpected = "(6  ) ^ 2 - 2 * 6 * x + (x  ) ^ 2";
+        String lastStepValueExpected = "(6 - x) ^ 2";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult3Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult3MinusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult3MinusExpected, finalStep.getReason());
+    }
+
     //</editor-fold>
 
 }

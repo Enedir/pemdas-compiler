@@ -47,11 +47,12 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
 
     private String adjustToExpandedFormula(boolean isPerfectSquare) {
         ExpandedQuadruple root = this.source.getRootQuadruple();
-        if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-            root = this.source.findQuadrupleByResult(root.getArgument1());
-
+        ExpandedQuadruple middleQuadruple = this.source.getRootQuadruple();
         ExpandedQuadruple lastQuadruple = this.source.getLastQuadruple(
                 this.source.findQuadrupleByArgument(root.getArgument2()));
+
+        if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
+            root = this.source.findQuadrupleByResult(root.getArgument1());
 
         if (isPerfectSquare)
             this.convertSquareMiddleTerm(lastQuadruple, root);
@@ -59,9 +60,23 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
             this.convertCubeMiddleTerm(lastQuadruple, root);
 
         lastQuadruple.setArgument2(this.convertToRaisedValue(lastQuadruple.getArgument2(), isPerfectSquare));
-        root.setArgument1(this.convertToRaisedValue(this.source.getRootQuadruple().getArgument1(), isPerfectSquare));
+        String raisedValue;
+        if (root.isNegative() && !isPerfectSquare) {
+            raisedValue = this.convertMinusToRaisedValue(root, middleQuadruple);
+            root = middleQuadruple;
+        } else
+            raisedValue = this.convertToRaisedValue(this.source.getRootQuadruple().getArgument1(), isPerfectSquare);
+
+        root.setArgument1(raisedValue);
 
         return (root.getOperator().equals("+")) ? "&plus;" : "&minus;";
+    }
+
+    private String convertMinusToRaisedValue(ExpandedQuadruple negativeQuadruple, ExpandedQuadruple middleQuadruple) {
+        negativeQuadruple.setLevel(1);
+        ExpandedQuadruple exponentQuadruple = new ExpandedQuadruple("^", negativeQuadruple.getResult(), "3", source.retrieveNextTemporary(), 0, 0);
+        source.getExpandedQuadruples().add(exponentQuadruple);
+        return exponentQuadruple.getResult();
     }
 
 
@@ -121,6 +136,11 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         String sonArgument = this.source.findDirectSonArgument(firstArgument.getArgument1(), true);
         String firstArgumentValue = this.getConvertedTerm(sonArgument, false);
 
+        if (firstArgument.isNegative()) {
+            firstArgumentValue = firstArgument.getResult();
+            firstArgument = this.source.findQuadrupleByArgument(firstArgument.getResult());
+        }
+
         sonArgument = this.source.findDirectSonArgument(lastQuadruple.getArgument2(), true);
         String secondArgumentValue = this.getConvertedTerm(sonArgument, false);
 
@@ -128,7 +148,13 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         this.source.addQuadrupleToList("*", firstArgumentValue, lastQuadruple.getResult(), firstArgument, false);
         this.source.addQuadrupleToList("*", "3", firstArgument.getArgument2(), firstArgument, false);
         this.source.addQuadrupleToList("+", secondArgumentValue, firstArgument.getArgument2(), firstArgument, false);
-        this.source.addQuadrupleToList("*", "(" + firstArgumentValue + ")^2", firstArgument.getArgument2(), firstArgument, false);
+        String argument1;
+        if (StringUtil.match(firstArgumentValue, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            ExpandedQuadruple addedQuadruple =  this.source.addQuadrupleToList("^", firstArgumentValue,"2",firstArgument,true);
+            argument1 = addedQuadruple.getResult();
+        } else
+            argument1 = "(" + firstArgumentValue + ")^2";
+        this.source.addQuadrupleToList("*", argument1, firstArgument.getArgument2(), firstArgument, false);
         this.source.addQuadrupleToList("*", "3", firstArgument.getArgument2(), firstArgument, false);
     }
 }

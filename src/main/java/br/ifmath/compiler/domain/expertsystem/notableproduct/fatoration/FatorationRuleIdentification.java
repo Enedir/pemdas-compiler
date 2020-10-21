@@ -353,6 +353,10 @@ public class FatorationRuleIdentification implements IRule {
         ExpandedQuadruple last = source.getLastQuadruple(root);
         ExpandedQuadruple middleQuadruple = source.findQuadrupleByResult(root.getArgument2());
 
+        if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            root = source.findQuadrupleByResult(root.getArgument1());
+        }
+
 
         //Variável com variável
         if (isCubeReducibleVariableTerm(root.getArgument1()) && isCubeReducibleVariableTerm(last.getArgument2())) {

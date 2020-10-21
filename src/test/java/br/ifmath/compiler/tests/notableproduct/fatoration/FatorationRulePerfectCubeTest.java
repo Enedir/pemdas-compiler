@@ -275,6 +275,35 @@ public class FatorationRulePerfectCubeTest {
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
         assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
     }
+
+    @Test()
+    public void identify_variables_and_numbers_perfect_cube_scenery_four_with_success() {
+        //Arrange
+        String expression = "-1 - 3x + 3x^2 - x^3";
+
+        String stepTwoValueExpected = "(-1  ) ^ 3 - 3 * (-1)^2 * x + 3 * -1 * x^2 - (x  ) ^ 3";
+        String lastStepValueExpected = "(-1 - x) ^ 3";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult5PlusExpected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
+    }
     //</editor-fold>
 
 }
