@@ -11,7 +11,7 @@ import org.junit.runners.Suite;
         FatorationRuleIdentificationTest.class,
         FatorationRulePerfectCubeTest.class,
         FatorationRulePerfectPolynomialTest.class,
-        FatorationRuleTwoBinomialProductTest.class
+        FatorationRuleSecondDegreeTrinomialProductTest.class
 })
 public class FatorationSuiteTest {
 }

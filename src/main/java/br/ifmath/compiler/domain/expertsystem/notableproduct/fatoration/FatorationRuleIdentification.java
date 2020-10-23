@@ -6,10 +6,9 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.Couples;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProduct;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct.FatorationRuleTwoBinomialProductConvertToDivisionFormula;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.seconddegreetrinomial.FatorationRuleSecondDegreeTrinomialProduct;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.seconddegreetrinomial.FatorationRuleSecondDegreeTrinomialConvertToDivisionFormula;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
-import br.ifmath.compiler.domain.grammar.nonterminal.E;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
@@ -326,10 +325,10 @@ public class FatorationRuleIdentification implements IRule {
         }
         ThreeAddressCode trinomialSource = new ThreeAddressCode(source.getLeft(), expandedQuadruples);
 
-        FatorationRuleTwoBinomialProductConvertToDivisionFormula perfectSqrFirstRule = new FatorationRuleTwoBinomialProductConvertToDivisionFormula();
+        FatorationRuleSecondDegreeTrinomialConvertToDivisionFormula perfectSqrFirstRule = new FatorationRuleSecondDegreeTrinomialConvertToDivisionFormula();
         perfectSqrFirstRule.handle(Collections.singletonList(trinomialSource));
 
-        FatorationRuleTwoBinomialProduct perfectSqrSecondRule = new FatorationRuleTwoBinomialProduct();
+        FatorationRuleSecondDegreeTrinomialProduct perfectSqrSecondRule = new FatorationRuleSecondDegreeTrinomialProduct();
         return perfectSqrSecondRule.areRootsEqual(trinomialSource);
     }
     //</editor-fold>>

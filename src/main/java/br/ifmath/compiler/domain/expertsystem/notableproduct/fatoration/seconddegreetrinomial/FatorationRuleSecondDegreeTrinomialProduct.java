@@ -1,9 +1,8 @@
-package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct;
+package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.seconddegreetrinomial;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
-import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
@@ -12,7 +11,7 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FatorationRuleTwoBinomialProduct implements IRule {
+public class FatorationRuleSecondDegreeTrinomialProduct implements IRule {
 
     ThreeAddressCode source;
 

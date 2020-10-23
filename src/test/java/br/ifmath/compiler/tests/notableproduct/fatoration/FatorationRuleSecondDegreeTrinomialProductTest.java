@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class FatorationRuleTwoBinomialProductTest {
+public class FatorationRuleSecondDegreeTrinomialProductTest {
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String stepOneResult6Expected;
@@ -39,7 +39,7 @@ public class FatorationRuleTwoBinomialProductTest {
 
     //<editor-fold desc="Two Binomial Product">
     @Test()
-    public void identify_simple_binomial_product_scenery_one_with_success() {
+    public void identify_simple_second_degree_trinomial_scenery_one_with_success() {
         //Arrange
         String expression = "x^2 - 12x + 20";
 
@@ -68,7 +68,7 @@ public class FatorationRuleTwoBinomialProductTest {
     }
 
     @Test()
-    public void identify_simple_binomial_product_scenery_two_with_success() {
+    public void identify_simple_second_degree_trinomial_scenery_two_with_success() {
         //Arrange
         String expression = "2x^2 - 16x - 18";
 
@@ -97,7 +97,7 @@ public class FatorationRuleTwoBinomialProductTest {
     }
 
     @Test()
-    public void identify_simple_binomial_product_scenery_three_with_success() {
+    public void identify_simple_second_degree_trinomial_scenery_three_with_success() {
         //Arrange
         String expression = "3x^2 - 15x + 12";
 

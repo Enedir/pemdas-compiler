@@ -1,4 +1,4 @@
-package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.twobinomialproduct;
+package br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.seconddegreetrinomial;
 
 import br.ifmath.compiler.domain.compiler.ExpandedQuadruple;
 import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
@@ -12,7 +12,7 @@ import br.ifmath.compiler.infrastructure.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FatorationRuleTwoBinomialProductConvertToDivisionFormula implements IRule {
+public class FatorationRuleSecondDegreeTrinomialConvertToDivisionFormula implements IRule {
 
     ThreeAddressCode source;
 
