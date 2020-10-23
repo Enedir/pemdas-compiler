@@ -39,7 +39,9 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
 
     private String generateSum() {
         ExpandedQuadruple argumentQuadruple = this.source.findQuadrupleByResult(this.source.getRootQuadruple().getArgument1());
-        String argument1 = this.source.findDirectSonArgument(argumentQuadruple.getResult(), true);
+        ExpandedQuadruple argument1Quadruple = getDirectSon(argumentQuadruple);
+
+        String argument1 = (argument1Quadruple.isNegative()) ? "-" + argument1Quadruple.getArgument1() : argument1Quadruple.getArgument1();
 
         argumentQuadruple = this.source.getLastQuadruple(this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()));
         String argument2 = argumentQuadruple.getArgument1();
@@ -65,5 +67,13 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
         if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
             root = this.source.findQuadrupleByResult(root.getArgument1());
         return (root.getOperator().equals("+")) ? "&plus;" : "&minus;";
+    }
+
+    private ExpandedQuadruple getDirectSon(ExpandedQuadruple iterationQuadruple) {
+        ExpandedQuadruple son = this.source.findQuadrupleByResult(iterationQuadruple.getArgument1());
+        if (StringUtil.match(son.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.getDirectSon(son);
+        }
+        return son;
     }
 }

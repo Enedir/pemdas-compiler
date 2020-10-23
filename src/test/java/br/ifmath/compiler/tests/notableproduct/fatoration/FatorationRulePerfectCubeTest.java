@@ -281,7 +281,7 @@ public class FatorationRulePerfectCubeTest {
         //Arrange
         String expression = "-1 - 3x + 3x^2 - x^3";
 
-        String stepTwoValueExpected = "(-1  ) ^ 3 - 3 * (-1)^2 * x + 3 * -1 * x^2 - (x  ) ^ 3";
+        String stepTwoValueExpected = "(-1) ^ 3 - 3 * (-1) ^ 2 * x + 3 * (-1) * (x)^2 - (x  ) ^ 3";
         String lastStepValueExpected = "(-1 - x) ^ 3";
 
         // Act
@@ -298,11 +298,11 @@ public class FatorationRulePerfectCubeTest {
         Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
 
         assertEquals(expression, stepOne.getMathExpression());
-        assertEquals(stepOneResult5PlusExpected, stepOne.getReason());
+        assertEquals(stepOneResult5MinusExpected, stepOne.getReason());
         assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
-        assertEquals(stepTwoResult5PlusExpected, stepTwo.getReason());
+        assertEquals(stepTwoResult5MinusExpected, stepTwo.getReason());
         assertEquals(lastStepValueExpected, finalStep.getMathExpression());
-        assertEquals(stepThreeResult5PlusExpected, finalStep.getReason());
+        assertEquals(stepThreeResult5MinusExpected, finalStep.getReason());
     }
     //</editor-fold>
 
