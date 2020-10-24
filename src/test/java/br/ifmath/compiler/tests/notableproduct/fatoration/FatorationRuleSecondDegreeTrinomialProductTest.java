@@ -126,6 +126,36 @@ public class FatorationRuleSecondDegreeTrinomialProductTest {
     }
 
     @Test()
+    public void identify_simple_second_degree_trinomial_scenery_four_with_success() {
+        //Arrange
+        String expression = "10 - 9x + 2x^2";
+
+        String stepTwoValueExpected = "x^2 + (-9/2)x + (10/2)";
+        String lastStepValueExpected = "2 * (x - 5/2) * (x - 2)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult6Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult6Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult6Expected, finalStep.getReason());
+    }
+
+
+    @Test()
     public void identify_non_exact_roots_second_degree_trinomial_scenery_one_with_success() {
         //Arrange
         String expression = "14x^2 - 9x - 8";

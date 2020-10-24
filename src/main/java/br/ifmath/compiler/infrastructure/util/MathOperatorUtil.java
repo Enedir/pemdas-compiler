@@ -60,4 +60,9 @@ public class MathOperatorUtil {
         return source;
     }
 
+    public static double gcd(double a, double b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
+
 }

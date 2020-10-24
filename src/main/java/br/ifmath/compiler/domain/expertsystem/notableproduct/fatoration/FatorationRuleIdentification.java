@@ -481,35 +481,45 @@ public class FatorationRuleIdentification implements IRule {
     public static boolean isTwoBinomialProduct(ThreeAddressCode source) {
         ExpandedQuadruple root = source.getRootQuadruple();
 
-        String rootArgument1 = root.getArgument1();
-
-        if (StringUtil.match(rootArgument1, RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(rootArgument1);
-            rootArgument1 = innerQuadruple.getArgument1();
-        }
-
-        if (StringUtil.match(rootArgument1, RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
-
-            Monomial argument = new Monomial(rootArgument1);
-            if (argument.getCoefficient() != 0 && argument.getLiteralDegree() == 2) {
-
-                if (StringUtil.match(root.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-
-                    ExpandedQuadruple innerQuadruple = source.findQuadrupleByResult(root.getArgument2());
-                    if (StringUtil.match(innerQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
-                        argument = new Monomial(innerQuadruple.getArgument1());
-                        if (argument.getCoefficient() != 0 && argument.getLiteralDegree() == 1) {
-                            if (StringUtil.match(innerQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString())) {
-                                return !innerQuadruple.getArgument2().equals("0");
-                            }
-                        }
-
-                    }
-                }
-            }
+        if (argumentsCount(root, source) == 3) {
+            return containsMonomialWithExponent(root, 2, source) &&
+                    containsMonomialWithExponent(root, 1, source) &&
+                    containsMonomialWithExponent(root, 0, source);
         }
 
         return false;
+    }
+
+    private static boolean containsMonomialWithExponent(ExpandedQuadruple iterationQuadruple, int exponent, ThreeAddressCode source) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return containsMonomialWithExponent(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), exponent, source);
+        }
+
+        if (exponent != 0) {
+
+            Monomial iterationMonomialArgument = new Monomial(iterationQuadruple.getArgument1());
+            if (iterationMonomialArgument.getCoefficient() != 0 && iterationMonomialArgument.getLiteralDegree() == exponent)
+                return true;
+        } else {
+            if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                    !iterationQuadruple.getArgument1().equals("0")) {
+                return true;
+            }
+        }
+
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return containsMonomialWithExponent(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), exponent, source);
+        }
+
+        if (exponent != 0) {
+            Monomial iterationMonomialArgument = new Monomial(iterationQuadruple.getArgument2());
+            return iterationMonomialArgument.getCoefficient() != 0 && iterationMonomialArgument.getLiteralDegree() == exponent;
+        }
+        return StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                !iterationQuadruple.getArgument2().equals("0");
     }
     //</editor-fold>
 

@@ -6,6 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -124,20 +125,14 @@ public class FatorationRuleSecondDegreeTrinomialProduct implements IRule {
 
             float x2 = (float) (dividend / divisor);
             this.x2Operator = (x2 < 0) ? "+" : "-";
-
             this.x2 = (x2 % 1 == 0) ?
                     String.valueOf(Math.abs(Math.round(x2))) :
                     this.getReducedFraction(dividend, divisor);
 
         }
 
-        //Maior denominador comum
-        private double gcd(double a, double b) {
-            return b == 0 ? a : gcd(b, a % b);
-        }
-
         private String getReducedFraction(double a, double b) {
-            double gcd = gcd(a, b);
+            double gcd = MathOperatorUtil.gcd(a, b);
             return Math.abs(Math.round(a / gcd)) + "/" + Math.abs(Math.round(b / gcd));
         }
 

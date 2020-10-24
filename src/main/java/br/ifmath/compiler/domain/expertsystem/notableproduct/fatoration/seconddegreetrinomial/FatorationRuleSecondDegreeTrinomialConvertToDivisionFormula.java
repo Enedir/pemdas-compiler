@@ -39,29 +39,79 @@ public class FatorationRuleSecondDegreeTrinomialConvertToDivisionFormula impleme
     }
 
     private void convertToDivisionFormula() {
-        ExpandedQuadruple actualQuadruple = this.source.getRootQuadruple();
-        String rootArgument1 = actualQuadruple.getArgument1();
-        if (StringUtil.match(actualQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            ExpandedQuadruple minusQuadruple = this.source.findQuadrupleByResult(rootArgument1);
-            rootArgument1 = "-" + minusQuadruple.getArgument1();
+
+        ExpandedQuadruple argumentsQuadruple = this.source.getRootQuadruple();
+
+        Monomial monomialA = this.getMonomialWithExponent(argumentsQuadruple, 2);
+        String a = this.getElement(monomialA.toString());
+
+        Monomial monomialB = this.getMonomialWithExponent(argumentsQuadruple, 1);
+        String b = this.getElement(monomialB.toString());
+
+        Monomial monomialC = this.getMonomialWithExponent(argumentsQuadruple, 0);
+        String c = this.getElement(monomialC.toString());
+
+        argumentsQuadruple.setArgument1(monomialA.getLiteral());
+        argumentsQuadruple.setOperator("+");
+
+        argumentsQuadruple = this.source.findQuadrupleByResult(argumentsQuadruple.getArgument2());
+        argumentsQuadruple.setArgument1("(" + b + "/" + a + ")" + monomialB.getLiteral());
+        argumentsQuadruple.setOperator("+");
+
+        argumentsQuadruple.setArgument2("(" + c + "/" + a + ")");
+    }
+
+
+    private Monomial getMonomialWithExponent(ExpandedQuadruple iterationQuadruple, int exponent) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return getMonomialWithExponent(this.source.findQuadrupleByResult(iterationQuadruple.getArgument1()), exponent);
         }
-        Monomial term = new Monomial(rootArgument1);
-        String a = String.valueOf(term.getCoefficient());
-        actualQuadruple.setArgument1(term.getLiteral());
-        String operation = actualQuadruple.getOperator();
-        actualQuadruple.setOperator("+");
 
-        actualQuadruple = this.source.findQuadrupleByResult(actualQuadruple.getArgument2());
-        term.setAttributesFromString(actualQuadruple.getArgument1());
-        if (operation.equals("-"))
-            term.setCoefficient(term.getCoefficient() * -1);
-        actualQuadruple.setArgument1("(" + term.getCoefficient() + "/" + a + ")" + term.getLiteral());
-        operation = actualQuadruple.getOperator();
-        actualQuadruple.setOperator("+");
+        Monomial iterationMonomialArgument = new Monomial(iterationQuadruple.getArgument1());
+        if (exponent != 0) {
+            if (iterationMonomialArgument.getCoefficient() != 0 && iterationMonomialArgument.getLiteralDegree() == exponent)
+                return iterationMonomialArgument;
+        } else {
+            if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                    !iterationQuadruple.getArgument1().equals("0")) {
+                return iterationMonomialArgument;
+            }
+        }
 
-        term.setAttributesFromString(actualQuadruple.getArgument2());
-        if (operation.equals("-"))
-            term.setCoefficient(term.getCoefficient() * -1);
-        actualQuadruple.setArgument2("(" + term.getCoefficient() + "/" + a + ")");
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = this.source.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return getMonomialWithExponent(this.source.findQuadrupleByResult(iterationQuadruple.getArgument2()), exponent);
+        }
+
+        iterationMonomialArgument = new Monomial(iterationQuadruple.getArgument2());
+
+        if (exponent != 0) {
+            if (iterationMonomialArgument.getCoefficient() != 0 && iterationMonomialArgument.getLiteralDegree() == exponent)
+                return iterationMonomialArgument;
+        } else {
+            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.NATURAL_NUMBER.toString()) &&
+                    !iterationQuadruple.getArgument2().equals("0")) {
+                return iterationMonomialArgument;
+            }
+        }
+        return new Monomial();
+    }
+
+    private String getElement(String argument) {
+        Monomial monomial = new Monomial(argument);
+        ExpandedQuadruple argumentQuadruple = this.source.findQuadrupleByArgument(argument);
+        if (argumentQuadruple.getArgument1().equals(argument)) {
+            if (argumentQuadruple.isNegative()) {
+                return "-" + monomial.getCoefficient();
+            }
+            if (this.source.getLeft().equals(argumentQuadruple.getResult())) {
+                return String.valueOf(monomial.getCoefficient());
+            }
+            ExpandedQuadruple father = this.source.findDirectFather(argumentQuadruple.getResult());
+            return (father.isMinus()) ? "-" + monomial.getCoefficient() : String.valueOf(monomial.getCoefficient());
+        }
+        return (argumentQuadruple.isMinus()) ? "-" + monomial.getCoefficient() : String.valueOf(monomial.getCoefficient());
     }
 }
