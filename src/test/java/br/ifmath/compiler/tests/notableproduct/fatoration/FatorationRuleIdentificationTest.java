@@ -13,20 +13,17 @@ public class FatorationRuleIdentificationTest {
     private ICompiler compiler;
     private IExpertSystem expertSystem;
     private String stepOneResult1Expected;
-    //private String stepOneResult2Expected;
     private String stepOneResult3Expected;
     private String stepOneResult4Expected;
     private String stepOneResult5PlusExpected;
     private String stepOneResult5MinusExpected;
     private String stepOneResult6Expected;
     private String stepTwoResult1Expected;
-    //private String stepTwoResult2Expected;
     private String stepTwoResult3PlusExpected;
     private String stepTwoResult4Expected;
     private String stepTwoResult5PlusExpected;
     private String stepTwoResult5MinusExpected;
     private String stepTwoResult6Expected;
-    //private String stepThreeResult2Expected;
     private String stepThreeResult3PlusExpected;
     private String stepThreeResult4Expected;
     private String stepThreeResult5PlusExpected;
@@ -40,8 +37,6 @@ public class FatorationRuleIdentificationTest {
         expertSystem = new FatorationExpertSystem();
         String stepOneBaseResult = "Identificação do tipo de fatoração a partir da equação inicial: ";
         stepOneResult1Expected = stepOneBaseResult + "Fator comum em evidência.";
-//        stepOneResult2Expected = stepOneBaseResult + "Agrupamento. Note que nesse caso temos um elemento em comum " +
-//                "nos dois primeiros termos e um elemento comum no terceiro e quarto termos.";
         stepOneResult3Expected = stepOneBaseResult + "Trinômio quadrado perfeito. Note que a expressão é formada " +
                 "por três monômios em que o primeiro e o último termo são quadrados e o termo cental é o dobro do " +
                 "produto entre o primeiro termo e o segundo termo.";
@@ -53,11 +48,6 @@ public class FatorationRuleIdentificationTest {
 
 
         stepTwoResult1Expected = "Verificamos o elemento que temos em comum e colocamos em evidência.";
-
-//        stepTwoResult2Expected = "Colocamos em evidência o elemento que temos em comum nos primeiros termos e somamos " +
-//                "ao elemento que possuímos em comum nos últimos termos.";
-//        stepThreeResult2Expected = "Escrevemos a expressão como o produto da soma de dois termos, sem alterar o " +
-//                "resultado final.";
 
         stepTwoResult3PlusExpected = "Escrevemos a expressão no formato &ascr;&sup2; &plus; 2 &middot; &ascr; &middot; &bscr; " +
                 "&plus; &bscr;&sup2;, identificando os elementos que estão elevados ao quadrado e os respectivos produtos.";

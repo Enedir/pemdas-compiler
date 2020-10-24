@@ -125,5 +125,63 @@ public class FatorationRuleSecondDegreeTrinomialProductTest {
         assertEquals(stepThreeResult6Expected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_non_exact_roots_second_degree_trinomial_scenery_one_with_success() {
+        //Arrange
+        String expression = "14x^2 - 9x - 8";
+
+        String stepTwoValueExpected = "x^2 + (-9/14)x + (-8/14)";
+        String lastStepValueExpected = "14 * (x - 8/7) * (x + 1/2)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult6Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult6Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult6Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_non_exact_roots_second_degree_trinomial_scenery_two_with_success() {
+        //Arrange
+        String expression = "-3x^2 + 17x - 10";
+
+        String stepTwoValueExpected = "x^2 + (17/-3)x + (-10/-3)";
+        String lastStepValueExpected = "-3 * (x - 2/3) * (x - 5)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult6Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult6Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult6Expected, finalStep.getReason());
+    }
+
     //</editor-fold>
 }

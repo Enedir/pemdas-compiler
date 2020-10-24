@@ -53,14 +53,9 @@ public class FatorationRuleSecondDegreeTrinomialProduct implements IRule {
             root.setOperator("*");
 
             Bhaskara bhaskara = new Bhaskara(a, b, c);
-            int x1 = Math.round(bhaskara.getFirstRoot());
-            int x2 = Math.round(bhaskara.getSecondRoot());
 
-            String operatorX1 = (x1 < 0) ? "+" : "-";
-            String operatorX2 = (x2 < 0) ? "+" : "-";
-
-            this.source.addQuadrupleToList(operatorX1, variable, String.valueOf(Math.abs(x1)), innerQuadruple, true).setLevel(1);
-            this.source.addQuadrupleToList(operatorX2, variable, String.valueOf(Math.abs(x2)), innerQuadruple, false).setLevel(1);
+            this.source.addQuadrupleToList(bhaskara.getX1Operator(), variable, String.valueOf(bhaskara.getFirstRoot()), innerQuadruple, true).setLevel(1);
+            this.source.addQuadrupleToList(bhaskara.getX2Operator(), variable, String.valueOf(bhaskara.getSecondRoot()), innerQuadruple, false).setLevel(1);
             innerQuadruple.setOperator("*");
         }
 
@@ -84,32 +79,67 @@ public class FatorationRuleSecondDegreeTrinomialProduct implements IRule {
             int c = this.getVariable(innerQuadruple.getArgument2(), false);
 
             Bhaskara bhaskara = new Bhaskara(a, b, c);
-            int x1 = Math.round(bhaskara.getFirstRoot());
-            int x2 = Math.round(bhaskara.getSecondRoot());
-            return x1 == x2;
+            return bhaskara.getFirstRoot().equals(bhaskara.getSecondRoot());
         }
         return false;
     }
 
     private static class Bhaskara {
-        private float x1, x2;
+
+        private String x1, x2, x1Operator, x2Operator;
 
         public Bhaskara(int a, int b, int c) {
             this.calculate(a, b, c);
         }
 
-        private void calculate(int a, int b, int c) {
-            int delta = (b * b) + (-4 * (a * c));
-            this.x1 = (float) ((-b + Math.sqrt(delta)) / (2 * a));
-            this.x2 = (float) ((-b - Math.sqrt(delta)) / (2 * a));
-        }
-
-        public float getFirstRoot() {
+        public String getFirstRoot() {
             return x1;
         }
 
-        public float getSecondRoot() {
+        public String getSecondRoot() {
             return x2;
         }
+
+        public String getX1Operator() {
+            return x1Operator;
+        }
+
+        public String getX2Operator() {
+            return x2Operator;
+        }
+
+        private void calculate(int a, int b, int c) {
+            int delta = (b * b) + (-4 * (a * c));
+            int divisor = 2 * a;
+            double dividend = -b + Math.sqrt(delta);
+
+            float x1 = (float) (dividend / divisor);
+            this.x1Operator = (x1 < 0) ? "+" : "-";
+
+            this.x1 = (x1 % 1 == 0) ?
+                    String.valueOf(Math.abs(Math.round(x1))) :
+                    this.getReducedFraction(dividend, divisor);
+
+            dividend = -b - Math.sqrt(delta);
+
+            float x2 = (float) (dividend / divisor);
+            this.x2Operator = (x2 < 0) ? "+" : "-";
+
+            this.x2 = (x2 % 1 == 0) ?
+                    String.valueOf(Math.abs(Math.round(x2))) :
+                    this.getReducedFraction(dividend, divisor);
+
+        }
+
+        //Maior denominador comum
+        private double gcd(double a, double b) {
+            return b == 0 ? a : gcd(b, a % b);
+        }
+
+        private String getReducedFraction(double a, double b) {
+            double gcd = gcd(a, b);
+            return Math.abs(Math.round(a / gcd)) + "/" + Math.abs(Math.round(b / gcd));
+        }
+
     }
 }
