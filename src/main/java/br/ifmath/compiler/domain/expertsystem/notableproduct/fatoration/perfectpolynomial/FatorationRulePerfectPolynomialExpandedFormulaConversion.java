@@ -137,6 +137,7 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         String firstArgumentValue = this.getConvertedTerm(sonArgument, false);
 
         if (firstArgument.isNegative()) {
+            firstArgument.setArgument1(this.getConvertedTerm(firstArgument.getArgument1(), false));
             firstArgumentValue = firstArgument.getResult();
             firstArgument = this.source.findQuadrupleByArgument(firstArgument.getResult());
         }
@@ -150,7 +151,7 @@ public class FatorationRulePerfectPolynomialExpandedFormulaConversion implements
         this.source.addQuadrupleToList("+", secondArgumentValue, firstArgument.getArgument2(), firstArgument, false);
         String argument1;
         if (StringUtil.match(firstArgumentValue, RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            ExpandedQuadruple addedQuadruple =  this.source.addQuadrupleToList("^", firstArgumentValue,"2",firstArgument,true);
+            ExpandedQuadruple addedQuadruple = this.source.addQuadrupleToList("^", firstArgumentValue, "2", firstArgument, true);
             argument1 = addedQuadruple.getResult();
         } else
             argument1 = "(" + firstArgumentValue + ")^2";
