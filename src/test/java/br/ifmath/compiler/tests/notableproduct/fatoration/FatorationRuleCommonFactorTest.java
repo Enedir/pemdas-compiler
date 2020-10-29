@@ -59,9 +59,9 @@ public class FatorationRuleCommonFactorTest {
     @Test()
     public void identify_simple_terms_common_factor_scenery_two_with_success() {
         //Arrange
-        String expression = "2j + 12j^2 - 8";
+        String expression = "2j^2 + 12j^5 - 8";
 
-        String lastStepValueExpected = "2 * (j + 6j^2 - 4)";
+        String lastStepValueExpected = "2 * (j^2 + 6j^5 - 4)";
 
         // Act
         IAnswer answer = null;
@@ -137,6 +137,56 @@ public class FatorationRuleCommonFactorTest {
         String expression = "2x + 8x - 4";
 
         String lastStepValueExpected = "2 * (x + 4x - 2)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResult1Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_number_common_factor_scenery_four_with_success() {
+        //Arrange
+        String expression = "25 - 35x^2";
+
+        String lastStepValueExpected = "5 * (5 - 7x^2)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult1Expected, stepOne.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepTwoResult1Expected, finalStep.getReason());
+    }
+
+    @Test()
+    public void identify_number_common_factor_scenery_five_with_success() {
+        //Arrange
+        String expression = "27x^5 - 54y + 12x^2";
+
+        String lastStepValueExpected = "3 * (9x^5 - 18y + 4x^2)";
 
         // Act
         IAnswer answer = null;
@@ -236,7 +286,7 @@ public class FatorationRuleCommonFactorTest {
         //Arrange
         String expression = "-30z^4 + 16z^2 - 4z^8 + 10z^6";
 
-        String lastStepValueExpected = "z^2 * (-30z^2 + 16 - 4z^6 + 10z^4)";
+        String lastStepValueExpected = "2z^2 * (-15z^2 + 8 - 2z^6 + 5z^4)";
 
         // Act
         IAnswer answer = null;

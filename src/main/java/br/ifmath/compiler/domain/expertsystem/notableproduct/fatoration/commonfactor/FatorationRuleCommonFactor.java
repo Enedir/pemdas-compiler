@@ -6,7 +6,9 @@ import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.FatorationRuleIdentification;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
+import br.ifmath.compiler.domain.grammar.nonterminal.M;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -40,63 +42,76 @@ public class FatorationRuleCommonFactor implements IRule {
 
     //<editor-fold desc="getCommonFactor">
     private String getCommonFactor() {
-        Monomial monomialPattern = new Monomial(this.getSmallestUnit());
-
-        if (this.isEqualPattern(this.source.getRootQuadruple(), monomialPattern))
-            return monomialPattern.toString();
-
-        Integer monomialPatternCoefficient = monomialPattern.getCoefficient();
-        monomialPattern.setCoefficient(null);
-        if (this.isEqualPattern(this.source.getRootQuadruple(), monomialPattern))
-            return monomialPattern.getLiteral();
-
-        monomialPattern.setLiteral("");
-        monomialPattern.setCoefficient(monomialPatternCoefficient);
-        if (this.isEqualPattern(this.source.getRootQuadruple(), monomialPattern))
-            return monomialPattern.getCoefficient().toString();
-        return "";
+        String rootArgument1 = this.getFirstArgument(this.source.getRootQuadruple());
+        Monomial initialMonomial = new Monomial(rootArgument1);
+        int coefficient = this.getCommonCoefficient(this.source.getRootQuadruple(), initialMonomial.getCoefficient());
+        String literal = this.getCommonLiteral(this.source.getRootQuadruple(), new Monomial(initialMonomial.getLiteral()));
+        return new Monomial(literal, coefficient).toString();
     }
 
-    private String getSmallestUnit() {
-        String firstArgument = this.source.getRootQuadruple().getArgument1();
-        if (StringUtil.match(firstArgument, RegexPattern.TEMPORARY_VARIABLE.toString()))
-            firstArgument = this.source.findQuadrupleByResult(firstArgument).getArgument1();
-        return getLowestValue(this.source.getRootQuadruple(), firstArgument);
-    }
-
-    private String getLowestValue(ExpandedQuadruple iterationQuadruple, String lowestValue) {
+    private String getFirstArgument(ExpandedQuadruple iterationQuadruple) {
         if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), lowestValue);
+            return this.getFirstArgument(source.findQuadrupleByResult(iterationQuadruple.getArgument1()));
+        }
+        return iterationQuadruple.getArgument1();
+    }
+
+    private int getCommonCoefficient(ExpandedQuadruple iterationQuadruple, int coefficient) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.getCommonCoefficient(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), coefficient);
         }
 
-        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument1(), lowestValue);
+        Monomial monomial = new Monomial(iterationQuadruple.getArgument1());
+
+        coefficient = (int) MathOperatorUtil.gcd(coefficient, monomial.getCoefficient());
         if (iterationQuadruple.isNegative())
             iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
 
         if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-            return this.getLowestValue(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), lowestValue);
+            return this.getCommonCoefficient(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), coefficient);
         }
 
-        lowestValue = this.getLowerTerm(iterationQuadruple.getArgument2(), lowestValue);
-        return lowestValue;
+        monomial.setAttributesFromString(iterationQuadruple.getArgument2());
+
+        coefficient = (int) MathOperatorUtil.gcd(coefficient, monomial.getCoefficient());
+        return coefficient;
     }
 
-    private String getLowerTerm(String argument, String lowestValue) {
-        Monomial argumentMonomial = new Monomial(argument);
-        Monomial lowestMonomial = new Monomial(lowestValue);
+    private String getCommonLiteral(ExpandedQuadruple iterationQuadruple, Monomial literal) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.getCommonLiteral(source.findQuadrupleByResult(iterationQuadruple.getArgument1()), literal);
+        }
 
-        if(argumentMonomial.getCoefficient() < lowestMonomial.getCoefficient())
-            lowestMonomial.setCoefficient(argumentMonomial.getCoefficient());
+        Monomial monomial = new Monomial(iterationQuadruple.getArgument1());
 
-        if(argumentMonomial.getLiteralDegree() < lowestMonomial.getLiteralDegree())
-            if(argumentMonomial.getLiteralDegree() == 0)
-                lowestMonomial.setLiteral("");
-            else
-                lowestMonomial.setLiteralDegree(argumentMonomial.getLiteralDegree());
+        literal = this.getLowestDegreeLiteral(monomial, literal);
+        if (literal.toString().isEmpty())
+            return literal.toString();
 
-        return lowestMonomial.toString();
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = source.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.getCommonLiteral(source.findQuadrupleByResult(iterationQuadruple.getArgument2()), literal);
+        }
+
+        monomial = new Monomial(iterationQuadruple.getArgument2());
+
+        literal = this.getLowestDegreeLiteral(monomial, literal);
+
+        return literal.toString();
     }
 
+    private Monomial getLowestDegreeLiteral(Monomial firstLiteral, Monomial secondLiteral) {
+
+        if (firstLiteral.getLiteral().isEmpty() || secondLiteral.getLiteral().isEmpty() ||
+                !firstLiteral.getLiteralVariable().equals(secondLiteral.getLiteralVariable()))
+            return new Monomial();
+
+        return (firstLiteral.getLiteralDegree() < secondLiteral.getLiteralDegree()) ?
+                new Monomial(firstLiteral.getLiteral()) :
+                new Monomial(secondLiteral.getLiteral());
+    }
     //</editor-fold>>
 
     //<editor-fold desc="isEqualPattern">

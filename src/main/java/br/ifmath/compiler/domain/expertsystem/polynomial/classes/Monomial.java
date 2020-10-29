@@ -9,9 +9,9 @@ public class Monomial extends Polynomial {
     public Monomial() {
     }
 
-    public Monomial(String label, Integer value) {
-        this.literal = label;
-        this.coefficient = value;
+    public Monomial(String literal, Integer coefficient) {
+        this.literal = literal;
+        this.coefficient = coefficient;
     }
 
     public Monomial(String argument) {
