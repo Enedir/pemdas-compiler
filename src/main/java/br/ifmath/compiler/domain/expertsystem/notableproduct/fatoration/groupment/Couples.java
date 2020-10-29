@@ -7,6 +7,7 @@ import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionExceptio
 import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.commonfactor.FatorationRuleCommonFactor;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -54,12 +55,18 @@ public class Couples {
     }
 
     private void setCouples(ThreeAddressCode couple, boolean isFirstCouple) throws InvalidAlgebraicExpressionException {
+        boolean isMinus = this.isFirstQuadrupleMinus(couple.getRootQuadruple(), couple);
+
         FatorationRuleCommonFactor commonFactor = new FatorationRuleCommonFactor();
         ThreeAddressCode source = getResultSource(commonFactor, couple);
         if (isFirstCouple)
             this.firstCoupleFactor = source.getRootQuadruple().getArgument1();
-        else
+        else {
             this.secondCoupleFactor = source.getRootQuadruple().getArgument1();
+            if (secondCoupleFactor.equals("1") && isMinus)
+                this.changeAllOperations(couple);
+        }
+
 
         String latexNotation = couple.toLaTeXNotation().trim();
         String multiplierNotation = latexNotation.substring(latexNotation.indexOf('*') + 1);
@@ -80,6 +87,29 @@ public class Couples {
                 }
             }
         }
+    }
+
+    private void changeAllOperations(ThreeAddressCode couple) {
+        for (ExpandedQuadruple expandedQuadruple : couple.getExpandedQuadruples()) {
+            if (expandedQuadruple.isPlusOrMinus()) {
+                if (expandedQuadruple.isNegative()) {
+                    ExpandedQuadruple minusFather = couple.findQuadrupleByArgument(expandedQuadruple.getResult());
+                    if (minusFather.getArgument1().equals(expandedQuadruple.getResult()))
+                        minusFather.setArgument1(expandedQuadruple.getArgument1());
+                    else
+                        minusFather.setArgument2(expandedQuadruple.getArgument2());
+                } else
+                    expandedQuadruple.setOperator(MathOperatorUtil.signalRule(expandedQuadruple.getOperator(), "-"));
+            }
+        }
+        couple.clearNonUsedQuadruples();
+    }
+
+    private boolean isFirstQuadrupleMinus(ExpandedQuadruple iterationQuadruple, ThreeAddressCode couple) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.isFirstQuadrupleMinus(couple.findQuadrupleByResult(iterationQuadruple.getArgument1()), couple);
+        }
+        return iterationQuadruple.isNegative();
     }
 
     private ThreeAddressCode getResultSource(IRule rule, ThreeAddressCode ruleSource) throws InvalidAlgebraicExpressionException {

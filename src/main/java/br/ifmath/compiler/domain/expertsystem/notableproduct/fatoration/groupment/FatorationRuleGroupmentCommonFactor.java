@@ -93,7 +93,7 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
             lastInsertQuadruple = insertQuadruple.getResult();
         }
 
-        innerQuadruple.setOperator("+");
+        innerQuadruple.setOperator(couples.getSecondCoupleOperator());
 
         innerQuadruple = this.source.findQuadrupleByResult(innerQuadruple.getArgument2());
 
