@@ -254,13 +254,6 @@ public class ThreeAddressCode {
         }
     }
 
-    public String toLaTeXNotation() {
-        return String.format("%s %s %s",
-                generateLaTeXNotation(left, 0, new StringBuilder()).toString(),
-                comparison,
-                generateLaTeXNotation(right, 0, new StringBuilder()).toString());
-    }
-
     /**
      * Substitui o valor de um argumento ou operador de uma quadrupla, pelo valor de um dado argumento ou operador do seu filho. Ex.:
      * A = B + 1 e B = 2 + 3. Escolhendo B como son, 1 como o argument, entao obterá o valor do argument1 de B,
@@ -431,7 +424,7 @@ public class ThreeAddressCode {
                     isArgument1 = false;
                 }
 
-                /* Nesse caso não há como fazer comparação através do {@link StringUtil.match} pois uma
+                /* Nesse caso não há como fazer comparação através do StringUtil.match pois uma
                  * variável temporaria não deveria ter um expoente, e então sempre daria um resultado false */
                 if (argument.startsWith("T")) {
                     String potentiation = argument.substring(argument.indexOf("^"));
@@ -468,6 +461,14 @@ public class ThreeAddressCode {
     public void setUp() {
         this.setComparison("");
         this.setRight("");
+    }
+
+
+    public String toLaTeXNotation() {
+        return String.format("%s %s %s",
+                generateLaTeXNotation(left, 0, new StringBuilder()).toString(),
+                comparison,
+                generateLaTeXNotation(right, 0, new StringBuilder()).toString());
     }
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {
