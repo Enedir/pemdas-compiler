@@ -32,16 +32,23 @@ public class FatorationRuleGroupmentSumProduct implements IRule {
         return steps;
     }
 
+    /**
+     * Ajusta as quádruplas para ficarem no formato de soma e produto. Ex.: (x - 1) * (x^2 - 2x + 3)
+     */
     private void changeToSumProduct() {
         ExpandedQuadruple root = this.source.getRootQuadruple();
         String firstTermArgument1 = root.getArgument1();
+
         ExpandedQuadruple innerQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
         String firstTermOperation = innerQuadruple.getOperator();
+
         ExpandedQuadruple lastQuadruple = this.source.findQuadrupleByResult(innerQuadruple.getArgument2());
         String firstTermArgument2 = lastQuadruple.getArgument1();
 
+        //adiciona uma quádrupla que une os fatores em comum, com os multiplicadores
         this.source.addQuadrupleToList(firstTermOperation, firstTermArgument1, firstTermArgument2,
                 root, true).setLevel(1);
+
         root.setArgument2(lastQuadruple.getArgument2());
     }
 }

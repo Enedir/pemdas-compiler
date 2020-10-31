@@ -44,98 +44,131 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
         return steps;
     }
 
+    /**
+     * Gera duas estruturas parecida com o fator em comum.
+     *
+     * @throws InvalidAlgebraicExpressionException Erro caso não seja possível gerar algum dos dois fatores em comum.
+     */
     private void generateDoubleCommonFactor() throws InvalidAlgebraicExpressionException {
+
+        //obtém o número total de argumentos nas quádruplas para poder gerar o casal
         int argumentsCount = FatorationRuleIdentification.argumentsCount(source.getRootQuadruple(), source);
-        List<ThreeAddressCode> couplesSources = FatorationRuleIdentification.generateCouples(source, argumentsCount);
 
-        ThreeAddressCode firstCouple = couplesSources.get(0);
-        ThreeAddressCode secondCouple = couplesSources.get(1);
+        //retora uma lista no qual a posição 0 estará o primeiro conjuge, e na posição 1 o segundo.
+        List<ThreeAddressCode> coupleSources = FatorationRuleIdentification.generateCouple(source, argumentsCount);
 
-        String secondCoupleOperation = this.source.findQuadrupleByArgument(secondCouple.getLeft()).getOperator();
+        ThreeAddressCode firstSpouse = coupleSources.get(0);
+        ThreeAddressCode secondSpouse = coupleSources.get(1);
 
-        Couples couples = new Couples(firstCouple, secondCouple, secondCoupleOperation);
+        String secondSpouseOperation = this.source.findQuadrupleByArgument(secondSpouse.getLeft()).getOperator();
 
-        this.changeQuadruples(couples);
+        Couple couple = new Couple(firstSpouse, secondSpouse, secondSpouseOperation);
+
+        //a partir do casal, altera as quadruplas para gerarem a estrutura com os dois fatores em comum
+        this.changeQuadruples(couple);
 
     }
 
-    private void changeQuadruples(Couples couples) {
+    private void changeQuadruples(Couple couple) {
+        //pega a primeira quádrupla e altera para o primeiro fator em comum
         ExpandedQuadruple root = this.source.getRootQuadruple();
-        root.setArgument1(couples.getFirstCoupleFactor());
+        root.setArgument1(couple.getFirstSpouseFactor());
         root.setOperator("*");
         root.setLevel(0);
 
-        List<ExpandedQuadruple> firstCouple = couples.getFirstCoupleMultiplier();
-        this.adjustMinusQuadruple(firstCouple);
+        //adiciona as quadruplas do primeiro conjuge para o ThreeAddressCode principal
+        List<ExpandedQuadruple> firstCouple = couple.getFirstSpouseMultiplier();
+
+        //ajusta caso a primeira quádrupla for "MINUS"
+        this.adjustMinusQuadruplePosition(firstCouple);
         ExpandedQuadruple innerQuadruple = this.source.findQuadrupleByResult(root.getArgument2());
+
+        //inverte para garantir que as quádruplas vão apontar corretamente uma para a outra
         Collections.reverse(firstCouple);
 
-        String lastInsertQuadruple = null;
-        String minusQuadrupleResult = null;
-        for (ExpandedQuadruple expandedQuadruple : firstCouple) {
+        this.addSpouseQuadruplesToSource(firstCouple, innerQuadruple, true);
 
-            ExpandedQuadruple insertQuadruple = this.source.addQuadrupleToList(expandedQuadruple.getOperator(), expandedQuadruple.getArgument1(),
-                    expandedQuadruple.getArgument2(), innerQuadruple, true);
-
-            if (insertQuadruple.isNegative())
-                minusQuadrupleResult = insertQuadruple.getResult();
-
-            insertQuadruple.setLevel(1);
-
-            if (StringUtil.match(insertQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                insertQuadruple.setArgument1(minusQuadrupleResult);
-            }
-
-            if (StringUtil.match(insertQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
-                insertQuadruple.setArgument2(lastInsertQuadruple);
-            }
-
-            lastInsertQuadruple = insertQuadruple.getResult();
-        }
-
-        innerQuadruple.setOperator(couples.getSecondCoupleOperator());
+        //ajusta o operador do segundo conjuge
+        innerQuadruple.setOperator(couple.getSecondSpouseOperator());
 
         innerQuadruple = this.source.findQuadrupleByResult(innerQuadruple.getArgument2());
 
-        innerQuadruple.setArgument1(couples.getSecondCoupleFactor());
+
+        //mesma preparação feita antes, agora para o segundo fator em comum
+        innerQuadruple.setArgument1(couple.getSecondSpouseFactor());
         innerQuadruple.setOperator("*");
         innerQuadruple.setLevel(0);
 
-        List<ExpandedQuadruple> secondQuadruple = couples.getSecondCoupleMultiplier();
+        List<ExpandedQuadruple> secondQuadruple = couple.getSecondSpouseMultiplier();
         Collections.reverse(secondQuadruple);
 
-        for (ExpandedQuadruple expandedQuadruple : secondQuadruple) {
-            ExpandedQuadruple insertQuadruple = this.source.addQuadrupleToList(expandedQuadruple.getOperator(), expandedQuadruple.getArgument1(),
-                    expandedQuadruple.getArgument2(), innerQuadruple, false);
+        this.addSpouseQuadruplesToSource(secondQuadruple, innerQuadruple, false);
+    }
 
+    /**
+     * Ajusta a posição de uma quádrupla com operador "MINUS".
+     *
+     * @param expandedQuadruples {@link List} de {@link ExpandedQuadruple} a ser verificada para ajustar a quádrupla.
+     */
+    private void adjustMinusQuadruplePosition(List<ExpandedQuadruple> expandedQuadruples) {
+        //encontra a quádrupla com "MINUS"
+        ExpandedQuadruple minusQuadruple = null;
+        for (ExpandedQuadruple expandedQuadruple : expandedQuadruples) {
+            if (expandedQuadruple.isNegative()) {
+                minusQuadruple = expandedQuadruple;
+                break;
+            }
+        }
+
+        //remove a quádrupla e insere novamente na lista, somente para deixar ela na última posição
+        if (minusQuadruple != null) {
+            expandedQuadruples.remove(minusQuadruple);
+            expandedQuadruples.add(minusQuadruple);
+        }
+    }
+
+    /**
+     * Adiciona as qúadruplas presentes no {@code spouse} para o {@link ThreeAddressCode} principal.
+     *
+     * @param spouse           {@link List} de {@link ExpandedQuadruple} que serão inseridas no source.
+     * @param innerQuadruple   {@link ExpandedQuadruple} onde será inserida a primeira quadrupla do {@code spouse}.
+     * @param isSetOnArgument1 booleano que indica qual o argumento da {@code innerQuadruple}.
+     */
+    private void addSpouseQuadruplesToSource(List<ExpandedQuadruple> spouse, ExpandedQuadruple innerQuadruple,
+                                             boolean isSetOnArgument1) {
+
+        //variável que controla a última quadrupla inserida no source
+        String lastInsertQuadruple = null;
+
+        //variável que controla o result da quádrupla que é "MINUS" e que será inserida no source
+        String minusQuadrupleResult = null;
+
+        for (ExpandedQuadruple expandedQuadruple : spouse) {
+
+            //Adiciona quádrupla atual no source
+            ExpandedQuadruple insertQuadruple = this.source.addQuadrupleToList(expandedQuadruple.getOperator(), expandedQuadruple.getArgument1(),
+                    expandedQuadruple.getArgument2(), innerQuadruple, isSetOnArgument1);
+
+            //adiciona a quádrupla de minus para a variável de controle
             if (insertQuadruple.isNegative())
                 minusQuadrupleResult = insertQuadruple.getResult();
 
+            //coloca entre parênteses
+            insertQuadruple.setLevel(1);
+
+            //ajusta para apontar para a quádrupla MINUS que acabou de ser inserida na lista
             if (StringUtil.match(insertQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 insertQuadruple.setArgument1(minusQuadrupleResult);
             }
 
+            //ajusta para apontar para a quádrupla que acabou de ser inserida na lista
             if (StringUtil.match(insertQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
                 insertQuadruple.setArgument2(lastInsertQuadruple);
             }
 
-            insertQuadruple.setLevel(1);
-
-
             lastInsertQuadruple = insertQuadruple.getResult();
         }
-    }
 
-    private void adjustMinusQuadruple(List<ExpandedQuadruple> couple) {
-        ExpandedQuadruple minusQuadruple = null;
-        for (ExpandedQuadruple expandedQuadruple : couple) {
-            if (expandedQuadruple.isNegative())
-                minusQuadruple = expandedQuadruple;
-        }
 
-        if (minusQuadruple != null) {
-            couple.remove(minusQuadruple);
-            couple.add(minusQuadruple);
-        }
     }
 }

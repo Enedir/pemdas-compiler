@@ -5,7 +5,7 @@ import br.ifmath.compiler.domain.compiler.ThreeAddressCode;
 import br.ifmath.compiler.domain.expertsystem.IRule;
 import br.ifmath.compiler.domain.expertsystem.InvalidAlgebraicExpressionException;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.Couples;
+import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.groupment.Couple;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.seconddegreetrinomial.FatorationRuleSecondDegreeTrinomialProduct;
 import br.ifmath.compiler.domain.expertsystem.notableproduct.fatoration.seconddegreetrinomial.FatorationRuleSecondDegreeTrinomialConvertToDivisionFormula;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
@@ -112,7 +112,7 @@ public class FatorationRuleIdentification implements IRule {
             int argumentsCount = argumentsCount(source.getRootQuadruple(), source);
             if (argumentsCount > 3 && argumentsCount % 2 == 0) {
 
-                List<ThreeAddressCode> couplesSources = generateCouples(source, argumentsCount);
+                List<ThreeAddressCode> couplesSources = generateCouple(source, argumentsCount);
 
                 if (!couplesSources.isEmpty()) {
                     ThreeAddressCode firstCouple = couplesSources.get(0);
@@ -120,11 +120,11 @@ public class FatorationRuleIdentification implements IRule {
 
                     String secondCoupleOperation = source.findQuadrupleByArgument(secondCouple.getLeft()).getOperator();
 
-                    Couples couples = new Couples(firstCouple, secondCouple, secondCoupleOperation);
-                    if (couples.areEmpty())
+                    Couple couple = new Couple(firstCouple, secondCouple, secondCoupleOperation);
+                    if (couple.areEmpty())
                         return false;
-                    return !couples.getFirstCoupleFactor().equals(couples.getSecondCoupleFactor()) &&
-                            couples.isFirstCoupleEqualsSecond();
+                    return !couple.getFirstSpouseFactor().equals(couple.getSecondSpouseFactor()) &&
+                            couple.isFirstSpouseMultiplierEqualsSecond();
                 }
             }
         }
@@ -133,7 +133,7 @@ public class FatorationRuleIdentification implements IRule {
     }
 
 
-    public static List<ThreeAddressCode> generateCouples(ThreeAddressCode source, int argumentsCount) {
+    public static List<ThreeAddressCode> generateCouple(ThreeAddressCode source, int argumentsCount) {
 
         List<ExpandedQuadruple> firstCoupleQuadruples = new ArrayList<>();
         List<ExpandedQuadruple> secondCoupleQuadruples = new ArrayList<>();
