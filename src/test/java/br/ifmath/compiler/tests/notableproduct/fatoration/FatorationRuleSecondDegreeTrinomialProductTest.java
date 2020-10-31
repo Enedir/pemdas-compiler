@@ -213,5 +213,34 @@ public class FatorationRuleSecondDegreeTrinomialProductTest {
         assertEquals(stepThreeResult6Expected, finalStep.getReason());
     }
 
+    @Test()
+    public void identify_non_exact_roots_second_degree_trinomial_scenery_three_with_success() {
+        //Arrange
+        String expression = "7x + x^2 + 12";
+
+        String stepTwoValueExpected = "x^2 + (7/1)x + (12/1)";
+        String lastStepValueExpected = "1 * (x + 3) * (x + 4)";
+
+        // Act
+        IAnswer answer = null;
+        try {
+            answer = compiler.analyse(expertSystem, AnswerType.BEST, expression);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        // Assert
+        Step stepOne = answer.getSteps().get(answer.getSteps().size() - 3);
+        Step stepTwo = answer.getSteps().get(answer.getSteps().size() - 2);
+        Step finalStep = answer.getSteps().get(answer.getSteps().size() - 1);
+
+        assertEquals(expression, stepOne.getMathExpression());
+        assertEquals(stepOneResult6Expected, stepOne.getReason());
+        assertEquals(stepTwoValueExpected, stepTwo.getMathExpression());
+        assertEquals(stepTwoResult6Expected, stepTwo.getReason());
+        assertEquals(lastStepValueExpected, finalStep.getMathExpression());
+        assertEquals(stepThreeResult6Expected, finalStep.getReason());
+    }
+
     //</editor-fold>
 }
