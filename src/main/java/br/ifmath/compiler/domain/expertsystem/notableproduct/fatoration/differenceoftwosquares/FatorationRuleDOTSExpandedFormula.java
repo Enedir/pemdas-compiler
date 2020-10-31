@@ -50,6 +50,6 @@ public class FatorationRuleDOTSExpandedFormula implements IRule {
      * @return {@link String} que representa o result da quádrupla inicial onde está a estrutura das demais elevadas.
      */
     private String reduceToRaisedByTwo(String argument) {
-        return FatorationRulePerfectPolynomialExpandedFormulaConversion.reduceToRaisedValue(argument, this.source, true);
+        return FatorationRulePerfectPolynomialExpandedFormulaConversion.changeToRaisedValue(argument, this.source, true);
     }
 }

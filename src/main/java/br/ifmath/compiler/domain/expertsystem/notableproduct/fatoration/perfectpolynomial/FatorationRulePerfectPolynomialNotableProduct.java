@@ -37,31 +37,47 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
         return steps;
     }
 
+    /**
+     * Altera as quádruplas para ficarem na fórmula: (a +- b)^2 ou (a +- b)^3
+     *
+     * @return {@link String} que representa qual o expoente utilizado para construir a fórmula.
+     */
     private String generateSum() {
+
         ExpandedQuadruple argumentQuadruple = this.source.findQuadrupleByResult(this.source.getRootQuadruple().getArgument1());
-        ExpandedQuadruple argument1Quadruple = getDirectSon(argumentQuadruple);
 
-        String argument1 = (argument1Quadruple.isNegative()) ? "-" + argument1Quadruple.getArgument1() : argument1Quadruple.getArgument1();
+        //obtém a quadrupla que tem o valor de a
+        ExpandedQuadruple quadrupleA = getDirectSon(argumentQuadruple);
 
+        //obtém o valor de a
+        String argument1 = (quadrupleA.isNegative()) ? "-" + quadrupleA.getArgument1() : quadrupleA.getArgument1();
+
+        //obtém a quadrupla que tem o valor de b
         argumentQuadruple = this.source.getLastQuadruple(this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument2()));
+
+        //obtém o valor de b
         String argument2 = argumentQuadruple.getArgument1();
 
-        ExpandedQuadruple coreQuadruple = new ExpandedQuadruple(source.getRootQuadruple().getOperator(), argument1, argument2, "T1", 0, 1);
-
+        //cria a quadrupla principal que terá os dois valores
         List<ExpandedQuadruple> newQuadruples = new ArrayList<>();
-
+        ExpandedQuadruple coreQuadruple = new ExpandedQuadruple(source.getRootQuadruple().getOperator(), argument1, argument2, "T1", 0, 1);
         newQuadruples.add(coreQuadruple);
 
+        //cria a quádrupla que terá o exponent elevando os dois valores
         String exponent = this.source.findQuadrupleByResult(source.getRootQuadruple().getArgument1()).getArgument2();
-        ExpandedQuadruple squareQuadruple = new ExpandedQuadruple("^", "T1", exponent, "T2", 0, 0);
-
-        newQuadruples.add(squareQuadruple);
+        ExpandedQuadruple exponentQuadruple = new ExpandedQuadruple("^", "T1", exponent, "T2", 0, 0);
+        newQuadruples.add(exponentQuadruple);
 
         this.source = new ThreeAddressCode("T2", newQuadruples);
 
         return (exponent.equals("2")) ? "&sup2;." : "&sup3;.";
     }
 
+    /**
+     * Identifica se existe uma operação de soma ou subtração entre os valores a e b.
+     *
+     * @return {@link String} que representa se é uma operçaão de soma ou subtração.
+     */
     private String getSign() {
         ExpandedQuadruple root = this.source.getRootQuadruple();
         if (StringUtil.match(root.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
@@ -69,6 +85,12 @@ public class FatorationRulePerfectPolynomialNotableProduct implements IRule {
         return (root.getOperator().equals("+")) ? "&plus;" : "&minus;";
     }
 
+    /**
+     * Obtém o filho direto válido da quádrupla {@code iterationQuadruple}.
+     *
+     * @param iterationQuadruple {@link ExpandedQuadruple} de onde será o começo da busca pelo filho.
+     * @return {@link ExpandedQuadruple} que contém o filho direto da {@code iterationQuadruple}.
+     */
     private ExpandedQuadruple getDirectSon(ExpandedQuadruple iterationQuadruple) {
         ExpandedQuadruple son = this.source.findQuadrupleByResult(iterationQuadruple.getArgument1());
         if (StringUtil.match(son.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
