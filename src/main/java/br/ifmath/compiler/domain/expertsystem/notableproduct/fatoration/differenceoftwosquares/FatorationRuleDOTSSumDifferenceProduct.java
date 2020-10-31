@@ -34,6 +34,9 @@ public class FatorationRuleDOTSSumDifferenceProduct implements IRule {
         return steps;
     }
 
+    /**
+     * Altera as quádruplas para representar a fórmula: (a + b) * (a - b)
+     */
     private void sumDifferenceProduct() {
         ExpandedQuadruple root = this.source.getRootQuadruple();
         String firstTerm = this.source.findDirectSonArgument(root.getArgument1(), true);

@@ -34,12 +34,21 @@ public class FatorationRuleDOTSExpandedFormula implements IRule {
         return steps;
     }
 
+    /**
+     * Ajusta as quádruplas para a fórmula expandida: a^2 - b^2.
+     */
     private void adjustToExpandedFormula() {
         ExpandedQuadruple root = this.source.getRootQuadruple();
         root.setArgument1(this.reduceToRaisedByTwo(root.getArgument1()));
         root.setArgument2(this.reduceToRaisedByTwo(root.getArgument2()));
     }
 
+    /**
+     * Reduz as quádruplas para serem elevadas ao quadrado, a partir de uma quádrupla
+     *
+     * @param argument {@link String} que representa o result da quádrupla a partir de onde serão elevados os argumentos.
+     * @return {@link String} que representa o result da quádrupla inicial onde está a estrutura das demais elevadas.
+     */
     private String reduceToRaisedByTwo(String argument) {
         return FatorationRulePerfectPolynomialExpandedFormulaConversion.reduceToRaisedValue(argument, this.source, true);
     }
