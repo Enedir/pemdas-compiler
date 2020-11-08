@@ -52,7 +52,7 @@ public class FatorationRuleGroupmentCommonFactor implements IRule {
     private void generateDoubleCommonFactor() throws InvalidAlgebraicExpressionException {
 
         //obtém o número total de argumentos nas quádruplas para poder gerar o casal
-        int argumentsCount = FatorationRuleIdentification.argumentsCount(source.getRootQuadruple(), source);
+        int argumentsCount = source.argumentsCount(source.getRootQuadruple());
 
         //retora uma lista no qual a posição 0 estará o primeiro conjuge, e na posição 1 o segundo.
         List<ThreeAddressCode> coupleSources = FatorationRuleIdentification.generateCouple(source, argumentsCount);

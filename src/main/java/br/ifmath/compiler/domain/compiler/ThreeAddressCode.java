@@ -1,6 +1,7 @@
 package br.ifmath.compiler.domain.compiler;
 
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -453,6 +454,62 @@ public class ThreeAddressCode {
     private boolean isTemporaryVariableWithPotentiation(ExpandedQuadruple expandedQuadruple) {
         return (expandedQuadruple.getArgument1().contains("T") && expandedQuadruple.getArgument1().contains("^"))
                 || (expandedQuadruple.getArgument2().contains("T") && expandedQuadruple.getArgument2().contains("^"));
+    }
+
+    /**
+     * Inverte todas as operações de +, - e MINUS da {@link ThreeAddressCode}.
+     */
+    public void changeAllOperations() {
+
+        for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
+
+            //Se for uma operação "+", "-" ou "MINUS"
+            if (expandedQuadruple.isPlusOrMinus()) {
+
+                //caso for "MINUS" é necessário retirar essa quadrupla e colocar o argumento onde estava a quádrupla
+                if (expandedQuadruple.isNegative()) {
+                    ExpandedQuadruple minusFather = this.findQuadrupleByArgument(expandedQuadruple.getResult());
+
+                    //insere o argumento no lugar correto, ou seja, se é para ser trocado pelo argument1 ou argument2
+                    if (minusFather.getArgument1().equals(expandedQuadruple.getResult()))
+                        minusFather.setArgument1(expandedQuadruple.getArgument1());
+                    else
+                        minusFather.setArgument2(expandedQuadruple.getArgument2());
+
+                } else
+                    expandedQuadruple.setOperator(MathOperatorUtil.signalRule(expandedQuadruple.getOperator(), "-"));
+            }
+        }
+
+        //é necessário retirar as quádruplas não usadas se tiver uma quádrupla de "MINUS"
+        this.clearNonUsedQuadruples();
+    }
+
+    /**
+     * Conta o número de argumentos presentes na {@link List} de {@link ExpandedQuadruple}s.
+     *
+     * @param iterationQuadruple {@link ExpandedQuadruple} inicial de onde será começado a ser analisado. Normalmente
+     *                           é a quádrupla root ( {@code ThreeAddressCode.getRootQuadruple()}).
+     * @return inteiro que representa o número de argumentos dentro da lista de quádruplas
+     */
+    public int argumentsCount(ExpandedQuadruple iterationQuadruple) {
+        int sum = 0;
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            sum += argumentsCount(this.findQuadrupleByResult(iterationQuadruple.getArgument1()));
+        } else {
+
+            sum++;
+            if (iterationQuadruple.isNegative())
+                iterationQuadruple = this.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                sum += argumentsCount(this.findQuadrupleByResult(iterationQuadruple.getArgument2()));
+            } else {
+                sum++;
+            }
+        }
+
+        return sum;
     }
 
     /**

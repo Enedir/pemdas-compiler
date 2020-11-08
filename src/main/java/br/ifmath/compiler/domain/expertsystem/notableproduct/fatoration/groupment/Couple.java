@@ -88,7 +88,7 @@ public class Couple {
 
             //caso específico de o fator do segundo conjuge ser -1
             if (secondSpouseFactor.equals("1") && isMinus)
-                this.changeAllOperations(spouse);
+                spouse.changeAllOperations();
         }
 
 
@@ -119,37 +119,7 @@ public class Couple {
         }
     }
 
-    /**
-     * Inverte todas as operações de +, - e MINUS de um {@link ThreeAddressCode}
-     *
-     * @param source {@link ThreeAddressCode} com a {@link List} de {@link ExpandedQuadruple}
-     *               que serão alteradas as operações
-     */
-    private void changeAllOperations(ThreeAddressCode source) {
 
-        for (ExpandedQuadruple expandedQuadruple : source.getExpandedQuadruples()) {
-
-            //Se for uma operação "+", "-" ou "MINUS"
-            if (expandedQuadruple.isPlusOrMinus()) {
-
-                //caso for "MINUS" é necessário retirar essa quadrupla e colocar o argumento onde estava a quádrupla
-                if (expandedQuadruple.isNegative()) {
-                    ExpandedQuadruple minusFather = source.findQuadrupleByArgument(expandedQuadruple.getResult());
-
-                    //insere o argumento no lugar correto, ou seja, se é para ser trocado pelo argument1 ou argument2
-                    if (minusFather.getArgument1().equals(expandedQuadruple.getResult()))
-                        minusFather.setArgument1(expandedQuadruple.getArgument1());
-                    else
-                        minusFather.setArgument2(expandedQuadruple.getArgument2());
-
-                } else
-                    expandedQuadruple.setOperator(MathOperatorUtil.signalRule(expandedQuadruple.getOperator(), "-"));
-            }
-        }
-
-        //é necessário retirar as quádruplas não usadas se tiver uma quádrupla de "MINUS"
-        source.clearNonUsedQuadruples();
-    }
 
     /**
      * Verifica se a primeira quádrupla tem operador "MINUS".

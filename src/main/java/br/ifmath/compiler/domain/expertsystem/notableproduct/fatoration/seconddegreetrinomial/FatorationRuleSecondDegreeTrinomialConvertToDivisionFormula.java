@@ -18,7 +18,7 @@ public class FatorationRuleSecondDegreeTrinomialConvertToDivisionFormula impleme
 
     @Override
     public boolean match(List<ThreeAddressCode> source) {
-        return FatorationRuleIdentification.isTwoBinomialProduct(source.get(0));
+        return FatorationRuleIdentification.isSecondDegreeTrinomial(source.get(0));
     }
 
     @Override
