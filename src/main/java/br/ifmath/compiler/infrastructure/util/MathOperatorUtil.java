@@ -60,6 +60,13 @@ public class MathOperatorUtil {
         return source;
     }
 
+    /**
+     * Obtém o maior divisor comum entre dois números.
+     *
+     * @param a primeiro número que será obtido o maior divisor comum.
+     * @param b segundo número que será obtido o maior divisor comum.
+     * @return o valor que representa o maior divisor comum entre {@code a} e {@code b}.
+     */
     public static double gcd(double a, double b) {
         return b == 0 ? a : gcd(b, a % b);
     }

@@ -8,7 +8,6 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.PolynomialRuleSortSimilarTerms;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
-import br.ifmath.compiler.infrastructure.util.NumberUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -16,17 +15,17 @@ import java.util.List;
 
 public class NotableProductsExpertSystem implements IExpertSystem {
 
-    private NotableProductsRuleIdentification identification;
+    private final NotableProductsRuleIdentification identification;
 
-    private NotableProductsRuleApplyCorrectFormula applyFormula;
+    private final NotableProductsRuleApplyCorrectFormula applyFormula;
 
-    private NotableProductsRulePower power;
+    private final NotableProductsRulePower power;
 
-    private NotableProductsRuleMultiplication multiplication;
+    private final NotableProductsRuleMultiplication multiplication;
 
-    private PolynomialRuleSortSimilarTerms sort;
+    private final PolynomialRuleSortSimilarTerms sort;
 
-    private NotableProductsRuleSum sum;
+    private final NotableProductsRuleSum sum;
 
     public NotableProductsExpertSystem() {
         identification = new NotableProductsRuleIdentification();
@@ -111,36 +110,15 @@ public class NotableProductsExpertSystem implements IExpertSystem {
     @Override
     public void validateExpressions(List<ThreeAddressCode> sources) {
         List<String> variables = new ArrayList<>();
-        String variable;
 
-        if (StringUtil.isVariable(sources.get(0).getLeft())) {
-            variable = StringUtil.getVariable(sources.get(0).getLeft());
-            NumberUtil.getVariableCoeficient(sources.get(0).getLeft());
-            if (StringUtil.isNotEmpty(variable))
-                variables.add(variable);
-        }
+        StringUtil.validateVariable(sources.get(0).getLeft(), variables);
 
-        if (StringUtil.isVariable(sources.get(0).getRight())) {
-            variable = StringUtil.getVariable(sources.get(0).getRight());
-            NumberUtil.getVariableCoeficient(sources.get(0).getRight());
-            if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
-                variables.add(variable);
-        }
+        StringUtil.validateVariable(sources.get(0).getRight(), variables);
 
         for (ExpandedQuadruple expandedQuadruple : sources.get(0).getExpandedQuadruples()) {
-            if (StringUtil.isVariable(expandedQuadruple.getArgument1())) {
-                variable = StringUtil.getVariable(expandedQuadruple.getArgument1());
-                NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument1());
-                if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
-                    variables.add(variable);
-            }
+            StringUtil.validateVariable(expandedQuadruple.getArgument1(), variables);
 
-            if (StringUtil.isVariable(expandedQuadruple.getArgument2())) {
-                variable = StringUtil.getVariable(expandedQuadruple.getArgument2());
-                NumberUtil.getVariableCoeficient(expandedQuadruple.getArgument2());
-                if (StringUtil.isNotEmpty(variable) && !variables.contains(variable))
-                    variables.add(variable);
-            }
+            StringUtil.validateVariable(expandedQuadruple.getArgument2(), variables);
         }
     }
 

@@ -3,6 +3,8 @@ package br.ifmath.compiler.infrastructure.util;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
 
+import java.util.List;
+
 /**
  * <p>
  * It provides some methods to manipulate strings</p>
@@ -543,6 +545,16 @@ public class StringUtil {
             return b;
 
         return "";
+    }
+
+    public static void validateVariable(String variable, List<String> variables) {
+        if (StringUtil.isVariable(variable)) {
+            String uniqueVariable = StringUtil.getVariable(variable);
+            NumberUtil.getVariableCoeficient(variable);
+            if (StringUtil.isNotEmpty(uniqueVariable))
+                if (variables.isEmpty() || !variables.contains(uniqueVariable))
+                    variables.add(uniqueVariable);
+        }
     }
 
     /**
