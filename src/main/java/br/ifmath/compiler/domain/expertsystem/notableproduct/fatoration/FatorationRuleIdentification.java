@@ -68,8 +68,8 @@ public class FatorationRuleIdentification implements IRule {
         }
 
         if (isGroupment(this.source)) {
-            return "Agrupamento. Note que nesse caso temos um elemento em comum nos dois primeiros termos e um " +
-                    "elemento comum no terceiro e quarto termos.";
+            return "Agrupamento. Note que nesse caso temos um elemento em comum nos primeiros termos e um elemento " +
+                    "comum nos últimos termos.";
         }
 
         if (isCommonFactor(this.source.getRootQuadruple(), this.source)) {
