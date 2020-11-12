@@ -69,12 +69,12 @@ public class LinearEquationRuleGeneralWithCoeficientInVariable implements IRule 
             isNumber = expandedQuadruple.isNegative() && StringUtil.matchAny(expandedQuadruple.getArgument1(), RegexPattern.NATURAL_NUMBER.toString(), RegexPattern.DECIMAL_NUMBER.toString());
         }     
            
-        if (StringUtil.match(possibleVariable, RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+        if (StringUtil.match(possibleVariable, RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
             isVariableWithCoeficient = true;
         } else if (StringUtil.match(possibleVariable, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(possibleVariable);
             
-            isVariableWithCoeficient = expandedQuadruple.isNegative() && StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString());
+            isVariableWithCoeficient = expandedQuadruple.isNegative() && StringUtil.match(expandedQuadruple.getArgument1(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString());
         }
         
         return isNumber && isVariableWithCoeficient;
@@ -89,7 +89,7 @@ public class LinearEquationRuleGeneralWithCoeficientInVariable implements IRule 
         
         ExpandedQuadruple expandedQuadrupleVariable = null;
         
-        if (StringUtil.match(threeAddressCode.getLeft(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+        if (StringUtil.match(threeAddressCode.getLeft(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
             variableWithCoeficient = threeAddressCode.getLeft();
         } else { 
             expandedQuadrupleVariable = threeAddressCode.findQuadrupleByResult(threeAddressCode.getLeft());
@@ -130,7 +130,7 @@ public class LinearEquationRuleGeneralWithCoeficientInVariable implements IRule 
         
         ExpandedQuadruple expandedQuadrupleVariable = null;
         
-        if (StringUtil.match(threeAddressCode.getRight(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString())) {
+        if (StringUtil.match(threeAddressCode.getRight(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString())) {
             variableWithCoeficient = threeAddressCode.getRight();
         } else { 
             expandedQuadrupleVariable = threeAddressCode.findQuadrupleByResult(threeAddressCode.getRight());

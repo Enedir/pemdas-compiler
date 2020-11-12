@@ -1,7 +1,9 @@
 package br.ifmath.compiler.infrastructure.util;
 
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+
+import java.util.List;
 
 /**
  * <p>
@@ -64,7 +66,7 @@ public class StringUtil {
         source = source.replaceAll("Ý", "Y");
         source = source.replaceAll("ñ", "n");
         source = source.replaceAll("Ñ", "N");
-        source = source.replaceAll("['<>\\|/]", "");
+        source = source.replaceAll("['<>|/]", "");
         source = source.replaceAll(" ", "_");
 
         return source;
@@ -489,17 +491,46 @@ public class StringUtil {
         return (source != null && source.length() > 0);
     }
 
-    public static int getPowerValue(String param){
-        NumericValueVariable numericValueVariable = new NumericValueVariable();
-        numericValueVariable.setAttributesFromString(param);
-        return numericValueVariable.getLabelPower();
+    /**
+     * Obtains the value of the exponent, if the {@code param} is a {@link Monomial}.
+     *
+     * @param param {@link String} which represents a {@link Monomial}.
+     * @return integer value which is the exponent of the {@code param}.
+     */
+    public static int getPowerValue(String param) {
+        Monomial monomial = new Monomial(param);
+        return monomial.getLiteralDegree();
     }
 
+    /**
+     * Identifies if an argument contains a variable.
+     *
+     * @param param {@link String} to be identified.
+     * @return true if the {@code param} contains a variable and else otherwise.
+     */
     public static boolean isVariable(String param) {
-        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPOENT.toString())
+        return StringUtil.matchAny(param, RegexPattern.VARIABLE.toString(), RegexPattern.VARIABLE_WITH_COEFFICIENT.toString(), RegexPattern.VARIABLE_WITH_EXPONENT.toString())
                 && !StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString());
     }
 
+    /**
+     * Identifies if an argument is a {@link Monomial}.
+     *
+     * @param param {@link String} to be identified.
+     * @return true if the {@code param} represents a {@link Monomial} and else otherwise.
+     */
+    public static boolean isMonomial(String param) {
+        return StringUtil.matchAny(param, RegexPattern.VARIABLE_WITH_EXPONENT.toString(),
+                RegexPattern.VARIABLE_WITH_COEFFICIENT.toString());
+    }
+
+
+    /**
+     * Obtains only the variable within a {@code param}.
+     *
+     * @param param {@link String} to be obtained the variable.
+     * @return {@link String} which contains the varible among the {@code param}.
+     */
     public static String getVariable(String param) {
         return StringUtil.removeNumericChars(param);
     }
@@ -514,6 +545,16 @@ public class StringUtil {
             return b;
 
         return "";
+    }
+
+    public static void validateVariable(String variable, List<String> variables) {
+        if (StringUtil.isVariable(variable)) {
+            String uniqueVariable = StringUtil.getVariable(variable);
+            NumberUtil.getVariableCoeficient(variable);
+            if (StringUtil.isNotEmpty(uniqueVariable))
+                if (variables.isEmpty() || !variables.contains(uniqueVariable))
+                    variables.add(uniqueVariable);
+        }
     }
 
     /**

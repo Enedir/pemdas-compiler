@@ -1,6 +1,7 @@
 package br.ifmath.compiler.domain.compiler;
 
 import br.ifmath.compiler.infrastructure.props.RegexPattern;
+import br.ifmath.compiler.infrastructure.util.MathOperatorUtil;
 import br.ifmath.compiler.infrastructure.util.StringUtil;
 
 import java.util.ArrayList;
@@ -62,6 +63,43 @@ public class ThreeAddressCode {
         this.expandedQuadruples = expandedQuadruples;
     }
 
+    /**
+     * Obtem a primeira quadrupla "raiz" da estrutura, nao necessariamente a primeira quadrupla da lista.
+     *
+     * @return {@link ExpandedQuadruple} raiz.
+     */
+    public ExpandedQuadruple getRootQuadruple() {
+        return this.findQuadrupleByResult(left);
+    }
+
+    /**
+     * Obtem a ultima quadrupla da lista de quadrupla
+     *
+     * @return {@link ExpandedQuadruple} na ultima posicao da {@link List}.
+     */
+    public ExpandedQuadruple getListLastQuadruple() {
+        return this.getExpandedQuadruples().get(getExpandedQuadruples().size() - 1);
+    }
+
+    /**
+     * Obtem a ultima quadrupla de acordo com o encadeamento das quadruplas
+     *
+     * @param iterationQuadruple {@link ExpandedQuadruple} de onde vai ser começada a busca
+     * @return {@link ExpandedQuadruple} que representa a ultima quadrupla
+     */
+    public ExpandedQuadruple getLastQuadruple(ExpandedQuadruple iterationQuadruple) {
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return getLastQuadruple(this.findQuadrupleByResult(iterationQuadruple.getArgument1()));
+        }
+
+        if (iterationQuadruple.isNegative())
+            iterationQuadruple = this.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+        if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return getLastQuadruple(this.findQuadrupleByResult(iterationQuadruple.getArgument2()));
+        }
+        return iterationQuadruple;
+    }
 
     /**
      * Remove todas as quadruplas que não estão sendo usadas, ou seja, remove as quadruplas que não
@@ -217,13 +255,6 @@ public class ThreeAddressCode {
         }
     }
 
-    public String toLaTeXNotation() {
-        return String.format("%s %s %s",
-                generateLaTeXNotation(left, 0, new StringBuilder()).toString(),
-                comparison,
-                generateLaTeXNotation(right, 0, new StringBuilder()).toString());
-    }
-
     /**
      * Substitui o valor de um argumento ou operador de uma quadrupla, pelo valor de um dado argumento ou operador do seu filho. Ex.:
      * A = B + 1 e B = 2 + 3. Escolhendo B como son, 1 como o argument, entao obterá o valor do argument1 de B,
@@ -292,11 +323,15 @@ public class ThreeAddressCode {
     /**
      * Obtem a String que sera utilizada como {@code result} da nova quadrupla
      *
-     * @return {@link String} que eh o numero da ultima temporaria da lista, mais um (+1).
+     * @return {@link String} que é o numero da ultima temporaria da lista, mais um (+1).
      */
     public String retrieveNextTemporary() {
-        String lastQuadrupleResult = this.getExpandedQuadruples().get(this.getExpandedQuadruples().size() - 1).getResult();
-        int value = Integer.parseInt(lastQuadrupleResult.replace("T", ""));
+        int value = 0;
+        for (ExpandedQuadruple expandedQuadruple : this.expandedQuadruples) {
+            int iterationValue = Integer.parseInt(expandedQuadruple.getResult().replace("T", ""));
+            if (value < iterationValue)
+                value = iterationValue;
+        }
 
         return "T" + (value + 1);
     }
@@ -331,7 +366,7 @@ public class ThreeAddressCode {
     }
 
     /**
-     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}
+     * Encontra o pai que contém o operador diretamente antes da {@code iterationQuadruple}.
      *
      * @param quadrupleResult {@link String} que eh o {@code result} da {@link ExpandedQuadruple}
      *                        de onde sera encontrado o pai
@@ -346,6 +381,26 @@ public class ThreeAddressCode {
         }
         return father;
 
+    }
+
+    /**
+     * Encontra o próximo argumento válido do filho.
+     *
+     * @param quadrupleResult {@link String} representando uma variável temporária que será analisada
+     * @param isArgument1     {@link Boolean} que indica se o argument 1 ou 2 será analisado e obtido
+     * @return {@link String} do argumento correspondente do filho
+     */
+    public String findDirectSonArgument(String quadrupleResult, boolean isArgument1) {
+        if (this.getLeft().equals(quadrupleResult))
+            return null;
+        if (!StringUtil.match(quadrupleResult, RegexPattern.TEMPORARY_VARIABLE.toString()))
+            return quadrupleResult;
+        ExpandedQuadruple son = this.findQuadrupleByResult(quadrupleResult);
+        String argument = (isArgument1) ? son.getArgument1() : son.getArgument2();
+        if (StringUtil.match(argument, RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            return this.findDirectSonArgument(argument, isArgument1);
+        }
+        return argument;
     }
 
     /**
@@ -370,7 +425,7 @@ public class ThreeAddressCode {
                     isArgument1 = false;
                 }
 
-                /* Nesse caso não há como fazer comparação através do {@link StringUtil.match} pois uma
+                /* Nesse caso não há como fazer comparação através do StringUtil.match pois uma
                  * variável temporaria não deveria ter um expoente, e então sempre daria um resultado false */
                 if (argument.startsWith("T")) {
                     String potentiation = argument.substring(argument.indexOf("^"));
@@ -402,11 +457,75 @@ public class ThreeAddressCode {
     }
 
     /**
+     * Inverte todas as operações de +, - e MINUS da {@link ThreeAddressCode}.
+     */
+    public void changeAllOperations() {
+
+        for (ExpandedQuadruple expandedQuadruple : this.getExpandedQuadruples()) {
+
+            //Se for uma operação "+", "-" ou "MINUS"
+            if (expandedQuadruple.isPlusOrMinus()) {
+
+                //caso for "MINUS" é necessário retirar essa quadrupla e colocar o argumento onde estava a quádrupla
+                if (expandedQuadruple.isNegative()) {
+                    ExpandedQuadruple minusFather = this.findQuadrupleByArgument(expandedQuadruple.getResult());
+
+                    //insere o argumento no lugar correto, ou seja, se é para ser trocado pelo argument1 ou argument2
+                    if (minusFather.getArgument1().equals(expandedQuadruple.getResult()))
+                        minusFather.setArgument1(expandedQuadruple.getArgument1());
+                    else
+                        minusFather.setArgument2(expandedQuadruple.getArgument2());
+
+                } else
+                    expandedQuadruple.setOperator(MathOperatorUtil.signalRule(expandedQuadruple.getOperator(), "-"));
+            }
+        }
+
+        //é necessário retirar as quádruplas não usadas se tiver uma quádrupla de "MINUS"
+        this.clearNonUsedQuadruples();
+    }
+
+    /**
+     * Conta o número de argumentos presentes na {@link List} de {@link ExpandedQuadruple}s.
+     *
+     * @param iterationQuadruple {@link ExpandedQuadruple} inicial de onde será começado a ser analisado. Normalmente
+     *                           é a quádrupla root ( {@code ThreeAddressCode.getRootQuadruple()}).
+     * @return inteiro que representa o número de argumentos dentro da lista de quádruplas
+     */
+    public int argumentsCount(ExpandedQuadruple iterationQuadruple) {
+        int sum = 0;
+        if (StringUtil.match(iterationQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+            sum += argumentsCount(this.findQuadrupleByResult(iterationQuadruple.getArgument1()));
+        } else {
+
+            sum++;
+            if (iterationQuadruple.isNegative())
+                iterationQuadruple = this.findQuadrupleByArgument(iterationQuadruple.getResult());
+
+            if (StringUtil.match(iterationQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString())) {
+                sum += argumentsCount(this.findQuadrupleByResult(iterationQuadruple.getArgument2()));
+            } else {
+                sum++;
+            }
+        }
+
+        return sum;
+    }
+
+    /**
      * Ajusta os valores iniciais da quadrupla
      */
     public void setUp() {
         this.setComparison("");
         this.setRight("");
+    }
+
+
+    public String toLaTeXNotation() {
+        return String.format("%s %s %s",
+                generateLaTeXNotation(left, 0, new StringBuilder()).toString(),
+                comparison,
+                generateLaTeXNotation(right, 0, new StringBuilder()).toString());
     }
 
     private StringBuilder generateLaTeXNotation(String param, int level, StringBuilder builder) {

@@ -27,12 +27,12 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
 
     @Override
     public List<Step> handle(List<ThreeAddressCode> sources) {
-        List<NumericValueVariable> termsAndValuesList = new ArrayList<>();
+        List<Monomial> termsAndValuesList = new ArrayList<>();
         expandedQuadruples.clear();
         expandedQuadruples.addAll(sources.get(0).getExpandedQuadruples());
 
         int numbersSum = sumTerms(sources.get(0), sources.get(0).getLeft(), false, termsAndValuesList);
-        sortNVVList(termsAndValuesList);
+        sortMonomialList(termsAndValuesList);
         ThreeAddressCode step;
         if (termsAndValuesList.isEmpty()) {
             ExpandedQuadruple newQuadruple = new ExpandedQuadruple("", String.valueOf(numbersSum), "", "T1", 0, 0);
@@ -53,35 +53,35 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
     }
 
     /**
-     * organiza e remove as variaveis desnecessarias da {@code termsAndValuesList} levando em consideração os expoentes
+     * organiza e remove as variaveis desnecessarias da {@code monomialList} levando em consideração os expoentes
      * das variáveis, em ordem decrescente.
      *
-     * @param termsAndValuesList {@link List} de {@link NumericValueVariable} a ser organizada
+     * @param monomialList {@link List} de {@link Monomial} a ser organizada
      */
-    private void sortNVVList(List<NumericValueVariable> termsAndValuesList) {
+    private void sortMonomialList(List<Monomial> monomialList) {
 
         //Removendo as variáveis com valor zero
-        List<NumericValueVariable> iterableNVVList = new ArrayList<>(termsAndValuesList);
-        for (NumericValueVariable numericValue : iterableNVVList) {
-            if (numericValue.getValue() == 0)
-                termsAndValuesList.remove(numericValue);
+        List<Monomial> iterableMonomialList = new ArrayList<>(monomialList);
+        for (Monomial monomial : iterableMonomialList) {
+            if (monomial.getCoefficient() == 0)
+                monomialList.remove(monomial);
         }
 
         //Bubble sort
-        for (int i = 0; i < termsAndValuesList.size(); i++) {
-            for (int j = 0; j < termsAndValuesList.size() - 1; j++) {
-                String currentLabel = termsAndValuesList.get(j).getLabel();
+        for (int i = 0; i < monomialList.size(); i++) {
+            for (int j = 0; j < monomialList.size() - 1; j++) {
+                String currentLabel = monomialList.get(j).getLiteral();
                 int currentValue = 1;
                 // há o caso de haver uma variável sem expoente, somente com o x por exemplo
                 if (currentLabel.contains("^"))
                     currentValue = Integer.parseInt(currentLabel.substring(currentLabel.indexOf("^") + 1));
-                String nextLabel = termsAndValuesList.get(j + 1).getLabel();
+                String nextLabel = monomialList.get(j + 1).getLiteral();
                 int nextValue = 1;
                 if (nextLabel.contains("^"))
                     nextValue = Integer.parseInt(nextLabel.substring(nextLabel.indexOf("^") + 1));
                 if (nextValue > currentValue) {
-                    NumericValueVariable aux = termsAndValuesList.remove(j);
-                    termsAndValuesList.add(j + 1, aux);
+                    Monomial aux = monomialList.remove(j);
+                    monomialList.add(j + 1, aux);
                 }
             }
         }
@@ -103,11 +103,11 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
      * Adiciona os termos semelhantes agrupados na lista de quadruplas expandidas presente no {@code source}.
      *
      * @param source             {@link ThreeAddressCode} que será modificado para apresentar os termos agrupados
-     * @param termsAndValuesList {@link List} de {@link NumericValueVariable} de onde serão obtidos os termos já
+     * @param termsAndValuesList {@link List} de {@link Monomial} de onde serão obtidos os termos já
      *                           agrupados
      * @param numbersSum         soma total dos números que não contém variáveis
      */
-    private void replaceExpandedQuadruples(ThreeAddressCode source, List<NumericValueVariable> termsAndValuesList, int numbersSum) {
+    private void replaceExpandedQuadruples(ThreeAddressCode source, List<Monomial> termsAndValuesList, int numbersSum) {
         boolean hasOnlyOneItemOnList = false;
         if (termsAndValuesList.size() == 1)
             hasOnlyOneItemOnList = true;
@@ -118,47 +118,47 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
         //toda vez que uma variável é analisada, ela é retirada da lista
         while (!termsAndValuesList.isEmpty()) {
             iterationQuadruple = (i == 0 || i == 1) ? expandedQuadruples.get(0) : source.findQuadrupleByResult(iterationQuadruple.getArgument2());
-            NumericValueVariable iterationNVV = termsAndValuesList.get(0);
+            Monomial iterationMonomial = termsAndValuesList.get(0);
 
-            if (iterationNVV.getValue() != 0) {
+            if (iterationMonomial.getCoefficient() != 0) {
                 //verificação para caso esteja no formato 1x, transformando para x
-                String nvvValue = String.valueOf(Math.abs(iterationNVV.getValue()));
-                if (nvvValue.equals("1"))
-                    nvvValue = "";
-                iterationNVV.setLabel(nvvValue + iterationNVV.getLabel());
+                String monomialCoefficient = String.valueOf(Math.abs(iterationMonomial.getCoefficient()));
+                if (monomialCoefficient.equals("1"))
+                    monomialCoefficient = "";
+                iterationMonomial.setLiteral(monomialCoefficient + iterationMonomial.getLiteral());
                 //Se o valor for negativo, e for a analise do argument1 (i==0), criará uma quadrupla MINUS
-                if (iterationNVV.getValue() < 0) {
+                if (iterationMonomial.getCoefficient() < 0) {
                     if (i == 0)
-                        source.addQuadrupleToList("MINUS", iterationNVV.getLabel(), "", iterationQuadruple, true);
+                        source.addQuadrupleToList("MINUS", iterationMonomial.getLiteral(), "", iterationQuadruple, true);
                         /*Se for a analise do argument2, e a soma dos números sem variável for 0, o valor simplesmente é
                          * substituído no argument2*/
                     else {
                         iterationQuadruple.setOperator("-");
                         if (numbersSum == 0 && termsAndValuesList.size() == 1)
-                            iterationQuadruple.setArgument2(iterationNVV.getLabel());
+                            iterationQuadruple.setArgument2(iterationMonomial.getLiteral());
                             /* Já se a soma dos números for diferente de 0, será criada uma nova quadrupla para ser
-                             *  adicionado o iterationNVV no argument1, e a soma dos números no argument2*/
+                             *  adicionado o iterationMonomial no argument1, e a soma dos números no argument2*/
                         else
-                            source.addQuadrupleToList("+", iterationNVV.getLabel(), "", iterationQuadruple, false);
+                            source.addQuadrupleToList("+", iterationMonomial.getLiteral(), "", iterationQuadruple, false);
 
                     }
                     //Se o valor for positivo
                 } else {
                     if (i == 0)
-                        iterationQuadruple.setArgument1(iterationNVV.getLabel());
+                        iterationQuadruple.setArgument1(iterationMonomial.getLiteral());
                     else {
                         iterationQuadruple.setOperator("+");
 
                         if (numbersSum == 0) {
-                            /*Caso tiver dois ou mais itens na lista de NVV, criará uma quadrupla nova, caso contrário
+                            /*Caso tiver dois ou mais itens na lista de Monomios, criará uma quadrupla nova, caso contrário
                              * somente substituirá no argument2*/
                             if (termsAndValuesList.size() > 1)
-                                source.addQuadrupleToList("+", iterationNVV.getLabel(), "", iterationQuadruple, false);
+                                source.addQuadrupleToList("+", iterationMonomial.getLiteral(), "", iterationQuadruple, false);
                             else
-                                iterationQuadruple.setArgument2(iterationNVV.getLabel());
+                                iterationQuadruple.setArgument2(iterationMonomial.getLiteral());
 
                         } else
-                            source.addQuadrupleToList("+", iterationNVV.getLabel(), "", iterationQuadruple, false);
+                            source.addQuadrupleToList("+", iterationMonomial.getLiteral(), "", iterationQuadruple, false);
                     }
                 }
             }
@@ -210,7 +210,7 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
      * @return A soma dos números que não tem variáveis
      */
     private int sumTerms(ThreeAddressCode threeAddressCode, String param, boolean lastOperationIsMinus, List<
-            NumericValueVariable> termsAndValuesList) {
+            Monomial> termsAndValuesList) {
         int sum = 0;
         if (StringUtil.match(param, RegexPattern.TEMPORARY_VARIABLE.toString())) {
             ExpandedQuadruple expandedQuadruple = threeAddressCode.findQuadrupleByResult(param);
@@ -227,7 +227,7 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
             if (StringUtil.isVariable(param)) {
                 String paramValue, paramVariable;
 
-                if (StringUtil.match(param, RegexPattern.VARIABLE_WITH_EXPOENT.toString())) {
+                if (StringUtil.match(param, RegexPattern.VARIABLE_WITH_EXPONENT.toString())) {
                     paramValue = param.substring(0, param.indexOf("^") - 1);
                     paramVariable = param.substring(param.indexOf("^") - 1);
                 } else {
@@ -246,13 +246,13 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
                 /*caso não haja uma determinada variável, com ou sem expoente, dentro da lista termsAndValuesList
                  * é criado um novo item*/
                 if (termsAndValuesList.isEmpty()) {
-                    termsAndValuesList.add(new NumericValueVariable(paramVariable, 0));
+                    termsAndValuesList.add(new Monomial(paramVariable, 0));
                 } else {
                     for (int i = 0; i < termsAndValuesList.size(); i++) {
-                        if (!termsAndValuesList.get(i).getLabel().equals(paramVariable)) {
+                        if (!termsAndValuesList.get(i).getLiteral().equals(paramVariable)) {
                             cont++;
                             if (cont == termsAndValuesList.size()) {
-                                termsAndValuesList.add(new NumericValueVariable(paramVariable, 0));
+                                termsAndValuesList.add(new Monomial(paramVariable, 0));
                             }
                         } else {
                             index = i;
@@ -262,9 +262,9 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
                 //caso o valor seja, por exemplo, x, então tratará como 1x
                 int newValue = (StringUtil.isEmpty(paramValue)) ? 1 : Integer.parseInt(paramValue);
                 if (lastOperationIsMinus)
-                    termsAndValuesList.get(index).setValue(termsAndValuesList.get(index).getValue() - newValue);
+                    termsAndValuesList.get(index).setCoefficient(termsAndValuesList.get(index).getCoefficient() - newValue);
                 else
-                    termsAndValuesList.get(index).setValue(termsAndValuesList.get(index).getValue() + newValue);
+                    termsAndValuesList.get(index).setCoefficient(termsAndValuesList.get(index).getCoefficient() + newValue);
             } else {
                 //efetiva soma dos números sem variável
                 if (lastOperationIsMinus)
@@ -321,33 +321,33 @@ public class PolynomialRuleGroupSimilarTerms implements IRule {
      * @return {@code true} caso haja dois labels iguais na lista, ou {@code false} caso contrario
      */
     private boolean isThereAEqualLabel(ThreeAddressCode source, ExpandedQuadruple expandedQuadruple, boolean isArgument1) {
-        NumericValueVariable nvvExQuadruple = new NumericValueVariable();
+        Monomial monomialExQuadruple = new Monomial();
         if (isArgument1)
-            nvvExQuadruple.setAttributesFromString(expandedQuadruple.getArgument1());
+            monomialExQuadruple.setAttributesFromString(expandedQuadruple.getArgument1());
         else
-            nvvExQuadruple.setAttributesFromString(expandedQuadruple.getArgument2());
+            monomialExQuadruple.setAttributesFromString(expandedQuadruple.getArgument2());
 
         for (ExpandedQuadruple argumentQuadruple : source.getExpandedQuadruples()) {
-            NumericValueVariable nvvArgQuadruple = new NumericValueVariable();
+            Monomial monomialArgQuadruple = new Monomial();
 
             /*caso seja o argument1 a ser analisado, nao podera obter a si mesmo para ser analisado. Mesmo
              * caso da verificacao mais a baixo*/
             if (!expandedQuadruple.equals(argumentQuadruple) || !isArgument1) {
                 if (!StringUtil.match(argumentQuadruple.getArgument1(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-                    nvvArgQuadruple.setAttributesFromString(argumentQuadruple.getArgument1());
+                    monomialArgQuadruple.setAttributesFromString(argumentQuadruple.getArgument1());
             }
 
             //caso haja labels iguais para o argument1
-            if (nvvArgQuadruple.getLabel() != null && nvvArgQuadruple.getLabel().equals(nvvExQuadruple.getLabel()))
+            if (monomialArgQuadruple.getLiteral() != null && monomialArgQuadruple.getLiteral().equals(monomialExQuadruple.getLiteral()))
                 return true;
 
             if (!expandedQuadruple.equals(argumentQuadruple) || isArgument1) {
                 if (!argumentQuadruple.isNegative() && !StringUtil.match(argumentQuadruple.getArgument2(), RegexPattern.TEMPORARY_VARIABLE.toString()))
-                    nvvArgQuadruple.setAttributesFromString(argumentQuadruple.getArgument2());
+                    monomialArgQuadruple.setAttributesFromString(argumentQuadruple.getArgument2());
             }
 
             //caso haja labels iguais para o argument2
-            if (nvvArgQuadruple.getLabel() != null && nvvArgQuadruple.getLabel().equals(nvvExQuadruple.getLabel()))
+            if (monomialArgQuadruple.getLiteral() != null && monomialArgQuadruple.getLiteral().equals(monomialExQuadruple.getLiteral()))
                 return true;
 
         }

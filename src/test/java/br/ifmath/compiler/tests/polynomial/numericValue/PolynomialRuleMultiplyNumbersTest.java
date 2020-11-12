@@ -6,7 +6,7 @@ import br.ifmath.compiler.domain.expertsystem.AnswerType;
 import br.ifmath.compiler.domain.expertsystem.IAnswer;
 import br.ifmath.compiler.domain.expertsystem.IExpertSystem;
 import br.ifmath.compiler.domain.expertsystem.Step;
-import br.ifmath.compiler.domain.expertsystem.polynomial.classes.NumericValueVariable;
+import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class PolynomialRuleMultiplyNumbersTest {
     private String stepTwoExplicationExpected;
     private String stepThreeExplicationExpected;
     private String finalResultExplicationExpected;
-    private List<NumericValueVariable> userInput = new ArrayList<>();
+    private List<Monomial> userInput = new ArrayList<>();
 
 
     @Before
@@ -35,9 +35,9 @@ public class PolynomialRuleMultiplyNumbersTest {
         stepThreeExplicationExpected = "Multiplicando os valores.";
         finalResultExplicationExpected = "Somando os valores.";
 
-        userInput.add(new NumericValueVariable("a", 777));
-        userInput.add(new NumericValueVariable("y", 3));
-        userInput.add(new NumericValueVariable("z", 4));
+        userInput.add(new Monomial("a", 777));
+        userInput.add(new Monomial("y", 3));
+        userInput.add(new Monomial("z", 4));
     }
 
     @Test()
