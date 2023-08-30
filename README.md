@@ -1,27 +1,14 @@
 # PEMDAS Compiler Project
 
-Welcome to the PEMDAS Compiler project! This is an exciting endeavor aimed at creating a compiler that interprets and executes mathematical expressions following the PEMDAS (Parentheses, Exponents, Multiplication and Division, Addition and Subtraction) order of operations. This project aims to provide a tool that simplifies complex mathematical expressions for easy computation.
+Welcome to the PEMDAS Compiler project! This project is a math operations compiler that focuses on linear equations, polynomial equation and notable products. Whether you're a student, educator, researcher, or just someone with a love for mathematics, this project aims to simplify complex calculations and provide valuable insights.
 
-# Project Overview
-The PEMDAS Compiler project focuses on developing a software tool that takes in mathematical expressions as input and processes them according to the PEMDAS order of operations. The compiler will parse the input expressions, apply the necessary mathematical operations in the correct sequence, and output the simplified result.
+# Features
 
-# Project Steps
-* Expression Tokenization: Break down the input expression into individual tokens (numbers, operators, parentheses) to prepare for parsing.
+* Linear Equation Solver: Input linear equations and receive step-by-step solutions. Gain a deep understanding of how each variable is determined.
 
-* Parsing: Implement the parsing logic to create a parse tree from the tokenized expression. This tree will represent the hierarchical structure of the expression based on operator precedence.
+* Polynomial Equation Solver: Solve polynomial equations of varying degrees using advanced numerical methods. Obtain real and complex solutions with explanations.
 
-* PEMDAS Execution: Traverse the parse tree according to the PEMDAS order of operations. Perform operations in the correct sequence, starting from parentheses, then exponents, followed by multiplication and division, and finally addition and subtraction.
-
-* Error Handling: Implement a comprehensive error-handling system to detect and handle syntax errors, mathematical errors, and other exceptional cases that might arise during parsing and execution.
-
-* Optimization (Optional): If desired, incorporate optimization techniques to simplify expressions further and improve performance.
-
-* User Interface (Optional): Develop a user-friendly interface that allows users to input expressions, view the parsed tree, and receive the computed results.
-
-* Testing: Rigorously test the compiler with a variety of test cases, including simple and complex expressions, edge cases, and error scenarios.
-
-# Collaboration
-This project welcomes collaboration from developers, mathematicians, and enthusiasts interested in compiler construction, mathematics, and software development. If you're interested in contributing, please fork the project repository, make your enhancements, and submit a pull request.
+* Notable Products: Discover and analyze notable mathematical products, such as perfect squares, differences of squares, and sum/difference of cubes.
 
 # Getting Started
 To get started with the PEMDAS Compiler project, clone the repository and refer to the documentation for installation instructions, usage guidelines, and developer resources.
