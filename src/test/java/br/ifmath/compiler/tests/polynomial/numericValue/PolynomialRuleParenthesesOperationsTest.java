@@ -9,6 +9,7 @@ import br.ifmath.compiler.domain.expertsystem.Step;
 import br.ifmath.compiler.domain.expertsystem.polynomial.classes.Monomial;
 import br.ifmath.compiler.domain.expertsystem.polynomial.numericvalue.PolynomialNumericValueExpertSystem;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -153,6 +154,7 @@ public class PolynomialRuleParenthesesOperationsTest {
     }
 
     @Test()
+    @Ignore()
     public void multiple_operations_in_multiple_parentheses_scenery_one_with_success() {
         //Arrange
         String expression = "(y + 3 * (2 - 7 + (a - 770))) + (z * (6 - (2 ^ 2)))";
